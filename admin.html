@@ -592,7 +592,7 @@ function filterArticles(q) {
         <td>${a.read_time||'?'} perc</td>
         <td style="color:var(--text3)">${fmtDate(a.created_at)}</td>
         <td>
-          <button class="btn btn-secondary btn-sm" onclick="openEdit(${JSON.stringify(a.id)})">Szerk.</button>
+          <button class="btn btn-secondary btn-sm" onclick="openEdit('${a.id}')">Szerk.</button>
           <button class="btn btn-danger btn-sm" style="margin-left:4px" onclick="deleteArticle(${JSON.stringify(a.id)})">Törlés</button>
         </td>
       </tr>`).join('')
