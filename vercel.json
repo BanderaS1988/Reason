@@ -5,6 +5,6 @@
     { "source": "/robots.txt", "destination": "/api/robots.txt" },
     { "source": "/news-sitemap.xml", "destination": "/api/news-sitemap.xml" },
     { "source": "/llms.txt", "destination": "/api/llms.txt" },
-    { "source": "/cikk/:id", "destination": "/api/cikk/:id" }
+    { "source": "/cikk/:id", "destination": "/api/cikk/$1" }
   ]
 }
