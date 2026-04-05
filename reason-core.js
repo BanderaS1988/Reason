@@ -1,6 +1,21 @@
 // reason-core.js
 // Egyetlen fájl, minden benne van. A többiek ezt hívják.
 
+async function groqNoStreamFallback(_, model, system, prompt, maxTokens) {
+  const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer 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`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: model || 'llama-3.3-70b-versatile',
+      messages: [{ role: 'system', content: system }, { role: 'user', content: prompt }],
+      max_tokens: maxTokens || 1000
+    })
+  });
+  const data = await resp.json();
+  return data.choices?.[0]?.message?.content || '';
+}
+
+
 const REASON_CORE = (function() {
   'use strict';
 
