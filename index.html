@@ -23,6 +23,7 @@
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:15px;line-height:1.6;min-height:100vh}
 
+/* TICKER */
 .ticker-wrap{background:var(--accent);color:#fff;overflow:hidden;height:34px;display:flex;align-items:center;position:sticky;top:0;z-index:200}
 .ticker-label{background:rgba(0,0,0,.25);padding:0 14px;height:100%;display:flex;align-items:center;font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
 .ticker-scroll{flex:1;overflow:hidden;position:relative;height:100%}
@@ -32,6 +33,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .ticker-sep{opacity:.4;margin:0 4px}
 @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
+/* HEADER */
 .site-header{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:34px;z-index:190;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .header-top{display:flex;align-items:center;justify-content:space-between;padding:14px 28px 12px;max-width:1400px;margin:0 auto;gap:16px;flex-wrap:wrap}
 .logo{font-family:var(--font-d);font-size:34px;font-weight:900;color:var(--text);letter-spacing:-1.5px;line-height:1;cursor:pointer;user-select:none}
@@ -47,6 +49,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .weather-temp{font-size:17px;font-weight:700;font-family:var(--font-m);line-height:1}
 .weather-sub{font-size:10px;color:var(--text4);margin-top:1px}
 
+/* NAV */
 .main-nav{border-top:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
 .main-nav::-webkit-scrollbar{display:none}
 .nav-inner{display:flex;padding:0 28px;max-width:1400px;margin:0 auto}
@@ -55,10 +58,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .nav-item.active{color:var(--accent);border-bottom-color:var(--accent)}
 .nav-count{display:inline-block;background:var(--accent);color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:10px;margin-left:4px;vertical-align:middle;min-width:16px;text-align:center}
 
+/* LAYOUT */
 .page-wrap{max-width:1400px;margin:0 auto;padding:28px 28px 80px}
 .main-layout{display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start}
 @media(max-width:1000px){.main-layout{grid-template-columns:1fr}}
 
+/* STATUS BAR */
 .status-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;margin-bottom:20px;border-bottom:1px solid var(--border)}
 .status-left{display:flex;align-items:center;gap:12px}
 .live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse-dot 2s infinite;flex-shrink:0}
@@ -67,6 +72,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .refresh-btn{font-size:11px;color:var(--cyan);cursor:pointer;padding:4px 10px;border:1px solid var(--cyan);border-radius:5px;background:transparent;font-family:var(--font-s);transition:.15s}
 .refresh-btn:hover{background:var(--cyan);color:#fff}
 
+/* FEATURED */
 .featured-section{margin-bottom:32px}
 .section-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text4);margin-bottom:14px;display:flex;align-items:center;gap:10px}
 .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
@@ -79,6 +85,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .featured-excerpt{font-size:13px;color:var(--text3);line-height:1.65;margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .featured-foot{display:flex;align-items:center;gap:14px;font-size:11px;color:var(--text4)}
 
+/* TOP STRIP */
 .top-strip{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap}
 .strip-left{display:flex;align-items:baseline;gap:10px}
 .strip-title{font-family:var(--font-d);font-size:26px;font-weight:900;color:var(--text)}
@@ -89,6 +96,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .view-btn{width:30px;height:30px;border-radius:5px;border:1px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:13px;transition:.15s}
 .view-btn.active{background:var(--text);color:#fff;border-color:var(--text)}
 
+/* SEARCH */
 .search-wrap{position:relative;margin-bottom:20px}
 .search-input{width:100%;padding:10px 16px 10px 38px;border:1px solid var(--border2);border-radius:8px;background:var(--surface);font-size:13px;font-family:var(--font-s);color:var(--text);outline:none;transition:.2s}
 .search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(200,16,46,.08)}
@@ -96,9 +104,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .search-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:var(--text4);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1}
 .search-clear.visible{display:flex}
 
+/* ARTICLES GRID */
 .articles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px}
 .articles-grid.list-view{grid-template-columns:1fr;gap:10px}
 
+/* ARTICLE CARD */
 .article-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:.2s;display:flex;flex-direction:column}
 .article-card:hover{box-shadow:var(--shadow2);border-color:var(--border2);transform:translateY(-2px)}
 .articles-grid.list-view .article-card{flex-direction:row;border-radius:8px;min-height:auto}
@@ -121,18 +131,22 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .card-foot{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border);margin-top:auto;font-size:10px;color:var(--text4)}
 .card-readtime{display:flex;align-items:center;gap:3px}
 
+/* HIGHLIGHT for search */
 .hl{background:#fff3b0;border-radius:2px;padding:0 1px}
 
+/* EMPTY */
 .empty-state{text-align:center;padding:100px 24px;color:var(--text4)}
 .empty-icon{font-size:60px;margin-bottom:18px;opacity:.25;display:block}
 .empty-title{font-family:var(--font-d);font-size:24px;color:var(--text3);margin-bottom:10px}
 .empty-sub{font-size:13px;line-height:1.8;max-width:400px;margin:0 auto}
 
+/* LOAD MORE */
 .load-more-wrap{text-align:center;margin-top:40px}
 .load-more-btn{padding:13px 36px;background:var(--text);color:#fff;border:none;border-radius:8px;font-family:var(--font-s);font-size:13px;font-weight:600;cursor:pointer;transition:.2s;letter-spacing:.04em}
 .load-more-btn:hover{background:var(--accent)}
 .load-more-btn:disabled{opacity:.35;cursor:not-allowed}
 
+/* MODAL */
 .modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(20,18,14,.72);backdrop-filter:blur(8px);display:flex;align-items:flex-start;justify-content:center;padding:48px 20px 40px;opacity:0;pointer-events:none;transition:opacity .3s;overflow-y:auto}
 .modal-overlay.open{opacity:1;pointer-events:auto}
 .article-modal{background:var(--bg2);border-radius:18px;width:100%;max-width:800px;box-shadow:0 32px 100px rgba(0,0,0,.25);overflow:hidden;transform:scale(.97) translateY(16px);transition:transform .35s cubic-bezier(.4,0,.2,1);position:relative;flex-shrink:0}
@@ -152,24 +166,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .modal-close{position:absolute;top:18px;right:18px;width:38px;height:38px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--text3);transition:.15s;z-index:10}
 .modal-close:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
 
-/* LÁJK + MEGOSZTÁS + KOMMENT */
-.like-btn{display:flex;align-items:center;gap:7px;padding:8px 18px;background:var(--bg2);border:1px solid var(--border2);border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-s);color:var(--text2);transition:.2s}
-.like-btn:hover{border-color:var(--accent);color:var(--accent)}
-.like-btn.liked{background:#c8102e12;border-color:var(--accent);color:var(--accent)}
-.share-btn{padding:6px 12px;border:1px solid var(--border2);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font-s);transition:.2s;background:var(--bg2);color:var(--text2)}
-.share-btn:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.12)}
-.share-btn.fb:hover{background:#1877f2;color:#fff;border-color:#1877f2}
-.share-btn.tw:hover{background:#000;color:#fff;border-color:#000}
-.share-btn.wa:hover{background:#25d366;color:#fff;border-color:#25d366}
-.share-btn.tg:hover{background:#229ed9;color:#fff;border-color:#229ed9}
-.share-btn.li:hover{background:#0a66c2;color:#fff;border-color:#0a66c2}
-.share-btn.cp:hover{background:var(--cyan);color:#fff;border-color:var(--cyan)}
-.comment-item{padding:14px 0;border-bottom:1px solid var(--border)}
-.comment-item:last-child{border-bottom:none}
-.comment-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px}
-.comment-time{font-size:10px;color:var(--text4);margin-left:8px;font-weight:400}
-.comment-text{font-size:14px;color:var(--text2);line-height:1.65}
-
+/* SIDEBAR */
 .sidebar{display:flex;flex-direction:column;gap:20px;position:sticky;top:110px}
 .s-widget{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;overflow:hidden}
 .s-title{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text4);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
@@ -192,6 +189,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .weather-big-icon{font-size:36px}
 .weather-details{font-size:11px;color:var(--text3);line-height:1.8}
 
+/* AUTH MODAL */
 .auth-overlay{position:fixed;inset:0;z-index:600;background:rgba(20,18,14,.8);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}
 .auth-overlay.open{opacity:1;pointer-events:auto}
 .auth-box{background:var(--bg2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:420px;padding:36px 40px;position:relative;box-shadow:0 32px 100px rgba(0,0,0,.3)}
@@ -215,12 +213,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .gdpr-note{font-size:10px;color:var(--text4);line-height:1.6;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);text-align:center}
 .gdpr-note a{color:var(--cyan);text-decoration:none}
 
+/* SUPPORT BTN */
 .support-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;background:linear-gradient(135deg,#f0c040,#e8a800);color:#5a3e00;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-s);transition:.2s;letter-spacing:.03em;white-space:nowrap}
 .support-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(232,168,0,.3)}
 .support-banner{background:linear-gradient(135deg,#1a1814,#2a2520);border:1px solid #f0c04030;border-radius:12px;padding:20px 24px;margin-top:20px;text-align:center}
 .support-banner h3{font-family:var(--font-d);font-size:18px;color:#f0c040;margin-bottom:6px}
 .support-banner p{font-size:12px;color:var(--text3);margin-bottom:14px;line-height:1.6}
 
+/* USER MENU */
 .user-menu-wrap{position:relative}
 .user-btn{display:flex;align-items:center;gap:8px;padding:7px 13px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);transition:.2s}
 .user-btn:hover{border-color:var(--border2)}
@@ -231,10 +231,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .user-dd-item:hover{background:var(--bg3);color:var(--text)}
 .user-dd-item.danger{color:var(--accent)}
 
+/* GDPR BANNER */
 .gdpr-banner{position:fixed;bottom:0;left:0;right:0;z-index:800;background:var(--text);color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:12px;line-height:1.5}
 .gdpr-banner a{color:#f0c040;text-decoration:none}
 .gdpr-accept{padding:8px 20px;background:#f0c040;color:#1a1814;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-s);white-space:nowrap}
 
+/* TOASTS */
 .toast-wrap{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:7px;pointer-events:none}
 .toast{padding:11px 16px;background:var(--text);color:#fff;border-radius:9px;font-size:12px;font-weight:500;box-shadow:var(--shadow2);animation:toastIn .3s ease;display:flex;align-items:center;gap:8px;pointer-events:auto;max-width:280px}
 .toast.success{background:var(--green)}
@@ -242,6 +244,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .toast.info{background:var(--cyan)}
 @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
+/* RESPONSIVE */
 @media(max-width:700px){
   .header-top{padding:12px 16px}
   .page-wrap{padding:16px 16px 60px}
@@ -250,12 +253,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
   .modal-header{padding:20px 20px 16px}
   .modal-body{padding:20px 20px 32px;font-size:16px}
   .articles-grid{grid-template-columns:1fr}
-  .modal-social-bar{flex-direction:column;align-items:flex-start !important}
 }
 </style>
 </head>
 <body>
 
+<!-- TICKER -->
 <div class="ticker-wrap">
   <div class="ticker-label">⚡ ÉLŐBEN</div>
   <div class="ticker-scroll">
@@ -268,6 +271,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
   </div>
 </div>
 
+<!-- HEADER -->
 <header class="site-header">
   <div class="header-top">
     <div>
@@ -347,7 +351,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
     <div style="text-align:center;padding:10px 0">
       <div style="font-size:40px;margin-bottom:12px">❤️</div>
       <div class="auth-logo" style="text-align:center">Támogasd a <span>REASON</span>-t</div>
-      <p style="font-size:13px;color:var(--text3);margin:12px 0 24px;line-height:1.7">A REASON független, automatizált hírportál. Ha értékesnek találja a munkánkat, támogatásával segít fenntartani és fejleszteni a portált.</p>
+      <p style="font-size:13px;color:var(--text3);margin:12px 0 24px;line-height:1.7">A REASON független, automatizált hírportál. Ha értékesnek találja a munkánkat, támogatásával segít fenntartani és fejleszteni a portált. Minden támogatást hálásan köszönünk.</p>
       <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
         <button class="support-btn" style="width:100%;justify-content:center;font-size:14px;padding:12px" onclick="doSupport(500)">☕ 500 Ft – Egy kávé</button>
         <button class="support-btn" style="width:100%;justify-content:center;font-size:14px;padding:12px" onclick="doSupport(1000)">🍕 1 000 Ft – Egy szelet pizza</button>
@@ -361,9 +365,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
   </div>
 </div>
 
-<!-- GDPR -->
+<!-- GDPR BANNER -->
 <div class="gdpr-banner" id="gdprBanner" style="display:none">
-  <span>🍪 Ez az oldal sütiket és localStorage-t használ a működéshez. <a href="/adatkezeles">Adatkezelési tájékoztató</a></span>
+  <span>🍪 Ez az oldal sütiket és localStorage-t használ a működéshez. Olvasói fiókhoz szükséges az adatok tárolása. <a href="/adatkezeles">Adatkezelési tájékoztató</a></span>
   <button class="gdpr-accept" onclick="acceptGDPR()">Elfogadom</button>
 </div>
 
@@ -381,57 +385,24 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
       <div class="modal-meta" id="modalMeta"></div>
     </div>
     <div class="modal-body" id="modalBody"></div>
-
-    <!-- LÁJK + MEGOSZTÁS + KOMMENT -->
-    <div id="modalSocial" style="display:none">
-      <div class="modal-social-bar" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:16px 44px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg3)">
-        <button class="like-btn" id="likeBtn" onclick="toggleLike()">
-          <span id="likeIcon">🤍</span>
-          <span id="likeCount">0</span> lájk
-        </button>
-        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <span style="font-size:10px;color:var(--text4);letter-spacing:.1em;text-transform:uppercase">Megosztás:</span>
-          <button class="share-btn fb" onclick="shareArticle('facebook')">Facebook</button>
-          <button class="share-btn tw" onclick="shareArticle('twitter')">Twitter/X</button>
-          <button class="share-btn wa" onclick="shareArticle('whatsapp')">WhatsApp</button>
-          <button class="share-btn tg" onclick="shareArticle('telegram')">Telegram</button>
-          <button class="share-btn li" onclick="shareArticle('linkedin')">LinkedIn</button>
-          <button class="share-btn cp" onclick="shareArticle('copy')" id="copyBtn">🔗 Link</button>
-        </div>
-      </div>
-      <div style="padding:28px 44px 44px">
-        <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text4);margin-bottom:18px;display:flex;align-items:center;gap:8px">
-          💬 Hozzászólások
-          <span id="commentCount" style="background:var(--tag-bg);color:var(--tag-text);padding:1px 8px;border-radius:10px;font-family:var(--font-m)">0</span>
-        </div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:24px">
-          <input type="text" id="commentName" placeholder="Neved (elhagyható – alapból Névtelen)"
-            style="width:100%;padding:8px 12px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;font-size:13px;font-family:var(--font-s);color:var(--text);outline:none;margin-bottom:10px">
-          <textarea id="commentBody" placeholder="Írd ide a hozzászólásod..." rows="3"
-            style="width:100%;padding:10px 12px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;font-size:13px;font-family:var(--font-s);color:var(--text);outline:none;resize:vertical;line-height:1.6"></textarea>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;flex-wrap:wrap;gap:8px">
-            <span style="font-size:11px;color:var(--text4)">Azonnal megjelenik, moderálás nélkül.</span>
-            <button onclick="submitComment()"
-              style="padding:8px 22px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-s)">Küldés</button>
-          </div>
-          <div id="commentMsg" style="font-size:11px;margin-top:6px;min-height:16px"></div>
-        </div>
-        <div id="commentsList"></div>
-      </div>
-    </div>
-
   </div>
 </div>
 
+<!-- TOAST -->
 <div class="toast-wrap" id="toastWrap"></div>
 
+<!-- MAIN -->
 <main class="page-wrap">
   <div class="main-layout">
     <div id="mainCol">
+
+      <!-- FEATURED -->
       <div id="featuredSection" style="display:none">
         <div class="section-label">⭐ Kiemelt cikk</div>
         <div class="featured-card" id="featuredCard"></div>
       </div>
+
+      <!-- STATUS BAR -->
       <div class="status-bar">
         <div class="status-left">
           <div class="live-dot"></div>
@@ -439,6 +410,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
         </div>
         <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()">↻ Frissítés</button>
       </div>
+
+      <!-- TOP STRIP -->
       <div class="top-strip">
         <div class="strip-left">
           <div class="strip-title" id="stripTitle">Legfrissebb</div>
@@ -455,12 +428,18 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
           </div>
         </div>
       </div>
+
+      <!-- SEARCH -->
       <div class="search-wrap">
         <span class="search-icon">🔍</span>
         <input class="search-input" type="text" id="searchInput" placeholder="Keresés a cikkek között..." oninput="onSearch(this.value)" autocomplete="off">
         <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
       </div>
+
+      <!-- GRID -->
       <div class="articles-grid" id="articlesGrid"></div>
+
+      <!-- EMPTY -->
       <div id="emptyState" style="display:none">
         <div class="empty-state">
           <span class="empty-icon">📭</span>
@@ -468,31 +447,40 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
           <div class="empty-sub" id="emptySub">Hamarosan friss hírek érkeznek.</div>
         </div>
       </div>
+
+      <!-- LOAD MORE -->
       <div class="load-more-wrap" id="lmWrap" style="display:none">
         <button class="load-more-btn" onclick="loadMore()">Tovább olvasok →</button>
       </div>
     </div>
 
+    <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebarCol">
+
       <div class="s-widget">
         <div class="s-title">📊 Portálstatisztika</div>
         <div class="stat-row"><span style="font-size:12px;color:var(--text3)">Összes cikk</span><span class="stat-val" id="statTotal">0</span></div>
         <div class="stat-row"><span style="font-size:12px;color:var(--text3)">Mai cikkek</span><span class="stat-val" id="statToday">0</span></div>
         <div class="stat-row"><span style="font-size:12px;color:var(--text3)">Aktív olvasók</span><span class="stat-val" id="statActiveReaders">–</span></div>
-        <div class="stat-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:10px">
-          <button class="support-btn" style="width:100%;justify-content:center" onclick="openSupport()">❤️ Támogasd a REASON-t</button>
-        </div>
+      <div class="stat-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:10px">
+        <button class="support-btn" style="width:100%;justify-content:center" onclick="openSupport()">❤️ Támogasd a REASON-t</button>
+      </div>
         <div class="stat-row"><span style="font-size:12px;color:var(--text3)">Összes olvasás</span><span class="stat-val" id="statTotalViews">–</span></div>
         <div class="stat-row"><span style="font-size:12px;color:var(--text3)">Utolsó frissítés</span><span class="stat-val" id="statLast" style="font-size:11px">–</span></div>
       </div>
+
       <div class="s-widget">
         <div class="s-title">📂 Kategóriák</div>
         <div id="catList"><div style="font-size:12px;color:var(--text4);padding:4px 0">Betöltés...</div></div>
       </div>
+
       <div class="s-widget" id="weatherSidebar">
         <div class="s-title">🌦 Időjárás – <span id="weatherCityLabel">–</span></div>
-        <div id="weatherSidebarContent"><div style="font-size:12px;color:var(--text4)">Helymeghatározás...</div></div>
+        <div id="weatherSidebarContent">
+          <div style="font-size:12px;color:var(--text4)">Helymeghatározás...</div>
+        </div>
       </div>
+
       <div class="s-widget">
         <div class="s-title">ℹ️ A REASON-ról</div>
         <div style="font-size:12px;color:var(--text3);line-height:1.75">
@@ -501,6 +489,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
           <p style="font-size:11px;color:var(--text4)">© 2025 REASON · Minden jog fenntartva</p>
         </div>
       </div>
+
     </aside>
   </div>
 </main>
@@ -516,23 +505,30 @@ const PAGE_SIZE = 12;
 let allArticles = [], filteredArticles = [];
 let page = 1, cat = 'all', sort = 'newest', view = 'grid', searchQ = '';
 let lastCount = -1;
-let currentArticleId = null;
+let userCity = null, userLat = null, userLon = null;
 
 const CAT_COLOR = {
-  Világ:'#c8102e',Tech:'#0066cc',Gazdaság:'#1a7a3c',
-  Életmód:'#b86000',Kultúra:'#7c3aed',Botrány:'#e8152f',
-  Sport:'#0099cc',Krimi:'#2d2d2d',Politika:'#8b0000',
-  Vélemény:'#b8860b',Tudomány:'#2d6a4f'
+  Világ:'#c8102e', Tech:'#0066cc', Gazdaság:'#1a7a3c',
+  Életmód:'#b86000', Kultúra:'#7c3aed', Botrány:'#e8152f',
+  Sport:'#0099cc', Krimi:'#2d2d2d', Politika:'#8b0000',
+  // legacy fallbacks so old DB articles still render
+  Vélemény:'#b8860b', Tudomány:'#2d6a4f'
 };
 const CAT_EMOJI = {
-  Világ:'🌍',Tech:'💻',Gazdaság:'📈',Életmód:'🌿',
-  Kultúra:'🎭',Botrány:'💥',Sport:'⚽',Krimi:'🔍',Politika:'🏛',
-  Vélemény:'💬',Tudomány:'🔬'
+  Világ:'🌍', Tech:'💻', Gazdaság:'📈', Életmód:'🌿',
+  Kultúra:'🎭', Botrány:'💥', Sport:'⚽', Krimi:'🔍', Politika:'🏛',
+  Vélemény:'💬', Tudomány:'🔬'
 };
-const CAT_REMAP = {'Vélemény':'Botrány','Tudomány':'Életmód'};
-const TYPE_LABEL = {blog:'Blog',hir:'Hír',seo:'SEO',elemzés:'Elemzés',riport:'Riport',interjú:'Interjú'};
 
-const SESSION_ID = 'sess_' + Math.random().toString(36).slice(2) + '_' + Date.now();
+// Category remapping: old DB values → new display names
+const CAT_REMAP = {
+  'Vélemény': 'Botrány',
+  'Tudomány': 'Életmód'
+};
+
+const TYPE_LABEL = {
+  blog:'Blog', hir:'Hír', seo:'SEO', elemzés:'Elemzés', riport:'Riport', interjú:'Interjú'
+};
 
 const WICO = id => {
   if(id>=200&&id<300)return'⛈';if(id>=300&&id<400)return'🌦';
@@ -542,126 +538,181 @@ const WICO = id => {
   return'🌥';
 };
 
-function remapCat(c){ return CAT_REMAP[c]||c; }
+// Remap category on article object
+function remapCat(c){ return CAT_REMAP[c] || c; }
 
 // ── CLOCK ──
-function tick(){
-  const n=new Date();
-  document.getElementById('clock-display').textContent=n.toLocaleTimeString('hu-HU',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  const d=n.toLocaleDateString('hu-HU',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  document.getElementById('date-display').textContent=d.charAt(0).toUpperCase()+d.slice(1);
+function tick() {
+  const n = new Date();
+  const t = n.toLocaleTimeString('hu-HU',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const d = n.toLocaleDateString('hu-HU',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('clock-display').textContent = t;
+  const ds = d.charAt(0).toUpperCase()+d.slice(1);
+  document.getElementById('date-display').textContent = ds;
 }
 setInterval(tick,1000); tick();
 
-// ── WEATHER ──
-function initWeather(){
-  if(navigator.geolocation){
+// ── GEOLOCATION + WEATHER ──
+function initWeather() {
+  if(navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
-      pos=>loadWeather(pos.coords.latitude,pos.coords.longitude),
-      ()=>loadWeatherByCity('Budapest'),{timeout:6000}
+      pos => loadWeather(pos.coords.latitude, pos.coords.longitude),
+      () => loadWeatherByCity('Budapest'),
+      {timeout:6000}
     );
-  } else { loadWeatherByCity('Budapest'); }
+  } else {
+    loadWeatherByCity('Budapest');
+  }
 }
-async function loadWeatherByCity(city){
-  try{
-    const [cur,fore]=await Promise.all([
+
+async function loadWeatherByCity(city) {
+  try {
+    const [cur, fore] = await Promise.all([
       fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${OWM_KEY}&units=metric&lang=hu`),
       fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&appid=${OWM_KEY}&units=metric&lang=hu&cnt=40`)
     ]);
-    if(!cur.ok) throw new Error();
-    renderWeather(await cur.json(),await fore.json());
-  }catch(e){
-    document.getElementById('hWeatherDesc').textContent='Nem elérhető';
-    document.getElementById('weatherSidebarContent').innerHTML='<div style="font-size:11px;color:var(--text4)">Időjárás nem elérhető.</div>';
+    if(!cur.ok) throw new Error('HTTP '+cur.status);
+    renderWeather(await cur.json(), await fore.json());
+  } catch(e) {
+    document.getElementById('hWeatherDesc').textContent = 'Nem elérhető';
+    document.getElementById('weatherSidebarContent').innerHTML = '<div style="font-size:11px;color:var(--text4)">Időjárás nem elérhető.</div>';
   }
 }
-async function loadWeather(lat,lon){
-  try{
-    const [cur,fore]=await Promise.all([
+
+async function loadWeather(lat, lon) {
+  try {
+    const [cur, fore] = await Promise.all([
       fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OWM_KEY}&units=metric&lang=hu`),
       fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${OWM_KEY}&units=metric&lang=hu&cnt=40`)
     ]);
-    if(!cur.ok) throw new Error();
-    renderWeather(await cur.json(),await fore.json());
-  }catch(e){ loadWeatherByCity('Budapest'); }
+    if(!cur.ok) throw new Error('HTTP '+cur.status);
+    renderWeather(await cur.json(), await fore.json());
+  } catch(e) {
+    loadWeatherByCity('Budapest');
+  }
 }
-function renderWeather(cj,fj){
-  const temp=Math.round(cj.main.temp),feels=Math.round(cj.main.feels_like);
-  const desc=cj.weather[0].description,ico=WICO(cj.weather[0].id);
-  const hum=cj.main.humidity,wind=Math.round(cj.wind.speed*3.6),city=cj.name;
-  document.getElementById('hWeatherIcon').textContent=ico;
-  document.getElementById('hWeatherTemp').textContent=temp+'°C';
-  document.getElementById('hWeatherDesc').textContent=desc.charAt(0).toUpperCase()+desc.slice(1);
-  document.getElementById('hWeatherLoc').textContent=city+' · '+hum+'% páratartalom';
-  document.getElementById('weatherCityLabel').textContent=city;
-  document.getElementById('weatherSidebarContent').innerHTML=`
+
+function renderWeather(cj, fj) {
+  const temp   = Math.round(cj.main.temp);
+  const feels  = Math.round(cj.main.feels_like);
+  const desc   = cj.weather[0].description;
+  const ico    = WICO(cj.weather[0].id);
+  const hum    = cj.main.humidity;
+  const wind   = Math.round(cj.wind.speed * 3.6);
+  const city   = cj.name;
+
+  document.getElementById('hWeatherIcon').textContent = ico;
+  document.getElementById('hWeatherTemp').textContent = temp + '°C';
+  document.getElementById('hWeatherDesc').textContent = desc.charAt(0).toUpperCase()+desc.slice(1);
+  document.getElementById('hWeatherLoc').textContent  = city + ' · ' + hum + '% páratartalom';
+  document.getElementById('weatherCityLabel').textContent = city;
+
+  document.getElementById('weatherSidebarContent').innerHTML = `
     <div class="weather-main">
       <div class="weather-big-icon">${ico}</div>
-      <div><div class="weather-big-temp">${temp}°C</div>
-      <div class="weather-details">Érzett: ${feels}°C<br>${desc.charAt(0).toUpperCase()+desc.slice(1)}<br>Páratartalom: ${hum}%<br>Szél: ${wind} km/h</div></div>
+      <div>
+        <div class="weather-big-temp">${temp}°C</div>
+        <div class="weather-details">
+          Érzett: ${feels}°C<br>
+          ${desc.charAt(0).toUpperCase()+desc.slice(1)}<br>
+          Páratartalom: ${hum}%<br>
+          Szél: ${wind} km/h
+        </div>
+      </div>
     </div>
     <div class="forecast-grid" id="forecastGrid"></div>`;
-  const days={};
-  const DN=['Vas','Hét','Kedd','Szer','Csüt','Pén','Szo'];
-  fj.list.forEach(item=>{
-    const d=new Date(item.dt*1000),k=d.toDateString();
-    if(!days[k])days[k]={name:DN[d.getDay()],temps:[],ids:[]};
-    days[k].temps.push(item.main.temp);days[k].ids.push(item.weather[0].id);
+
+  const days = {};
+  const DN = ['Vas','Hét','Kedd','Szer','Csüt','Pén','Szo'];
+  fj.list.forEach(item => {
+    const d = new Date(item.dt*1000);
+    const k = d.toDateString();
+    if(!days[k]) days[k]={name:DN[d.getDay()],temps:[],ids:[]};
+    days[k].temps.push(item.main.temp);
+    days[k].ids.push(item.weather[0].id);
   });
-  const fg=document.getElementById('forecastGrid');
-  if(fg)fg.innerHTML=Object.values(days).slice(0,5).map(day=>{
+  const fg = document.getElementById('forecastGrid');
+  if(fg) fg.innerHTML = Object.values(days).slice(0,5).map(day=>{
     const avg=Math.round(day.temps.reduce((a,b)=>a+b,0)/day.temps.length);
     const i=WICO(day.ids[Math.floor(day.ids.length/2)]);
-    return`<div class="fc-day"><div class="fc-name">${day.name}</div><div class="fc-ico">${i}</div><div class="fc-temp">${avg}°</div></div>`;
+    return `<div class="fc-day"><div class="fc-name">${day.name}</div><div class="fc-ico">${i}</div><div class="fc-temp">${avg}°</div></div>`;
   }).join('');
 }
 
 // ── SUPABASE ──
-async function fetchArticles(){
-  try{
-    const r=await fetch(`${SB_URL}/rest/v1/articles?select=*&order=created_at.desc&limit=300`,
-      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'}});
+async function fetchArticles() {
+  try {
+    const r = await fetch(
+      `${SB_URL}/rest/v1/articles?select=*&order=created_at.desc&limit=300`,
+      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'}}
+    );
     if(!r.ok) throw new Error('HTTP '+r.status);
-    const data=await r.json();
+    const data = await r.json();
     if(!Array.isArray(data)) throw new Error('Nem tömb');
-    data.forEach(a=>{a.category=remapCat(a.category);});
-    const prev=lastCount; lastCount=data.length; allArticles=data;
-    if(prev>=0&&data.length>prev) showToast(`🆕 ${data.length-prev} új cikk érkezett!`,'success');
+
+    // Apply category remapping to all articles
+    data.forEach(a => { a.category = remapCat(a.category); });
+
+    const prev = lastCount;
+    lastCount = data.length;
+    allArticles = data;
+
+    if(prev >= 0 && data.length > prev) {
+      showToast(`🆕 ${data.length-prev} új cikk érkezett!`, 'success');
+    }
     if(data.length) updateTicker(data);
-    applyFilters(); updateStats(); updateCatSidebar(); updateNavCounts();
-    setStatus('Utoljára frissítve: '+new Date().toLocaleTimeString('hu-HU'));
-  }catch(e){
+
+    applyFilters();
+    updateStats();
+    updateCatSidebar();
+    updateNavCounts();
+    setStatus('Utoljára frissítve: ' + new Date().toLocaleTimeString('hu-HU'));
+  } catch(e) {
     setStatus('Kapcsolódás sikertelen – újrapróbálkozás...');
     renderArticles();
-  }finally{
-    document.getElementById('refreshBtn').textContent='↻ Frissítés';
+  } finally {
+    const btn = document.getElementById('refreshBtn');
+    btn.textContent = '↻ Frissítés';
   }
 }
-function manualRefresh(){document.getElementById('refreshBtn').textContent='...';fetchArticles();}
-window.manualRefresh=manualRefresh;
+
+function manualRefresh() {
+  document.getElementById('refreshBtn').textContent = '...';
+  fetchArticles();
+}
+window.manualRefresh = manualRefresh;
 function setStatus(msg){document.getElementById('statusText').textContent=msg;}
 
 // ── SEARCH ──
-function onSearch(v){
-  searchQ=v.trim().toLowerCase();
-  document.getElementById('searchClear').classList.toggle('visible',!!searchQ);
-  page=1; applyFilters();
+function onSearch(v) {
+  searchQ = v.trim().toLowerCase();
+  document.getElementById('searchClear').classList.toggle('visible', !!searchQ);
+  page = 1;
+  applyFilters();
 }
-window.onSearch=onSearch;
+window.onSearch = onSearch;
 function clearSearch(){
-  document.getElementById('searchInput').value='';searchQ='';
-  document.getElementById('searchClear').classList.remove('visible');applyFilters();
+  document.getElementById('searchInput').value='';
+  searchQ='';
+  document.getElementById('searchClear').classList.remove('visible');
+  applyFilters();
 }
-window.clearSearch=clearSearch;
+window.clearSearch = clearSearch;
 
 // ── FILTERS ──
-function applyFilters(){
-  let arr=[...allArticles];
-  if(cat!=='all') arr=arr.filter(a=>a.category===cat);
-  if(searchQ) arr=arr.filter(a=>(a.title||'').toLowerCase().includes(searchQ)||(a.excerpt||'').toLowerCase().includes(searchQ)||(a.body||'').toLowerCase().includes(searchQ));
+function applyFilters() {
+  let arr = [...allArticles];
+  if(cat !== 'all') arr = arr.filter(a => a.category === cat);
+  if(searchQ) arr = arr.filter(a =>
+    (a.title||'').toLowerCase().includes(searchQ) ||
+    (a.excerpt||'').toLowerCase().includes(searchQ) ||
+    (a.body||'').toLowerCase().includes(searchQ)
+  );
   if(sort==='newest') arr.sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));
   else arr.sort((a,b)=>new Date(a.created_at||0)-new Date(b.created_at||0));
-  filteredArticles=arr; page=1; renderArticles();
+  filteredArticles = arr;
+  page = 1;
+  renderArticles();
 }
 function setSort(v){sort=v;applyFilters();}
 window.setSort=setSort;
@@ -679,41 +730,63 @@ document.getElementById('mainNav').addEventListener('click',e=>{
   if(!item) return;
   document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
   item.classList.add('active');
-  cat=item.dataset.cat; updateStripTitle(); applyFilters();
+  cat=item.dataset.cat;
+  updateStripTitle();
+  applyFilters();
   window.scrollTo({top:0,behavior:'smooth'});
 });
+
 function filterByCat(c){
   cat=c;
   document.querySelectorAll('.nav-item').forEach(i=>i.classList.toggle('active',i.dataset.cat===c));
-  updateStripTitle(); applyFilters(); window.scrollTo({top:0,behavior:'smooth'});
+  updateStripTitle();
+  applyFilters();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 window.filterByCat=filterByCat;
 
 // ── RENDER ──
-function renderArticles(){
+function renderArticles() {
   const grid=document.getElementById('articlesGrid');
   const empty=document.getElementById('emptyState');
   const lmw=document.getElementById('lmWrap');
   const feat=document.getElementById('featuredSection');
   document.getElementById('stripCount').textContent=filteredArticles.length+' cikk';
-  if(!filteredArticles.length){
-    grid.innerHTML=''; empty.style.display=''; lmw.style.display='none'; feat.style.display='none';
-    if(searchQ){document.getElementById('emptyTitle').textContent='Nincs találat';document.getElementById('emptySub').textContent='A keresett kifejezésre ("'+searchQ+'") nincs eredmény.';}
-    else{document.getElementById('emptyTitle').textContent='Még nincsenek cikkek';document.getElementById('emptySub').textContent='Hamarosan friss hírek érkeznek.';}
+
+  if(!filteredArticles.length) {
+    grid.innerHTML='';
+    empty.style.display='';
+    lmw.style.display='none';
+    feat.style.display='none';
+    if(searchQ) {
+      document.getElementById('emptyTitle').textContent='Nincs találat';
+      document.getElementById('emptySub').textContent='A keresett kifejezésre ("'+searchQ+'") nincs eredmény.';
+    } else {
+      document.getElementById('emptyTitle').textContent='Még nincsenek cikkek';
+      document.getElementById('emptySub').textContent='Hamarosan friss hírek érkeznek.';
+    }
     return;
   }
   empty.style.display='none';
+
   let startIdx=0;
-  if(cat==='all'&&!searchQ&&page===1&&filteredArticles.length>0){
-    renderFeatured(filteredArticles[0]); feat.style.display=''; startIdx=1;
-  } else { feat.style.display='none'; }
+  if(cat==='all' && !searchQ && page===1 && filteredArticles.length>0){
+    renderFeatured(filteredArticles[0]);
+    feat.style.display='';
+    startIdx=1;
+  } else {
+    feat.style.display='none';
+  }
+
   const visible=filteredArticles.slice(startIdx,page*PAGE_SIZE);
   grid.innerHTML=visible.map(a=>renderCard(a)).join('');
   lmw.style.display=filteredArticles.length>page*PAGE_SIZE?'':'none';
 }
 
 function renderFeatured(art){
-  const c=art.category||'Egyéb',col=CAT_COLOR[c]||'#888',ico=CAT_EMOJI[c]||'📰';
+  const c=art.category||'Egyéb';
+  const col=CAT_COLOR[c]||'#888';
+  const ico=CAT_EMOJI[c]||'📰';
   const fc=document.getElementById('featuredCard');
   fc.style.background=col+'0a';
   fc.innerHTML=`
@@ -732,11 +805,13 @@ function renderFeatured(art){
 }
 
 function renderCard(art){
-  const c=art.category||'Egyéb',col=CAT_COLOR[c]||'#888',ico=CAT_EMOJI[c]||'📰';
+  const c=art.category||'Egyéb';
+  const col=CAT_COLOR[c]||'#888';
+  const ico=CAT_EMOJI[c]||'📰';
   const tl=TYPE_LABEL[(art.article_type||'').toLowerCase()]||art.article_type||'';
   const ex=art.excerpt||(art.body||'').slice(0,220);
   const id=art.id;
-  return`<div class="article-card" onclick="openModalById(${JSON.stringify(id)})">
+  return `<div class="article-card" onclick="openModalById(${JSON.stringify(id)})">
     <div class="card-img" style="background:linear-gradient(135deg,${col}16,${col}08)">
       <div class="card-img-emoji">${ico}</div>
       <div class="card-img-badge">${c}</div>
@@ -784,13 +859,15 @@ function openModalById(id){
 window.openModalById=openModalById;
 
 function openModal(art){
-  const c=art.category||'Egyéb',col=CAT_COLOR[c]||'#888';
+  const c=art.category||'Egyéb';
+  const col=CAT_COLOR[c]||'#888';
   const tl=TYPE_LABEL[(art.article_type||'').toLowerCase()]||'';
   document.getElementById('modalCat').textContent=c;
   document.getElementById('modalCat').style.color=col;
   const tb=document.getElementById('modalTypeBadge');
   tb.textContent=tl; tb.style.display=tl?'':'none';
-  document.getElementById('modalPremium').style.display=art.is_premium?'':'none';
+  const pm=document.getElementById('modalPremium');
+  pm.style.display=art.is_premium?'':'none';
   document.getElementById('modalTitle').textContent=art.title||'–';
   document.getElementById('modalMeta').innerHTML=`
     <span class="modal-meta-item">🕐 ${fmtTimeFull(art.created_at)}</span>
@@ -798,15 +875,17 @@ function openModal(art){
     <span class="modal-meta-item">⏱ ${art.read_time||'?'} perc olvasás</span>
     ${(art.body||'').length?`<span class="modal-meta-item">📝 ${(art.body||'').length.toLocaleString('hu')} karakter</span>`:''}`;
 
-  if(art.is_premium&&!currentUser){
+  if(art.is_premium && !currentUser){
     document.getElementById('modalBody').innerHTML=`
       <div style="text-align:center;padding:60px 20px">
         <div style="font-size:48px;margin-bottom:16px">⭐</div>
         <div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--text);margin-bottom:10px">Prémium tartalom</div>
-        <div style="font-size:14px;color:var(--text3);line-height:1.7;margin-bottom:24px;max-width:340px;margin-left:auto;margin-right:auto">Ez a cikk csak bejelentkezett olvasóknak érhető el.</div>
+        <div style="font-size:14px;color:var(--text3);line-height:1.7;margin-bottom:24px;max-width:340px;margin-left:auto;margin-right:auto">
+          Ez a cikk csak bejelentkezett olvasóknak érhető el.<br>Regisztrálj ingyen vagy jelentkezz be!
+        </div>
         <button onclick="closeModal();openAuth();" style="padding:12px 28px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-s);margin-right:10px">Bejelentkezés</button>
+        <button onclick="closeModal();openSupport();" style="padding:12px 28px;background:linear-gradient(135deg,#f0c040,#e8a800);color:#5a3e00;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-s)">❤️ Támogatás</button>
       </div>`;
-    document.getElementById('modalSocial').style.display='none';
     document.getElementById('articleModal').classList.add('open');
     document.body.style.overflow='hidden';
     document.getElementById('articleModalBox').scrollTop=0;
@@ -818,22 +897,10 @@ function openModal(art){
   document.getElementById('modalBody').innerHTML=paras.length
     ?paras.map(p=>`<p>${esc(p.trim())}</p>`).join('')
     :`<p>${esc(body)}</p>`;
-
   document.getElementById('articleModal').classList.add('open');
   document.body.style.overflow='hidden';
   document.getElementById('articleModalBox').scrollTop=0;
-
-  // Social szekció
-  currentArticleId=String(art.id);
-  document.getElementById('modalSocial').style.display='';
-  document.getElementById('commentName').value='';
-  document.getElementById('commentBody').value='';
-  document.getElementById('commentMsg').textContent='';
-  trackArticleView(art.id);
-  loadLikes(art.id);
-  loadComments(art.id);
 }
-
 document.getElementById('modalClose').onclick=closeModal;
 document.getElementById('articleModal').addEventListener('click',e=>{
   if(e.target===document.getElementById('articleModal')) closeModal();
@@ -842,157 +909,66 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape') closeModal();});
 function closeModal(){
   document.getElementById('articleModal').classList.remove('open');
   document.body.style.overflow='';
-  currentArticleId=null;
 }
 
-// ── LÁJK ──
-async function loadLikes(articleId){
-  try{
-    const r=await fetch(`${SB_URL}/rest/v1/likes?article_id=eq.${articleId}&select=session_id`,
-      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
-    const data=await r.json();
-    const n=Array.isArray(data)?data.length:0;
-    document.getElementById('likeCount').textContent=n;
-    const liked=localStorage.getItem('liked_'+articleId)==='1';
-    document.getElementById('likeBtn').classList.toggle('liked',liked);
-    document.getElementById('likeIcon').textContent=liked?'❤️':'🤍';
-  }catch(e){}
-}
+// ── SESSION ID ──
+const SESSION_ID = 'sess_' + Math.random().toString(36).slice(2) + '_' + Date.now();
 
-async function toggleLike(){
-  if(!currentArticleId) return;
-  const liked=localStorage.getItem('liked_'+currentArticleId)==='1';
-  try{
-    if(!liked){
-      await fetch(`${SB_URL}/rest/v1/likes`,{
-        method:'POST',
-        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
-        body:JSON.stringify({article_id:currentArticleId,session_id:SESSION_ID})
-      });
-      localStorage.setItem('liked_'+currentArticleId,'1');
-    } else {
-      await fetch(`${SB_URL}/rest/v1/likes?article_id=eq.${currentArticleId}&session_id=eq.${SESSION_ID}`,{
-        method:'DELETE',
-        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=minimal'}
-      });
-      localStorage.removeItem('liked_'+currentArticleId);
-    }
-    await loadLikes(currentArticleId);
-  }catch(e){ showToast('Hiba a lájkolásnál.','warn'); }
-}
-window.toggleLike=toggleLike;
-
-// ── MEGOSZTÁS ──
-function shareArticle(platform){
-  if(!currentArticleId) return;
-  const art=allArticles.find(a=>String(a.id)===currentArticleId);
-  const url=encodeURIComponent('https://reason-five.vercel.app/');
-  const text=encodeURIComponent((art?art.title:'REASON cikk')+' – reason-five.vercel.app');
-  if(platform==='copy'){
-    navigator.clipboard.writeText(decodeURIComponent(url)).then(()=>{
-      const btn=document.getElementById('copyBtn');
-      btn.textContent='✅ Másolva!';
-      setTimeout(()=>{btn.textContent='🔗 Link';},2000);
+// ── VISITOR PING (aktív olvasók) ──
+async function pingVisitor() {
+  try {
+    await fetch(`${SB_URL}/rest/v1/visitors`, {
+      method: 'POST',
+      headers: {
+        'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates'
+      },
+      body: JSON.stringify({ session_id: SESSION_ID, last_seen: new Date().toISOString() })
     });
-    return;
-  }
-  const links={
-    facebook:`https://www.facebook.com/sharer/sharer.php?u=${url}`,
-    twitter:`https://twitter.com/intent/tweet?text=${text}&url=${url}`,
-    whatsapp:`https://wa.me/?text=${text}%20${url}`,
-    telegram:`https://t.me/share/url?url=${url}&text=${text}`,
-    linkedin:`https://www.linkedin.com/sharing/share-offsite/?url=${url}`
-  };
-  window.open(links[platform],'_blank','noopener,width=600,height=500');
-}
-window.shareArticle=shareArticle;
-
-// ── KOMMENTEK ──
-async function loadComments(articleId){
-  const list=document.getElementById('commentsList');
-  const countEl=document.getElementById('commentCount');
-  list.innerHTML='<div style="font-size:12px;color:var(--text4);padding:8px 0">Betöltés...</div>';
-  try{
-    const r=await fetch(`${SB_URL}/rest/v1/comments?article_id=eq.${articleId}&order=created_at.asc&select=*`,
-      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
-    const data=await r.json();
-    countEl.textContent=Array.isArray(data)?data.length:0;
-    if(!data.length){
-      list.innerHTML='<div style="font-size:13px;color:var(--text4);padding:20px 0;text-align:center">Még nincs hozzászólás – légy az első!</div>';
-      return;
-    }
-    list.innerHTML=data.map(c=>`
-      <div class="comment-item">
-        <div class="comment-name">${esc(c.name||'Névtelen')}<span class="comment-time">${fmtTime(c.created_at)}</span></div>
-        <div class="comment-text">${esc(c.content||'').replace(/\n/g,'<br>')}</div>
-      </div>`).join('');
-  }catch(e){
-    list.innerHTML='<div style="font-size:12px;color:var(--accent)">Hiba a kommentek betöltésekor.</div>';
-  }
+  } catch(e) {}
 }
 
-async function submitComment(){
-  if(!currentArticleId) return;
-  const name=(document.getElementById('commentName').value.trim()||'Névtelen').slice(0,60);
-  const content=document.getElementById('commentBody').value.trim();
-  const msg=document.getElementById('commentMsg');
-  if(!content||content.length<2){msg.style.color='var(--accent)';msg.textContent='Írj legalább 2 karaktert!';return;}
-  if(content.length>1000){msg.style.color='var(--accent)';msg.textContent='Maximum 1000 karakter!';return;}
-  msg.style.color='var(--text4)';msg.textContent='Küldés...';
-  try{
-    await fetch(`${SB_URL}/rest/v1/comments`,{
-      method:'POST',
-      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
-      body:JSON.stringify({article_id:currentArticleId,name,content})
-    });
-    document.getElementById('commentBody').value='';
-    msg.style.color='var(--green)';msg.textContent='✅ Komment elküldve!';
-    setTimeout(()=>{msg.textContent='';},3000);
-    await loadComments(currentArticleId);
-  }catch(e){msg.style.color='var(--accent)';msg.textContent='Hiba: '+e.message;}
-}
-window.submitComment=submitComment;
-
-// ── VISITOR PING ──
-async function pingVisitor(){
-  try{
-    await fetch(`${SB_URL}/rest/v1/visitors`,{
-      method:'POST',
-      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
-      body:JSON.stringify({session_id:SESSION_ID,last_seen:new Date().toISOString()})
-    });
-  }catch(e){}
-}
-async function fetchActiveReaders(){
-  try{
-    const since=new Date(Date.now()-5*60*1000).toISOString();
-    const r=await fetch(`${SB_URL}/rest/v1/visitors?last_seen=gte.${since}&select=session_id`,
-      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
+async function fetchActiveReaders() {
+  try {
+    const since = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const r = await fetch(
+      `${SB_URL}/rest/v1/visitors?last_seen=gte.${since}&select=session_id`,
+      { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
+    );
     if(!r.ok) return;
-    const data=await r.json();
-    document.getElementById('statActiveReaders').textContent=new Set(data.map(v=>v.session_id)).size;
-  }catch(e){}
+    const data = await r.json();
+    const unique = new Set(data.map(v => v.session_id)).size;
+    document.getElementById('statActiveReaders').textContent = unique;
+  } catch(e) {}
 }
 
-// ── VIEW TRACKING ──
-async function trackArticleView(articleId){
-  try{
-    await fetch(`${SB_URL}/rest/v1/rpc/increment_view`,{
-      method:'POST',
-      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
-      body:JSON.stringify({p_article_id:String(articleId)})
+// ── ARTICLE VIEW TRACKING ──
+async function trackArticleView(articleId) {
+  try {
+    await fetch(`${SB_URL}/rest/v1/rpc/increment_view`, {
+      method: 'POST',
+      headers: {
+        'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ p_article_id: String(articleId) })
     });
     fetchTotalViews();
-  }catch(e){}
+  } catch(e) {}
 }
-async function fetchTotalViews(){
-  try{
-    const r=await fetch(`${SB_URL}/rest/v1/article_views?select=view_count`,
-      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
+
+async function fetchTotalViews() {
+  try {
+    const r = await fetch(
+      `${SB_URL}/rest/v1/article_views?select=view_count`,
+      { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
+    );
     if(!r.ok) return;
-    const data=await r.json();
-    document.getElementById('statTotalViews').textContent=data.reduce((s,row)=>s+(row.view_count||0),0).toLocaleString('hu');
-  }catch(e){}
+    const data = await r.json();
+    const total = data.reduce((s, row) => s + (row.view_count || 0), 0);
+    document.getElementById('statTotalViews').textContent = total.toLocaleString('hu');
+  } catch(e) {}
 }
 
 // ── STATS ──
@@ -1002,141 +978,180 @@ function updateStats(){
   document.getElementById('statToday').textContent=allArticles.filter(a=>new Date(a.created_at||0).toDateString()===today).length;
   if(allArticles.length) document.getElementById('statLast').textContent=fmtTime(allArticles[0].created_at);
 }
+
 function updateCatSidebar(){
   const counts={};
   allArticles.forEach(a=>{const c=a.category||'Egyéb';counts[c]=(counts[c]||0)+1;});
   const entries=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
-  if(!entries.length){document.getElementById('catList').innerHTML='<div style="font-size:12px;color:var(--text4);padding:4px 0">Nincs még cikk</div>';return;}
+  if(!entries.length){
+    document.getElementById('catList').innerHTML='<div style="font-size:12px;color:var(--text4);padding:4px 0">Nincs még cikk</div>';
+    return;
+  }
   document.getElementById('catList').innerHTML=entries.map(([c,n])=>{
-    const col=CAT_COLOR[c]||'#999',ico=CAT_EMOJI[c]||'📌';
-    return`<div class="cat-row" onclick="filterByCat('${c}')">
+    const col=CAT_COLOR[c]||'#999';
+    const ico=CAT_EMOJI[c]||'📌';
+    return `<div class="cat-row" onclick="filterByCat('${c}')">
       <div class="cat-dot" style="background:${col}"></div>
       <div class="cat-name">${ico} ${c}</div>
       <div class="cat-count">${n}</div>
     </div>`;
   }).join('');
 }
+
 function updateNavCounts(){
   const counts={all:allArticles.length};
   allArticles.forEach(a=>{const c=a.category||'Egyéb';counts[c]=(counts[c]||0)+1;});
-  Object.entries(counts).forEach(([c,n])=>{const el=document.getElementById('nc-'+c);if(el)el.textContent=n;});
+  Object.entries(counts).forEach(([c,n])=>{
+    const el=document.getElementById('nc-'+c);
+    if(el) el.textContent=n;
+  });
 }
+
 function updateStripTitle(){
-  const map={all:'Legfrissebb',Világ:'Világ',Tech:'Tech',Gazdaság:'Gazdaság',Sport:'Sport',Kultúra:'Kultúra',Botrány:'Botrány',Életmód:'Életmód',Krimi:'Krimi',Politika:'Politika'};
+  const map={
+    all:'Legfrissebb',Világ:'Világ',Tech:'Tech',Gazdaság:'Gazdaság',
+    Sport:'Sport',Kultúra:'Kultúra',Botrány:'Botrány',
+    Életmód:'Életmód',Krimi:'Krimi',Politika:'Politika'
+  };
   document.getElementById('stripTitle').textContent=map[cat]||cat;
 }
 
 // ── TICKER ──
 function updateTicker(arts){
   if(!arts||!arts.length) return;
-  const items=[...arts.slice(0,20),...arts.slice(0,20)].map(a=>`<span class="ticker-item">${esc(a.title||'')}</span><span class="ticker-sep">·</span>`).join('');
+  const items=[...arts.slice(0,20),...arts.slice(0,20)]
+    .map(a=>`<span class="ticker-item">${esc(a.title||'')}</span><span class="ticker-sep">·</span>`)
+    .join('');
   document.getElementById('tickerInner').innerHTML=items;
 }
 
 // ── TOAST ──
-function showToast(msg,type){
+function showToast(msg,type=''){
   const w=document.getElementById('toastWrap');
   const t=document.createElement('div');
-  t.className='toast '+type;t.textContent=msg;w.appendChild(t);
+  t.className='toast '+type; t.textContent=msg;
+  w.appendChild(t);
   setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .4s';setTimeout(()=>t.remove(),400);},3800);
 }
 
 // ── HELPERS ──
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function fmtTime(iso){
-  if(!iso)return'–';
+  if(!iso) return'–';
   const diff=Math.floor((Date.now()-new Date(iso))/1000);
-  if(diff<60)return'épp most';if(diff<3600)return Math.floor(diff/60)+' perce';
-  if(diff<86400)return Math.floor(diff/3600)+' órája';if(diff<604800)return Math.floor(diff/86400)+' napja';
+  if(diff<60) return'épp most';
+  if(diff<3600) return Math.floor(diff/60)+' perce';
+  if(diff<86400) return Math.floor(diff/3600)+' órája';
+  if(diff<604800) return Math.floor(diff/86400)+' napja';
   return new Date(iso).toLocaleDateString('hu-HU',{month:'short',day:'numeric'});
 }
 function fmtTimeFull(iso){
-  if(!iso)return'–';
+  if(!iso) return'–';
   return new Date(iso).toLocaleString('hu-HU',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});
 }
 
-// ── AUTH ──
-let currentUser=null;
-function openAuth(){document.getElementById('authModal').classList.add('open');switchTab('login');}
-function closeAuth(){document.getElementById('authModal').classList.remove('open');}
-function openSupport(){document.getElementById('supportModal').classList.add('open');}
-function closeSupport(){document.getElementById('supportModal').classList.remove('open');}
-window.openAuth=openAuth;window.closeAuth=closeAuth;window.openSupport=openSupport;window.closeSupport=closeSupport;
+// ── MODAL – view tracking ──
+const _origOpenModal = openModal;
+window.openModal = function(art) {
+  _origOpenModal(art);
+  if(art && art.id) trackArticleView(art.id);
+};
+
+// ── AUTH (Supabase) ──────────────────────────────────────────
+let currentUser = null;
+
+function openAuth(){ document.getElementById('authModal').classList.add('open'); switchTab('login'); }
+function closeAuth(){ document.getElementById('authModal').classList.remove('open'); }
+function openSupport(){ document.getElementById('supportModal').classList.add('open'); }
+function closeSupport(){ document.getElementById('supportModal').classList.remove('open'); }
+window.openAuth=openAuth; window.closeAuth=closeAuth;
+window.openSupport=openSupport; window.closeSupport=closeSupport;
 
 function switchTab(tab){
-  document.getElementById('authLoginForm').style.display=tab==='login'?'':'none';
-  document.getElementById('authRegForm').style.display=tab==='reg'?'':'none';
-  document.getElementById('tabLogin').classList.toggle('active',tab==='login');
-  document.getElementById('tabReg').classList.toggle('active',tab==='reg');
+  document.getElementById('authLoginForm').style.display = tab==='login'?'':'none';
+  document.getElementById('authRegForm').style.display   = tab==='reg'?'':'none';
+  document.getElementById('tabLogin').classList.toggle('active', tab==='login');
+  document.getElementById('tabReg').classList.toggle('active', tab==='reg');
   document.getElementById('authMsg').textContent='';
 }
 window.switchTab=switchTab;
-function setAuthMsg(msg,type){const el=document.getElementById('authMsg');el.textContent=msg;el.className='auth-msg '+(type||'');}
+
+function setAuthMsg(msg, type){ const el=document.getElementById('authMsg'); el.textContent=msg; el.className='auth-msg '+(type||''); }
 
 async function doLogin(){
-  const email=document.getElementById('loginEmail').value.trim();
-  const pass=document.getElementById('loginPass').value;
-  if(!email||!pass){setAuthMsg('Töltsd ki az összes mezőt.','err');return;}
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+  if(!email||!pass){ setAuthMsg('Töltsd ki az összes mezőt.','err'); return; }
   setAuthMsg('Bejelentkezés...');
-  try{
-    const r=await fetch(`${SB_URL}/auth/v1/token?grant_type=password`,{
-      method:'POST',headers:{'apikey':SB_KEY,'Content-Type':'application/json'},
+  try {
+    const r = await fetch(`${SB_URL}/auth/v1/token?grant_type=password`,{
+      method:'POST',
+      headers:{'apikey':SB_KEY,'Content-Type':'application/json'},
       body:JSON.stringify({email,password:pass})
     });
-    const d=await r.json();
+    const d = await r.json();
     if(!r.ok) throw new Error(d.error_description||d.msg||'Hibás email vagy jelszó');
-    localStorage.setItem('reason_token',d.access_token);
-    localStorage.setItem('reason_refresh',d.refresh_token);
+    localStorage.setItem('reason_token', d.access_token);
+    localStorage.setItem('reason_refresh', d.refresh_token);
     await loadUser(d.access_token);
-    closeAuth();setAuthMsg('','');
-    showToast('👋 Üdvözöljük vissza, '+(currentUser?.user_metadata?.name||currentUser?.email||'Olvasónk')+'!','success');
-  }catch(e){setAuthMsg(e.message,'err');}
+    closeAuth();
+    setAuthMsg('','');
+    const n = currentUser?.user_metadata?.name || currentUser?.email || 'Olvasónk';
+    showToast('👋 Üdvözöljük vissza, '+n+'! Kellemes olvasást kívánunk.','success');
+  } catch(e){ setAuthMsg(e.message,'err'); }
 }
 window.doLogin=doLogin;
 
 async function doRegister(){
-  const name=document.getElementById('regName').value.trim();
-  const email=document.getElementById('regEmail').value.trim();
-  const pass=document.getElementById('regPass').value;
-  const gdpr=document.getElementById('gdprCheck').checked;
-  if(!name||!email||!pass){setAuthMsg('Töltsd ki az összes mezőt.','err');return;}
-  if(pass.length<6){setAuthMsg('A jelszó legalább 6 karakter legyen.','err');return;}
-  if(!gdpr){setAuthMsg('Az adatkezelési tájékoztató elfogadása kötelező.','err');return;}
+  const name  = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass  = document.getElementById('regPass').value;
+  const gdpr  = document.getElementById('gdprCheck').checked;
+  if(!name||!email||!pass){ setAuthMsg('Töltsd ki az összes mezőt.','err'); return; }
+  if(pass.length<6){ setAuthMsg('A jelszó legalább 6 karakter legyen.','err'); return; }
+  if(!gdpr){ setAuthMsg('Az adatkezelési tájékoztató elfogadása kötelező.','err'); return; }
   setAuthMsg('Regisztráció...');
-  try{
-    const r=await fetch(`${SB_URL}/auth/v1/signup`,{
-      method:'POST',headers:{'apikey':SB_KEY,'Content-Type':'application/json'},
+  try {
+    const r = await fetch(`${SB_URL}/auth/v1/signup`,{
+      method:'POST',
+      headers:{'apikey':SB_KEY,'Content-Type':'application/json'},
       body:JSON.stringify({email,password:pass,data:{name}})
     });
-    const d=await r.json();
+    const d = await r.json();
     if(!r.ok) throw new Error(d.error_description||d.msg||'Hiba történt');
     if(d.access_token){
-      localStorage.setItem('reason_token',d.access_token);
-      localStorage.setItem('reason_refresh',d.refresh_token);
+      localStorage.setItem('reason_token', d.access_token);
+      localStorage.setItem('reason_refresh', d.refresh_token);
       await loadUser(d.access_token);
       closeAuth();
-      showToast('🎉 Üdvözöljük, '+name+'!','success');
+      showToast('🎉 Üdvözöljük a REASON közösségében, '+name+'! Örülünk, hogy itt van.','success');
     } else {
-      setAuthMsg('Regisztráció sikeres! Kérjük erősítse meg az emailben küldött linkre kattintva.','ok');
+      setAuthMsg('Regisztráció sikeres! Kérjük erősítse meg a fiókját az emailben küldött linkre kattintva.','ok');
     }
-  }catch(e){setAuthMsg(e.message,'err');}
+  } catch(e){ setAuthMsg(e.message,'err'); }
 }
 window.doRegister=doRegister;
 
 async function loadUser(token){
-  try{
-    const r=await fetch(`${SB_URL}/auth/v1/user`,{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token}});
-    if(!r.ok) throw new Error();
-    currentUser=await r.json();renderUserBtn();
-  }catch(e){logout();}
+  try {
+    const r = await fetch(`${SB_URL}/auth/v1/user`,{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token}
+    });
+    if(!r.ok) throw new Error('Token lejárt');
+    currentUser = await r.json();
+    renderUserBtn();
+  } catch(e){
+    logout();
+  }
 }
+
 function renderUserBtn(){
-  const wrap=document.getElementById('authBtnWrap');
+  const wrap = document.getElementById('authBtnWrap');
   if(!wrap) return;
   if(currentUser){
-    const name=currentUser.user_metadata?.name||currentUser.email||'Olvasó';
-    const initials=name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    wrap.innerHTML=`<div class="user-menu-wrap">
+    const name = currentUser.user_metadata?.name || currentUser.email || 'Olvasó';
+    const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    wrap.innerHTML = `<div class="user-menu-wrap">
       <div class="user-btn" onclick="toggleUserMenu()">
         <div class="user-avatar">${initials}</div>
         <span>${name.split(' ')[0]}</span>
@@ -1150,74 +1165,103 @@ function renderUserBtn(){
       </div>
     </div>`;
   } else {
-    wrap.innerHTML=`<button onclick="openAuth()" style="padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-s);letter-spacing:.04em">Bejelentkezés</button>`;
+    wrap.innerHTML = `<button onclick="openAuth()" style="padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-s);letter-spacing:.04em">Bejelentkezés</button>`;
   }
 }
-function toggleUserMenu(){const dd=document.getElementById('userDropdown');if(dd)dd.classList.toggle('open');}
+
+function toggleUserMenu(){
+  const dd = document.getElementById('userDropdown');
+  if(dd) dd.classList.toggle('open');
+}
 window.toggleUserMenu=toggleUserMenu;
 document.addEventListener('click',function(e){
-  if(!e.target.closest('.user-menu-wrap')){const dd=document.getElementById('userDropdown');if(dd)dd.classList.remove('open');}
+  if(!e.target.closest('.user-menu-wrap')){
+    const dd=document.getElementById('userDropdown');
+    if(dd) dd.classList.remove('open');
+  }
 });
+
 function logout(){
-  currentUser=null;localStorage.removeItem('reason_token');localStorage.removeItem('reason_refresh');
-  renderUserBtn();showToast('Sikeresen kijelentkeztettük.','');
+  currentUser=null;
+  localStorage.removeItem('reason_token');
+  localStorage.removeItem('reason_refresh');
+  renderUserBtn();
+  showToast('Sikeresen kijelentkeztettük. Viszont látásra!','');
 }
 window.logout=logout;
+
 async function initAuth(){
-  const token=localStorage.getItem('reason_token');
+  const token = localStorage.getItem('reason_token');
   if(token) await loadUser(token);
   else renderUserBtn();
 }
 
-// ── SUPPORT ──
-function setSupportMsg(msg,type){const el=document.getElementById('supportMsg');if(el){el.textContent=msg;el.className='auth-msg '+(type||'');}}
-const STRIPE_LINKS={
-  500:'https://buy.stripe.com/dRmfZjbhdg3EfkeeOogIo03',
-  1500:'https://buy.stripe.com/fZueVfbhd7x8c82ay8gIo04',
-  3000:'https://buy.stripe.com/28E3cxbhd6t43Bw5dOgIo05',
-};
-function doSupport(amount){
-  const link=STRIPE_LINKS[amount];
-  if(!link){setSupportMsg('Ismeretlen összeg.','err');return;}
-  const emailParam=currentUser?.email?'?prefilled_email='+encodeURIComponent(currentUser.email):'';
-  window.open(link+emailParam,'_blank','noopener');
-  setSupportMsg('✅ A fizetési oldal új lapon nyílt meg. Köszönjük!','ok');
-}
-function doSupportCustom(){
-  const v=parseInt(document.getElementById('customAmount').value);
-  if(!v||v<100){setSupportMsg('Minimum 100 Ft szükséges.','err');return;}
-  window.open(STRIPE_LINKS[1500],'_blank','noopener');
-  setSupportMsg('Egyedi összegnél módosíthatod a fizetési oldalon.','ok');
-}
-window.doSupport=doSupport;window.doSupportCustom=doSupportCustom;
+// ── SUPPORT ──────────────────────────────────────────────────
+function setSupportMsg(msg,type){ const el=document.getElementById('supportMsg'); if(el){el.textContent=msg;el.className='auth-msg '+(type||'');} }
 
-// ── GDPR ──
-function initGDPR(){if(!localStorage.getItem('reason_gdpr'))document.getElementById('gdprBanner').style.display='flex';}
-function acceptGDPR(){localStorage.setItem('reason_gdpr','1');document.getElementById('gdprBanner').style.display='none';}
+const STRIPE_LINKS = {
+  500:  'https://buy.stripe.com/dRmfZjbhdg3EfkeeOogIo03',
+  1500: 'https://buy.stripe.com/fZueVfbhd7x8c82ay8gIo04',
+  3000: 'https://buy.stripe.com/28E3cxbhd6t43Bw5dOgIo05',
+};
+
+function doSupport(amount) {
+  const link = STRIPE_LINKS[amount];
+  if (!link) { setSupportMsg('Ismeretlen összeg.', 'err'); return; }
+  const emailParam = currentUser?.email
+    ? '?prefilled_email=' + encodeURIComponent(currentUser.email)
+    : '';
+  window.open(link + emailParam, '_blank', 'noopener');
+  setSupportMsg('✅ A fizetési oldal új lapon nyílt meg. Köszönjük!', 'ok');
+}
+
+function doSupportCustom() {
+  const v = parseInt(document.getElementById('customAmount').value);
+  if (!v || v < 100) { setSupportMsg('Minimum 100 Ft szükséges.', 'err'); return; }
+  window.open(STRIPE_LINKS[1500], '_blank', 'noopener');
+  setSupportMsg('Egyedi összegnél módosíthatod a fizetési oldalon.', 'ok');
+}
+window.doSupport = doSupport;
+window.doSupportCustom = doSupportCustom;
+
+// ── GDPR ─────────────────────────────────────────────────────
+function initGDPR(){
+  if(!localStorage.getItem('reason_gdpr')){
+    document.getElementById('gdprBanner').style.display='flex';
+  }
+}
+function acceptGDPR(){
+  localStorage.setItem('reason_gdpr','1');
+  document.getElementById('gdprBanner').style.display='none';
+}
 window.acceptGDPR=acceptGDPR;
 
-// ── SUPPORT BANNER ──
+// ── SUPPORT BANNER AZ OLDAL ALJÁRA ───────────────────────────
 function renderSupportBanner(){
-  const mc=document.getElementById('mainCol');if(!mc)return;
-  const banner=document.createElement('div');
+  const mc = document.getElementById('mainCol');
+  if(!mc) return;
+  const banner = document.createElement('div');
   banner.className='support-banner';
   banner.innerHTML=`<h3>❤️ Támogasd a REASON-t</h3>
-    <p>Független, automatizált hírportál vagyunk. Ha értékesnek találja a munkánkat, egy kávé árával is sokat segít.</p>
+    <p>Független, automatizált hírportál vagyunk. Ha értékesnek találja a munkánkat, egy kávé árával is sokat segít a fenntartásban. Köszönjük minden olvasónk támogatását!</p>
     <button class="support-btn" onclick="openSupport()">Támogatás küldése →</button>`;
   mc.appendChild(banner);
 }
 
 // ── INIT ──
 initWeather();
-setInterval(initWeather,10*60*1000);
+setInterval(initWeather, 10*60*1000);
 fetchArticles();
-setInterval(fetchArticles,30*1000);
+setInterval(()=>fetchArticles(), 30*1000);
 renderArticles();
+
+// Visitor tracking
 pingVisitor();
-setInterval(pingVisitor,60*1000);
+setInterval(pingVisitor, 60*1000);
 fetchActiveReaders();
 fetchTotalViews();
-setInterval(()=>{fetchActiveReaders();fetchTotalViews();},30*1000);
+setInterval(()=>{ fetchActiveReaders(); fetchTotalViews(); }, 30*1000);
+
 initAuth();
 initGDPR();
 renderSupportBanner();
@@ -1229,5 +1273,6 @@ renderSupportBanner();
   <a href="/adatkezeles.html" style="color:#f0c040;text-decoration:none">Adatkezelés</a> ·
   <a href="/cookie.html" style="color:#f0c040;text-decoration:none">Cookie tájékoztató</a>
 </footer>
+  
 </body>
 </html>
