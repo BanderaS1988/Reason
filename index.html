@@ -874,6 +874,24 @@ function openModal(art){
     <span class="modal-meta-item">👤 REASON Szerkesztőség</span>
     <span class="modal-meta-item">⏱ ${art.read_time||'?'} perc olvasás</span>
     ${(art.body||'').length?`<span class="modal-meta-item">📝 ${(art.body||'').length.toLocaleString('hu')} karakter</span>`:''}`;
+
+  if(art.is_premium && !currentUser){
+    document.getElementById('modalBody').innerHTML=`
+      <div style="text-align:center;padding:60px 20px">
+        <div style="font-size:48px;margin-bottom:16px">⭐</div>
+        <div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--text);margin-bottom:10px">Prémium tartalom</div>
+        <div style="font-size:14px;color:var(--text3);line-height:1.7;margin-bottom:24px;max-width:340px;margin-left:auto;margin-right:auto">
+          Ez a cikk csak bejelentkezett olvasóknak érhető el.<br>Regisztrálj ingyen vagy jelentkezz be!
+        </div>
+        <button onclick="closeModal();openAuth();" style="padding:12px 28px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-s);margin-right:10px">Bejelentkezés</button>
+        <button onclick="closeModal();openSupport();" style="padding:12px 28px;background:linear-gradient(135deg,#f0c040,#e8a800);color:#5a3e00;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-s)">❤️ Támogatás</button>
+      </div>`;
+    document.getElementById('articleModal').classList.add('open');
+    document.body.style.overflow='hidden';
+    document.getElementById('articleModalBox').scrollTop=0;
+    return;
+  }
+
   const body=art.body||art.excerpt||'';
   const paras=body.split(/\n\n+|\n/).filter(p=>p.trim().length>4);
   document.getElementById('modalBody').innerHTML=paras.length
@@ -883,7 +901,6 @@ function openModal(art){
   document.body.style.overflow='hidden';
   document.getElementById('articleModalBox').scrollTop=0;
 }
-
 document.getElementById('modalClose').onclick=closeModal;
 document.getElementById('articleModal').addEventListener('click',e=>{
   if(e.target===document.getElementById('articleModal')) closeModal();
