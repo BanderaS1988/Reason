@@ -335,12 +335,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
       <div class="auth-field"><label>Jelszó</label><input type="password" id="regPass" placeholder="min. 6 karakter" autocomplete="new-password"></div>
       <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:10px">
         <input type="checkbox" id="gdprCheck" style="margin-top:2px;flex-shrink:0">
-        <label for="gdprCheck" style="font-size:11px;color:var(--text3);line-height:1.5;cursor:pointer">Elfogadom az <a href="#" style="color:var(--cyan)">Adatkezelési tájékoztatót</a> és hozzájárulok adataim kezeléséhez.</label>
+        <label for="gdprCheck" style="font-size:11px;color:var(--text3);line-height:1.5;cursor:pointer">Elfogadom az <a href="/adatkezeles" style="color:var(--cyan)">Adatkezelési tájékoztatót</a> és hozzájárulok adataim kezeléséhez.</label>
       </div>
       <button class="auth-submit" onclick="doRegister()">Regisztráció</button>
     </div>
     <div class="auth-msg" id="authMsg"></div>
-    <div class="gdpr-note">🔒 Adataidat biztonságosan tároljuk. Nem adjuk át harmadik félnek.<br>GDPR megfelelő · <a href="#">Adatkezelési tájékoztató</a></div>
+    <div class="gdpr-note">🔒 Adataidat biztonságosan tároljuk. Nem adjuk át harmadik félnek.<br>GDPR megfelelő · <a href="/adatkezeles">Adatkezelési tájékoztató</a></div>
   </div>
 </div>
 
@@ -367,7 +367,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 
 <!-- GDPR BANNER -->
 <div class="gdpr-banner" id="gdprBanner" style="display:none">
-  <span>🍪 Ez az oldal sütiket és localStorage-t használ a működéshez. Olvasói fiókhoz szükséges az adatok tárolása. <a href="#">Adatkezelési tájékoztató</a></span>
+  <span>🍪 Ez az oldal sütiket és localStorage-t használ a működéshez. Olvasói fiókhoz szükséges az adatok tárolása. <a href="/adatkezeles">Adatkezelési tájékoztató</a></span>
   <button class="gdpr-accept" onclick="acceptGDPR()">Elfogadom</button>
 </div>
 
@@ -1266,5 +1266,13 @@ initAuth();
 initGDPR();
 renderSupportBanner();
 </script>
+
+<footer style="background:var(--text);color:var(--text4);text-align:center;padding:20px;font-size:11px;line-height:2">
+  © 2025 REASON · Nagy András · 8600 Siófok ·
+  <a href="/aszf" style="color:#f0c040;text-decoration:none">ÁSZF</a> ·
+  <a href="/adatkezeles" style="color:#f0c040;text-decoration:none">Adatkezelés</a> ·
+  <a href="/cookie" style="color:#f0c040;text-decoration:none">Cookie tájékoztató</a>
+</footer>
+  
 </body>
 </html>
