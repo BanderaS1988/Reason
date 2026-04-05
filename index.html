@@ -854,7 +854,7 @@ window.loadMore=loadMore;
 
 // ── MODAL ──
 function openModalById(id){
-  const art=allArticles.find(a=>a.id==id);
+  const art=allArticles.find(a=>String(a.id)===String(id));
   if(art) openModal(art);
 }
 window.openModalById=openModalById;
