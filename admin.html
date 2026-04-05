@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>REASON Admin</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#222;--border:#2a2a2a;
+  --text:#f0f0f0;--text2:#aaa;--text3:#666;
+  --accent:#c8102e;--green:#1db954;--gold:#f0c040;--blue:#4a9eff;
+  --font:'Inter',system-ui,sans-serif
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;min-height:100vh}
+
+/* LOGIN */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg)}
+.login-box{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:48px 44px;width:100%;max-width:400px;text-align:center}
+.login-logo{font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:4px}
+.login-logo span{color:var(--accent)}
+.login-sub{font-size:11px;color:var(--text3);letter-spacing:.15em;text-transform:uppercase;margin-bottom:32px}
+.field{margin-bottom:14px;text-align:left}
+.field label{display:block;font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:600}
+.field input{width:100%;padding:10px 13px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:var(--font);outline:none;transition:.2s}
+.field input:focus{border-color:var(--accent)}
+.btn-login{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);margin-top:6px;transition:.2s}
+.btn-login:hover{background:#e8152f}
+.login-err{font-size:12px;color:var(--accent);margin-top:10px;min-height:18px}
+
+/* ADMIN LAYOUT */
+#adminScreen{display:none;min-height:100vh}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-logo{font-size:20px;font-weight:900;letter-spacing:-1px}
+.topbar-logo span{color:var(--accent)}
+.topbar-right{display:flex;align-items:center;gap:16px}
+.live-badge{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--green);background:#1db95420;padding:4px 10px;border-radius:20px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.btn-logout{padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:12px;cursor:pointer;font-family:var(--font);transition:.2s}
+.btn-logout:hover{border-color:var(--accent);color:var(--accent)}
+
+/* TABS */
+.tabs{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 28px;display:flex;gap:0;overflow-x:auto}
+.tab{padding:12px 20px;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:.15s;letter-spacing:.04em;text-transform:uppercase}
+.tab:hover{color:var(--text2)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+.content{padding:28px;max-width:1400px;margin:0 auto}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 22px}
+.stat-label{font-size:10px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.stat-val{font-size:28px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
+.stat-val.green{color:var(--green)}
+.stat-val.gold{color:var(--gold)}
+.stat-val.blue{color:var(--blue)}
+.stat-val.red{color:var(--accent)}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:4px}
+
+/* CHARTS */
+.charts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:20px;margin-bottom:28px}
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:22px}
+.chart-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:18px}
+.chart-wrap{position:relative;height:220px}
+
+/* TABLE */
+.table-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px}
+.table-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.table-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{padding:10px 16px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border);white-space:nowrap}
+.tbl td{padding:11px 16px;font-size:12px;color:var(--text2);border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--bg3)}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.05em}
+.badge-cat{background:#c8102e20;color:#e8415a}
+.badge-premium{background:#f0c04020;color:#f0c040}
+.badge-free{background:#1db95420;color:#1db954}
+
+/* ARTICLE FORM */
+.form-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px}
+.form-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:20px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-field{display:flex;flex-direction:column;gap:5px}
+.form-field.full{grid-column:1/-1}
+.form-field label{font-size:11px;font-weight:600;color:var(--text2)}
+.form-field input,.form-field select,.form-field textarea{background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:13px;font-family:var(--font);padding:9px 12px;outline:none;transition:.2s;width:100%}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--accent)}
+.form-field textarea{resize:vertical;min-height:120px;line-height:1.6}
+.form-actions{display:flex;gap:10px;margin-top:16px}
+.btn{padding:10px 20px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);border:none;transition:.2s;letter-spacing:.03em}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#e8152f}
+.btn-secondary{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--text3)}
+.btn-danger{background:#c8102e20;color:var(--accent);border:1px solid #c8102e40}
+.btn-danger:hover{background:var(--accent);color:#fff}
+.btn-sm{padding:5px 12px;font-size:11px}
+
+/* SEARCH */
+.search-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.search-input{flex:1;min-width:200px;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:12px;font-family:var(--font);outline:none}
+.search-input:focus{border-color:var(--accent)}
+
+/* STRIPE */
+.stripe-banner{background:linear-gradient(135deg,#635BFF20,#635BFF08);border:1px solid #635BFF40;border-radius:12px;padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.stripe-info{font-size:13px;color:var(--text2);line-height:1.6}
+.btn-stripe{padding:10px 20px;background:#635BFF;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);text-decoration:none;display:inline-block}
+
+/* LOGS */
+.log-wrap{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.8;max-height:400px;overflow-y:auto}
+.log-line{padding:1px 0}
+.log-ok{color:var(--green)}
+.log-warn{color:var(--gold)}
+.log-err{color:var(--accent)}
+.log-info{color:var(--blue)}
+
+/* EMPTY */
+.empty{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty-icon{font-size:40px;margin-bottom:12px;opacity:.3}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:auto}
+.modal-box{background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:100%;max-width:560px;padding:28px;position:relative}
+.modal-close{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:14px}
+.modal-close:hover{background:var(--accent);color:#fff}
+
+/* TOAST */
+.toast-wrap{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:6px}
+.toast{padding:10px 16px;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:12px;animation:tin .3s ease;max-width:260px}
+.toast.ok{border-color:var(--green);color:var(--green)}
+.toast.err{border-color:var(--accent);color:var(--accent)}
+@keyframes tin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:700px){
+  .charts-grid{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .content{padding:16px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">RE<span>A</span>SON</div>
+    <div class="login-sub">Admin Panel</div>
+    <div class="field"><label>Email</label><input type="email" id="lEmail" placeholder="admin@reason.hu" autocomplete="email"></div>
+    <div class="field"><label>Jelszó</label><input type="password" id="lPass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="btn-login" onclick="doLogin()">Belépés</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="adminScreen">
+  <div class="topbar">
+    <div class="topbar-logo">RE<span>A</span>SON <span style="font-size:12px;color:var(--text3);font-weight:400;letter-spacing:.1em">ADMIN</span></div>
+    <div class="topbar-right">
+      <div class="live-badge"><div class="live-dot"></div><span id="liveReaders">–</span> aktív olvasó</div>
+      <div style="font-size:11px;color:var(--text3)" id="topClock"></div>
+      <button class="btn-logout" onclick="doLogout()">Kijelentkezés</button>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabBar">
+    <div class="tab active" data-tab="dashboard">📊 Dashboard</div>
+    <div class="tab" data-tab="articles">📰 Cikkek</div>
+    <div class="tab" data-tab="upload">✍️ Feltöltés</div>
+    <div class="tab" data-tab="readers">👥 Olvasók</div>
+    <div class="tab" data-tab="revenue">💰 Bevétel</div>
+    <div class="tab" data-tab="logs">🔧 Logok</div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div id="tab-dashboard">
+      <div class="stat-grid" id="statGrid"></div>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-title">📅 Napi cikkszám (30 nap)</div>
+          <div class="chart-wrap"><canvas id="chartDaily"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">🗂 Kategória eloszlás</div>
+          <div class="chart-wrap"><canvas id="chartCat"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">📈 Olvasások időbeli alakulása</div>
+          <div class="chart-wrap"><canvas id="chartViews"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">🏆 Top 10 cikk olvasásszám szerint</div>
+          <div class="chart-wrap"><canvas id="chartTop"></canvas></div>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-head"><div class="table-title">🔥 Legtöbbet olvasott cikkek</div></div>
+        <table class="tbl" id="topTable"><thead><tr><th>#</th><th>Cím</th><th>Kategória</th><th>Olvasás</th><th>Olv. idő</th><th>Dátum</th></tr></thead><tbody id="topTbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ARTICLES -->
+    <div id="tab-articles" style="display:none">
+      <div class="search-row">
+        <input class="search-input" id="artSearch" placeholder="Keresés cím alapján..." oninput="filterArticles(this.value)">
+        <select class="search-input" style="flex:0;width:160px" id="artCatFilter" onchange="filterArticles(document.getElementById('artSearch').value)">
+          <option value="">Minden kategória</option>
+          <option>Világ</option><option>Tech</option><option>Gazdaság</option>
+          <option>Sport</option><option>Kultúra</option><option>Botrány</option>
+          <option>Életmód</option><option>Krimi</option><option>Politika</option>
+        </select>
+      </div>
+      <div class="table-card">
+        <div class="table-head">
+          <div class="table-title">Cikkek listája</div>
+          <span id="artCountLabel" style="font-size:11px;color:var(--text3)"></span>
+        </div>
+        <table class="tbl"><thead><tr><th>Cím</th><th>Kategória</th><th>Prémium</th><th>Olvasás</th><th>Olv. idő</th><th>Feltöltve</th><th>Műveletek</th></tr></thead>
+        <tbody id="artTbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- UPLOAD -->
+    <div id="tab-upload" style="display:none">
+      <div class="form-card">
+        <div class="form-title">✍️ Új cikk feltöltése</div>
+        <div class="form-grid">
+          <div class="form-field full"><label>Cím *</label><input type="text" id="uTitle" placeholder="Cikk címe..."></div>
+          <div class="form-field"><label>Kategória *</label>
+            <select id="uCat">
+              <option>Világ</option><option>Tech</option><option>Gazdaság</option>
+              <option>Sport</option><option>Kultúra</option><option>Botrány</option>
+              <option>Életmód</option><option>Krimi</option><option>Politika</option>
+            </select>
+          </div>
+          <div class="form-field"><label>Szerző</label><input type="text" id="uAuthor" value="REASON Szerkesztőség"></div>
+          <div class="form-field"><label>Kép URL (opcionális)</label><input type="text" id="uImage" placeholder="https://..."></div>
+          <div class="form-field"><label>Prémium tartalom</label>
+            <select id="uPremium"><option value="false">Nem</option><option value="true">Igen</option></select>
+          </div>
+          <div class="form-field full"><label>Összefoglaló (excerpt) *</label><textarea id="uExcerpt" placeholder="Rövid összefoglaló, max 300 karakter..."></textarea></div>
+          <div class="form-field full"><label>Cikk szövege *</label><textarea id="uBody" style="min-height:260px" placeholder="A teljes cikk szövege..."></textarea></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="uploadArticle()">📤 Feltöltés</button>
+          <button class="btn btn-secondary" onclick="clearUploadForm()">Törlés</button>
+        </div>
+        <div id="uploadMsg" style="font-size:12px;margin-top:12px;min-height:18px"></div>
+      </div>
+    </div>
+
+    <!-- READERS -->
+    <div id="tab-readers" style="display:none">
+      <div class="stat-grid" id="readerStats"></div>
+      <div class="table-card">
+        <div class="table-head"><div class="table-title">📧 Email feliratkozók</div></div>
+        <table class="tbl"><thead><tr><th>Email</th><th>Feliratkozott</th></tr></thead>
+        <tbody id="subTbody"></tbody></table>
+      </div>
+      <div class="table-card" style="margin-top:20px">
+        <div class="table-head"><div class="table-title">🟢 Aktív sessionök (utolsó 5 perc)</div></div>
+        <table class="tbl"><thead><tr><th>Session ID</th><th>Utolsó aktivitás</th></tr></thead>
+        <tbody id="visTbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- REVENUE -->
+    <div id="tab-revenue" style="display:none">
+      <div class="stripe-banner">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px">💳 Stripe Dashboard</div>
+          <div class="stripe-info">A valós fizetési adatok, visszatérítések és tranzakciók a Stripe dashboardon érhetők el.</div>
+        </div>
+        <a class="btn-stripe" href="https://dashboard.stripe.com" target="_blank" rel="noopener">Megnyitás →</a>
+      </div>
+      <div class="stat-grid" id="revStats"></div>
+      <div class="form-card">
+        <div class="form-title">➕ Manuális bevétel rögzítése</div>
+        <div class="form-grid">
+          <div class="form-field"><label>Összeg (Ft)</label><input type="number" id="payAmount" placeholder="pl. 1000" min="100"></div>
+          <div class="form-field"><label>Email (opcionális)</label><input type="email" id="payEmail" placeholder="fizeto@email.hu"></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="addPayment()">Rögzítés</button>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-head"><div class="table-title">💰 Bevételek naplója</div></div>
+        <table class="tbl"><thead><tr><th>Összeg</th><th>Email</th><th>Dátum</th></tr></thead>
+        <tbody id="payTbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- LOGS -->
+    <div id="tab-logs" style="display:none">
+      <div class="stat-grid" id="logStats"></div>
+      <div class="table-card" style="margin-bottom:20px">
+        <div class="table-head">
+          <div class="table-title">⚡ Sebesség log (localStorage)</div>
+          <button class="btn btn-secondary btn-sm" onclick="clearSpeedLog()">Törlés</button>
+        </div>
+        <div style="padding:16px"><div class="log-wrap" id="speedLog"></div></div>
+      </div>
+      <div class="table-card">
+        <div class="table-head">
+          <div class="table-title">🔗 Supabase kapcsolat státusz</div>
+          <button class="btn btn-secondary btn-sm" onclick="testConnection()">Teszt</button>
+        </div>
+        <div style="padding:16px"><div class="log-wrap" id="connLog"></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <div class="modal-close" onclick="closeEdit()">✕</div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:20px;color:var(--text2);letter-spacing:.08em;text-transform:uppercase">Cikk szerkesztése</div>
+    <input type="hidden" id="editId">
+    <div class="form-field" style="margin-bottom:12px"><label>Cím</label><input type="text" id="editTitle"></div>
+    <div class="form-field" style="margin-bottom:12px"><label>Kategória</label>
+      <select id="editCat">
+        <option>Világ</option><option>Tech</option><option>Gazdaság</option>
+        <option>Sport</option><option>Kultúra</option><option>Botrány</option>
+        <option>Életmód</option><option>Krimi</option><option>Politika</option>
+      </select>
+    </div>
+    <div class="form-field" style="margin-bottom:12px"><label>Prémium</label>
+      <select id="editPremium"><option value="false">Nem</option><option value="true">Igen</option></select>
+    </div>
+    <div class="form-field" style="margin-bottom:16px"><label>Összefoglaló</label><textarea id="editExcerpt" style="min-height:80px"></textarea></div>
+    <div class="form-actions">
+      <button class="btn btn-primary" onclick="saveEdit()">Mentés</button>
+      <button class="btn btn-secondary" onclick="closeEdit()">Mégse</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+'use strict';
+
+const SB_URL = 'https://kqugolmndqonbnjetdyi.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxdWdvbG1uZHFvbmJuamV0ZHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2OTM3NjMsImV4cCI6MjA4ODI2OTc2M30.wGEBEJDPUKsUPu9W5vxvH7Do0wX9U3FdgKzEzny_zBg';
+const ADMIN_EMAIL = 'nagyandras880718@gmail.com';
+const HEADERS = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
+
+const CAT_COLORS = ['#c8102e','#4a9eff','#1db954','#f0c040','#a855f7','#ff6b35','#0099cc','#2d2d2d','#8b0000'];
+
+let allArticles = [], allViews = [], charts = {}, currentTab = 'dashboard';
+
+// ── AUTH ──
+async function doLogin() {
+  const email = document.getElementById('lEmail').value.trim();
+  const pass  = document.getElementById('lPass').value;
+  const err   = document.getElementById('loginErr');
+  if (!email || !pass) { err.textContent = 'Töltsd ki az összes mezőt.'; return; }
+  if (email !== ADMIN_EMAIL) { err.textContent = 'Nincs admin jogosultságod.'; return; }
+  err.textContent = 'Belépés...';
+  try {
+    const r = await fetch(`${SB_URL}/auth/v1/token?grant_type=password`, {
+      method:'POST',
+      headers:{'apikey':SB_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({email,password:pass})
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error_description || 'Hibás adatok');
+    localStorage.setItem('reason_admin_token', d.access_token);
+    err.textContent = '';
+    showAdmin();
+  } catch(e) { err.textContent = e.message; }
+}
+
+function doLogout() {
+  localStorage.removeItem('reason_admin_token');
+  document.getElementById('adminScreen').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+async function checkAuth() {
+  const token = localStorage.getItem('reason_admin_token');
+  if (!token) return;
+  try {
+    const r = await fetch(`${SB_URL}/auth/v1/user`, {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token}});
+    if (!r.ok) throw new Error();
+    const u = await r.json();
+    if (u.email !== ADMIN_EMAIL) throw new Error();
+    showAdmin();
+  } catch(e) { localStorage.removeItem('reason_admin_token'); }
+}
+
+function showAdmin() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('adminScreen').style.display = 'block';
+  initAdmin();
+}
+
+// ── TABS ──
+document.getElementById('tabBar').addEventListener('click', e => {
+  const t = e.target.closest('.tab');
+  if (!t) return;
+  const tab = t.dataset.tab;
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x.dataset.tab === tab));
+  document.querySelectorAll('[id^="tab-"]').forEach(x => x.style.display = 'none');
+  document.getElementById('tab-' + tab).style.display = '';
+  currentTab = tab;
+  if (tab === 'readers') loadReaders();
+  if (tab === 'revenue') loadRevenue();
+  if (tab === 'logs')    loadLogs();
+});
+
+// ── CLOCK ──
+function tickClock() {
+  document.getElementById('topClock').textContent =
+    new Date().toLocaleTimeString('hu-HU',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(tickClock, 1000); tickClock();
+
+// ── SB FETCH HELPER ──
+async function sb(path, opts) {
+  const r = await fetch(SB_URL + path, {headers: HEADERS, ...opts});
+  if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error(e.message||'HTTP '+r.status); }
+  const txt = await r.text();
+  return txt ? JSON.parse(txt) : [];
+}
+
+// ── INIT ──
+async function initAdmin() {
+  await loadAll();
+  setInterval(loadAll, 30000);
+  setInterval(loadLiveReaders, 10000);
+  loadLiveReaders();
+  renderDashboard();
+}
+
+async function loadAll() {
+  try {
+    [allArticles, allViews] = await Promise.all([
+      sb('/rest/v1/articles?select=*&order=created_at.desc&limit=500'),
+      sb('/rest/v1/article_views?select=*')
+    ]);
+    if (currentTab === 'dashboard') renderDashboard();
+    if (currentTab === 'articles')  renderArticlesTab();
+  } catch(e) { toast('Betöltési hiba: ' + e.message, 'err'); }
+}
+
+async function loadLiveReaders() {
+  try {
+    const since = new Date(Date.now() - 5*60*1000).toISOString();
+    const data = await sb(`/rest/v1/visitors?last_seen=gte.${since}&select=session_id`);
+    const n = new Set(data.map(v => v.session_id)).size;
+    document.getElementById('liveReaders').textContent = n;
+  } catch(e) {}
+}
+
+// ── DASHBOARD ──
+function renderDashboard() {
+  const today = new Date().toDateString();
+  const todayArts = allArticles.filter(a => new Date(a.created_at).toDateString() === today).length;
+  const totalViews = allViews.reduce((s,v) => s+v.view_count, 0);
+  const avgRead = allArticles.length
+    ? Math.round(allArticles.reduce((s,a) => s+(a.read_time||0), 0) / allArticles.length)
+    : 0;
+  const premCount = allArticles.filter(a => a.is_premium).length;
+
+  document.getElementById('statGrid').innerHTML = `
+    ${sc('Összes cikk', allArticles.length, '', 'Supabase-ben')}
+    ${sc('Mai cikkek', todayArts, 'blue', 'Ma feltöltve')}
+    ${sc('Összes olvasás', totalViews.toLocaleString('hu'), 'green', 'Minden idők')}
+    ${sc('Átl. olvasási idő', avgRead + ' perc', 'gold', 'Cikkenként')}
+    ${sc('Prémium cikkek', premCount, 'red', allArticles.length ? Math.round(premCount/allArticles.length*100)+'%' : '0%')}
+    ${sc('Kategóriák', new Set(allArticles.map(a=>a.category)).size, '', 'Aktív kategória')}`;
+
+  renderCharts();
+  renderTopTable();
+}
+
+function sc(label, val, cls, sub) {
+  return `<div class="stat-card">
+    <div class="stat-label">${label}</div>
+    <div class="stat-val ${cls}">${val}</div>
+    <div class="stat-sub">${sub}</div>
+  </div>`;
+}
+
+function renderCharts() {
+  // Napi cikkszám
+  const byDay = {};
+  allArticles.forEach(a => {
+    const d = new Date(a.created_at).toLocaleDateString('hu-HU',{month:'short',day:'numeric'});
+    byDay[d] = (byDay[d]||0)+1;
+  });
+  const dayLabels = Object.keys(byDay).slice(-30).reverse();
+  const dayData   = dayLabels.map(d => byDay[d]||0);
+  mkChart('chartDaily', 'bar', dayLabels, [{label:'Cikkek',data:dayData,backgroundColor:'#c8102e80',borderColor:'#c8102e',borderWidth:1}]);
+
+  // Kategória kördiagram
+  const catCount = {};
+  allArticles.forEach(a => { catCount[a.category||'Egyéb'] = (catCount[a.category||'Egyéb']||0)+1; });
+  const catLabels = Object.keys(catCount);
+  const catData   = catLabels.map(k => catCount[k]);
+  mkChart('chartCat', 'doughnut', catLabels, [{data:catData,backgroundColor:CAT_COLORS,borderWidth:0}]);
+
+  // Olvasások időbeli – napi bontás article_views alapján (összes view dátum nélkül, csak összesítve)
+  const viewMap = {};
+  allViews.forEach(v => { viewMap[v.article_id] = v.view_count; });
+  // cikkek létrehozási dátuma szerint csoportosítjuk a viewokat
+  const viewByDay = {};
+  allArticles.forEach(a => {
+    const d = new Date(a.created_at).toLocaleDateString('hu-HU',{month:'short',day:'numeric'});
+    viewByDay[d] = (viewByDay[d]||0) + (viewMap[a.id]||0);
+  });
+  const vdLabels = Object.keys(viewByDay).slice(-30).reverse();
+  const vdData   = vdLabels.map(d => viewByDay[d]||0);
+  mkChart('chartViews', 'line', vdLabels, [{label:'Olvasások',data:vdData,borderColor:'#1db954',backgroundColor:'#1db95420',fill:true,tension:.4,pointRadius:3}]);
+
+  // Top 10 bar
+  const top10 = [...allArticles]
+    .map(a => ({title:(a.title||'').slice(0,28)+'…', views: viewMap[a.id]||0}))
+    .sort((a,b)=>b.views-a.views).slice(0,10);
+  mkChart('chartTop','bar',top10.map(x=>x.title),[{label:'Olvasás',data:top10.map(x=>x.views),backgroundColor:'#4a9eff80',borderColor:'#4a9eff',borderWidth:1}],true);
+}
+
+function mkChart(id, type, labels, datasets, horizontal) {
+  if (charts[id]) { charts[id].destroy(); }
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  charts[id] = new Chart(ctx, {
+    type,
+    data: {labels, datasets},
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      indexAxis: horizontal ? 'y' : 'x',
+      plugins:{legend:{display: type==='doughnut', labels:{color:'#aaa',font:{size:11}}},tooltip:{backgroundColor:'#1a1a1a',titleColor:'#fff',bodyColor:'#aaa'}},
+      scales: type === 'doughnut' ? {} : {
+        x:{ticks:{color:'#666',font:{size:10}},grid:{color:'#2a2a2a'}},
+        y:{ticks:{color:'#666',font:{size:10}},grid:{color:'#2a2a2a'}}
+      }
+    }
+  });
+}
+
+function renderTopTable() {
+  const viewMap = {};
+  allViews.forEach(v => { viewMap[v.article_id] = v.view_count; });
+  const top = [...allArticles].sort((a,b)=>(viewMap[b.id]||0)-(viewMap[a.id]||0)).slice(0,10);
+  document.getElementById('topTbody').innerHTML = top.length
+    ? top.map((a,i) => `<tr>
+        <td style="color:var(--text3)">${i+1}</td>
+        <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(a.title||'–')}</td>
+        <td><span class="badge badge-cat">${a.category||'–'}</span></td>
+        <td style="color:var(--green);font-weight:700">${(viewMap[a.id]||0).toLocaleString('hu')}</td>
+        <td>${a.read_time||'?'} perc</td>
+        <td style="color:var(--text3)">${fmtDate(a.created_at)}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="6" class="empty"><div class="empty-icon">📭</div>Nincs adat</td></tr>';
+}
+
+// ── ARTICLES TAB ──
+function renderArticlesTab() {
+  filterArticles(document.getElementById('artSearch')?.value || '');
+}
+
+function filterArticles(q) {
+  q = (q||'').toLowerCase();
+  const cat = document.getElementById('artCatFilter')?.value || '';
+  const viewMap = {};
+  allViews.forEach(v => { viewMap[v.article_id] = v.view_count; });
+  let arr = allArticles.filter(a =>
+    (!q || (a.title||'').toLowerCase().includes(q)) &&
+    (!cat || a.category === cat)
+  );
+  document.getElementById('artCountLabel').textContent = arr.length + ' cikk';
+  document.getElementById('artTbody').innerHTML = arr.length
+    ? arr.map(a => `<tr>
+        <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(a.title||'')}">${esc((a.title||'').slice(0,60))}</td>
+        <td><span class="badge badge-cat">${a.category||'–'}</span></td>
+        <td><span class="badge ${a.is_premium?'badge-premium':'badge-free'}">${a.is_premium?'Prémium':'Ingyenes'}</span></td>
+        <td style="color:var(--green)">${(viewMap[a.id]||0).toLocaleString('hu')}</td>
+        <td>${a.read_time||'?'} perc</td>
+        <td style="color:var(--text3)">${fmtDate(a.created_at)}</td>
+        <td>
+          <button class="btn btn-secondary btn-sm" onclick="openEdit(${JSON.stringify(a.id)})">Szerk.</button>
+          <button class="btn btn-danger btn-sm" style="margin-left:4px" onclick="deleteArticle(${JSON.stringify(a.id)})">Törlés</button>
+        </td>
+      </tr>`).join('')
+    : '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text3)">Nincs találat</td></tr>';
+}
+
+// ── UPLOAD ──
+async function uploadArticle() {
+  const title   = document.getElementById('uTitle').value.trim();
+  const cat     = document.getElementById('uCat').value;
+  const author  = document.getElementById('uAuthor').value.trim() || 'REASON Szerkesztőség';
+  const image   = document.getElementById('uImage').value.trim() || null;
+  const premium = document.getElementById('uPremium').value === 'true';
+  const excerpt = document.getElementById('uExcerpt').value.trim();
+  const body    = document.getElementById('uBody').value.trim();
+  const msg     = document.getElementById('uploadMsg');
+
+  if (!title || !excerpt || !body) { msg.style.color='var(--accent)'; msg.textContent='Cím, összefoglaló és szöveg kötelező.'; return; }
+
+  const rawText = body.replace(/<[^>]*>/g,'');
+  const readTime = Math.max(1, Math.ceil(rawText.split(/\s+/).length / 200));
+
+  msg.style.color='var(--text3)'; msg.textContent='Feltöltés...';
+  try {
+    await sb('/rest/v1/articles', {
+      method:'POST',
+      headers:{...HEADERS,'Prefer':'return=minimal'},
+      body: JSON.stringify({title, body, excerpt, category:cat, author, image_url:image,
+        image_placeholder:'[ '+cat+' ]', is_premium:premium, likes:0, read_time:readTime})
+    });
+    msg.style.color='var(--green)'; msg.textContent='✅ Cikk sikeresen feltöltve!';
+    clearUploadForm();
+    await loadAll();
+    toast('Cikk feltöltve!', 'ok');
+  } catch(e) { msg.style.color='var(--accent)'; msg.textContent='Hiba: ' + e.message; }
+}
+
+function clearUploadForm() {
+  ['uTitle','uImage','uExcerpt','uBody'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('uPremium').value='false';
+  document.getElementById('uploadMsg').textContent='';
+}
+
+// ── EDIT ──
+function openEdit(id) {
+  const a = allArticles.find(x => x.id == id);
+  if (!a) return;
+  document.getElementById('editId').value = a.id;
+  document.getElementById('editTitle').value = a.title||'';
+  document.getElementById('editCat').value = a.category||'Világ';
+  document.getElementById('editPremium').value = a.is_premium?'true':'false';
+  document.getElementById('editExcerpt').value = a.excerpt||'';
+  document.getElementById('editModal').classList.add('open');
+}
+function closeEdit() { document.getElementById('editModal').classList.remove('open'); }
+
+async function saveEdit() {
+  const id      = document.getElementById('editId').value;
+  const title   = document.getElementById('editTitle').value.trim();
+  const cat     = document.getElementById('editCat').value;
+  const premium = document.getElementById('editPremium').value === 'true';
+  const excerpt = document.getElementById('editExcerpt').value.trim();
+  try {
+    await sb(`/rest/v1/articles?id=eq.${id}`, {
+      method:'PATCH',
+      headers:{...HEADERS,'Prefer':'return=minimal'},
+      body: JSON.stringify({title, category:cat, is_premium:premium, excerpt})
+    });
+    closeEdit();
+    await loadAll();
+    toast('Cikk mentve!', 'ok');
+  } catch(e) { toast('Hiba: '+e.message,'err'); }
+}
+
+async function deleteArticle(id) {
+  if (!confirm('Biztosan törlöd ezt a cikket?')) return;
+  try {
+    await sb(`/rest/v1/articles?id=eq.${id}`, {method:'DELETE', headers:{...HEADERS,'Prefer':'return=minimal'}});
+    await loadAll();
+    toast('Cikk törölve.','ok');
+  } catch(e) { toast('Hiba: '+e.message,'err'); }
+}
+
+// ── READERS ──
+async function loadReaders() {
+  try {
+    const [subs, vis] = await Promise.all([
+      sb('/rest/v1/subscribers?select=*&order=created_at.desc'),
+      sb(`/rest/v1/visitors?last_seen=gte.${new Date(Date.now()-5*60*1000).toISOString()}&select=*&order=last_seen.desc`)
+    ]);
+
+    document.getElementById('readerStats').innerHTML =
+      sc('Email feliratkozók', subs.length, 'green', 'Összesen') +
+      sc('Aktív olvasók', new Set(vis.map(v=>v.session_id)).size, 'blue', 'Utolsó 5 perc');
+
+    document.getElementById('subTbody').innerHTML = subs.length
+      ? subs.map(s=>`<tr><td>${esc(s.email)}</td><td style="color:var(--text3)">${fmtDate(s.created_at)}</td></tr>`).join('')
+      : '<tr><td colspan="2" style="text-align:center;padding:30px;color:var(--text3)">Nincs feliratkozó</td></tr>';
+
+    document.getElementById('visTbody').innerHTML = vis.length
+      ? vis.map(v=>`<tr>
+          <td style="font-family:monospace;font-size:11px;color:var(--text3)">${v.session_id}</td>
+          <td style="color:var(--green)">${fmtDateFull(v.last_seen)}</td>
+        </tr>`).join('')
+      : '<tr><td colspan="2" style="text-align:center;padding:30px;color:var(--text3)">Nincs aktív olvasó</td></tr>';
+  } catch(e) { toast('Olvasók betöltési hiba: '+e.message,'err'); }
+}
+
+// ── REVENUE ──
+async function loadRevenue() {
+  try {
+    const pays = await sb('/rest/v1/stripe_payments?select=*&order=created_at.desc');
+    const total = pays.reduce((s,p)=>s+p.amount,0);
+    const todayPays = pays.filter(p=>new Date(p.created_at).toDateString()===new Date().toDateString());
+    const todayTotal = todayPays.reduce((s,p)=>s+p.amount,0);
+
+    document.getElementById('revStats').innerHTML =
+      sc('Összes bevétel', total.toLocaleString('hu')+' Ft', 'gold', 'Minden idők') +
+      sc('Mai bevétel', todayTotal.toLocaleString('hu')+' Ft', 'green', 'Ma') +
+      sc('Tranzakciók', pays.length, '', 'Összesen');
+
+    document.getElementById('payTbody').innerHTML = pays.length
+      ? pays.map(p=>`<tr>
+          <td style="color:var(--gold);font-weight:700">${p.amount.toLocaleString('hu')} Ft</td>
+          <td>${esc(p.email||'–')}</td>
+          <td style="color:var(--text3)">${fmtDateFull(p.created_at)}</td>
+        </tr>`).join('')
+      : '<tr><td colspan="3" style="text-align:center;padding:30px;color:var(--text3)">Nincs rögzített tranzakció</td></tr>';
+  } catch(e) { toast('Bevétel betöltési hiba: '+e.message,'err'); }
+}
+
+async function addPayment() {
+  const amount = parseInt(document.getElementById('payAmount').value);
+  const email  = document.getElementById('payEmail').value.trim() || null;
+  if (!amount || amount < 100) { toast('Minimum 100 Ft szükséges.','err'); return; }
+  try {
+    await sb('/rest/v1/stripe_payments',{
+      method:'POST',
+      headers:{...HEADERS,'Prefer':'return=minimal'},
+      body:JSON.stringify({amount,email})
+    });
+    document.getElementById('payAmount').value='';
+    document.getElementById('payEmail').value='';
+    await loadRevenue();
+    toast('Bevétel rögzítve!','ok');
+  } catch(e) { toast('Hiba: '+e.message,'err'); }
+}
+
+// ── LOGS ──
+function loadLogs() {
+  // Sebesség log
+  const speedData = JSON.parse(localStorage.getItem('reason_speed_log')||'[]');
+  const logEl = document.getElementById('speedLog');
+  if (!speedData.length) {
+    logEl.innerHTML = '<div class="log-info">Nincs sebesség adat – nyisd meg a főoldalt először.</div>';
+  } else {
+    logEl.innerHTML = [...speedData].reverse().map(r => {
+      const cls = r.slow ? 'log-err' : 'log-ok';
+      return `<div class="log-line ${cls}">[${r.date.slice(0,19)}] Betöltés: ${r.loadTime}ms · DOM: ${r.domReady}ms ${r.slow?'⚠️ LASSÚ':''}</div>`;
+    }).join('');
+  }
+
+  // Supabase stats
+  const totalViews = allViews.reduce((s,v)=>s+v.view_count,0);
+  document.getElementById('logStats').innerHTML =
+    sc('Összes cikk (DB)', allArticles.length,'','Supabase articles') +
+    sc('View rekordok', allViews.length,'blue','article_views sorok') +
+    sc('Összes olvasás', totalViews.toLocaleString('hu'),'green','Összesített views');
+}
+
+async function testConnection() {
+  const el = document.getElementById('connLog');
+  el.innerHTML = '<div class="log-info">Tesztelés...</div>';
+  const tests = [
+    {name:'articles', path:'/rest/v1/articles?select=id&limit=1'},
+    {name:'article_views', path:'/rest/v1/article_views?select=article_id&limit=1'},
+    {name:'visitors', path:'/rest/v1/visitors?select=session_id&limit=1'},
+    {name:'subscribers', path:'/rest/v1/subscribers?select=id&limit=1'},
+    {name:'stripe_payments', path:'/rest/v1/stripe_payments?select=id&limit=1'},
+  ];
+  const lines = [];
+  for (const t of tests) {
+    try {
+      const r = await fetch(SB_URL+t.path,{headers:HEADERS});
+      lines.push(`<div class="log-line ${r.ok?'log-ok':'log-err'}">[${r.status}] ${t.name} ${r.ok?'✅':'❌'}</div>`);
+    } catch(e) {
+      lines.push(`<div class="log-line log-err">[ERR] ${t.name}: ${e.message}</div>`);
+    }
+  }
+  el.innerHTML = lines.join('');
+}
+
+function clearSpeedLog() {
+  localStorage.removeItem('reason_speed_log');
+  loadLogs();
+  toast('Sebesség log törölve.','ok');
+}
+
+// ── HELPERS ──
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmtDate(iso){if(!iso)return'–';return new Date(iso).toLocaleDateString('hu-HU',{year:'numeric',month:'short',day:'numeric'});}
+function fmtDateFull(iso){if(!iso)return'–';return new Date(iso).toLocaleString('hu-HU',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+
+function toast(msg,type){
+  const w=document.getElementById('toastWrap');
+  const t=document.createElement('div');
+  t.className='toast '+(type||''); t.textContent=msg;
+  w.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300)},3500);
+}
+
+// ── START ──
+checkAuth();
+</script>
+</body>
+</html>
