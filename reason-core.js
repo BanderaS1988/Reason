@@ -5,7 +5,7 @@ const REASON_CORE = (function() {
   'use strict';
 
   // ==================== KONFIG ====================
-  const SITE_URL = 'https://reason.hu';
+  const SITE_URL = 'https://reason-five.vercel.app';
   const BUFFER_TOKEN = '';
   const GROQ_API_KEY = null;
 
@@ -30,7 +30,7 @@ const REASON_CORE = (function() {
   const PREMIUM_TYPES = [];
 
   // IndexNow API kulcs – Bing/Yandex azonnali indexeléshez (generálj egy random stringet)
-  const INDEXNOW_KEY = '';
+  const INDEXNOW_KEY = 'reason2025xyz';
 
   // AI crawler user-agentek akiket engedélyezünk (GEO)
   const ALLOWED_AI_CRAWLERS = [
