@@ -109,7 +109,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .articles-grid.list-view{grid-template-columns:1fr;gap:10px}
 
 /* ARTICLE CARD */
-.article-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:.2s;display:flex;flex-direction:column}
+.article-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:.2s;display:flex;flex-direction:column;text-decoration:none;color:inherit}
 .article-card:hover{box-shadow:var(--shadow2);border-color:var(--border2);transform:translateY(-2px)}
 .articles-grid.list-view .article-card{flex-direction:row;border-radius:8px;min-height:auto}
 .articles-grid.list-view .article-card:hover{transform:none;box-shadow:var(--shadow)}
@@ -811,8 +811,7 @@ function renderCard(art){
   const tl=TYPE_LABEL[(art.article_type||'').toLowerCase()]||art.article_type||'';
   const ex=art.excerpt||(art.body||'').slice(0,220);
   const id=art.id;
-  const url=`/cikk/${id}`;
-  return `<a class="article-card" href="${url}" onclick="event.preventDefault();openModalById(${JSON.stringify(id)});history.pushState({},'',${JSON.stringify(url)})">
+  return `<div class="article-card" onclick="openModalById(${JSON.stringify(id)})">
     <div class="card-img" style="background:linear-gradient(135deg,${col}16,${col}08)">
       <div class="card-img-emoji">${ico}</div>
       <div class="card-img-badge">${c}</div>
@@ -832,7 +831,7 @@ function renderCard(art){
         <span class="card-readtime">⏱ ${art.read_time||'?'} perc</span>
       </div>
     </div>
-  </a>`;
+  </div>`;
 }
 
 function hlSearch(html){
