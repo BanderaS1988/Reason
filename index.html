@@ -147,9 +147,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .load-more-btn:disabled{opacity:.35;cursor:not-allowed}
 
 /* MODAL */
-.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(20,18,14,.72);backdrop-filter:blur(8px);display:flex;align-items:flex-start;justify-content:center;padding:48px 20px 40px;opacity:0;pointer-events:none;transition:opacity .3s;overflow-y:auto}
+.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(20,18,14,.72);backdrop-filter:blur(8px);display:flex;align-items:flex-start;justify-content:center;padding:48px 20px 40px;opacity:0;pointer-events:none;transition:opacity .3s;overflow-y:auto;max-height:100vh}
 .modal-overlay.open{opacity:1;pointer-events:auto}
-.article-modal{background:var(--bg2);border-radius:18px;width:100%;max-width:800px;box-shadow:0 32px 100px rgba(0,0,0,.25);overflow:hidden;transform:scale(.97) translateY(16px);transition:transform .35s cubic-bezier(.4,0,.2,1);position:relative;flex-shrink:0}
+.article-modal{background:var(--bg2);border-radius:18px;width:100%;max-width:800px;box-shadow:0 32px 100px rgba(0,0,0,.25);overflow-y:auto;max-height:90vh;transform:scale(.97) translateY(16px);transition:transform .35s cubic-bezier(.4,0,.2,1);position:relative;flex-shrink:0}
 .modal-overlay.open .article-modal{transform:scale(1) translateY(0)}
 .modal-header{padding:32px 44px 22px;border-bottom:1px solid var(--border);background:var(--bg2)}
 .modal-cat-bar{display:flex;align-items:center;gap:10px;margin-bottom:10px}
