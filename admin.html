@@ -608,6 +608,7 @@ async function uploadArticle() {
   const excerpt = document.getElementById('uExcerpt').value.trim();
   const body    = document.getElementById('uBody').value.trim();
   const msg     = document.getElementById('uploadMsg');
+  await REASON_CORE.afterPublish(article, allArticles);
 
   if (!title || !excerpt || !body) { msg.style.color='var(--accent)'; msg.textContent='Cím, összefoglaló és szöveg kötelező.'; return; }
 
