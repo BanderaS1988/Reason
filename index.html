@@ -811,7 +811,7 @@ function renderCard(art){
   const tl=TYPE_LABEL[(art.article_type||'').toLowerCase()]||art.article_type||'';
   const ex=art.excerpt||(art.body||'').slice(0,220);
   const id=art.id;
-  return `<div class="article-card" onclick="openModalById(${JSON.stringify(id)})">
+  return `<div class="article-card" onclick="openModalById('${id}')">
     <div class="card-img" style="background:linear-gradient(135deg,${col}16,${col}08)">
       <div class="card-img-emoji">${ico}</div>
       <div class="card-img-badge">${c}</div>
