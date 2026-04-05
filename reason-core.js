@@ -7,7 +7,7 @@ const REASON_CORE = (function() {
   // ==================== KONFIG ====================
   const SITE_URL = 'https://reason-five.vercel.app';
   const BUFFER_TOKEN = '';
-  const GROQ_API_KEY = null;
+  const GROQ_API_KEY = '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';
 
   // AdSense publisher ID – ide a sajátod kerül ha megvan
   const ADSENSE_CLIENT = 'ca-pub-XXXXXXXXXX';
@@ -1106,7 +1106,17 @@ Szöveg: ${article.excerpt || ''}`;
   // ==================== 28. AUTOMATIKUS OG KÉPGENERÁLÁS ====================
   // Ha nincs kép a cikkhez, SVG alapú OG képet generál a cikk címéből.
   // Ezt data URL-ként adja vissza – szerver oldalon PNG-vé kell konvertálni.
-  function generateOGImage(article) {
+function generateOGImage(article) {
+    const escapeXml = (str) => {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    };
+    
     const title = (article.title || '').slice(0, 80);
     const type = (article.type || '').toUpperCase();
     const date = new Date(article.timestamp || Date.now()).toLocaleDateString('hu');
@@ -1126,13 +1136,12 @@ Szöveg: ${article.excerpt || ''}`;
     const encoded = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
     console.log(`[OGImage] Kép generálva: ${article.id}`);
     return encoded;
-  }
+}
 
-
-  // ==================== 29. OLDALBETÖLTÉSI SEBESSÉG MONITOR ====================
-  // Figyeli az oldal betöltési idejét és naplózza.
-  // Ha 3 másodperc felett van, figyelmeztet – a Google ezt rangsorolási tényezőként kezeli.
-  function monitorPageSpeed() {
+// ==================== 29. OLDALBETÖLTÉSI SEBESSÉG MONITOR ====================
+// Figyeli az oldal betöltési idejét és naplózza.
+// Ha 3 másodperc felett van, figyelmeztet – a Google ezt rangsorolási tényezőként kezeli.
+function monitorPageSpeed() {
     if (typeof window === 'undefined' || !window.performance) return null;
 
     const timing = window.performance.timing;
@@ -1140,10 +1149,10 @@ Szöveg: ${article.excerpt || ''}`;
     const domReady = timing.domContentLoadedEventEnd - timing.navigationStart;
 
     const report = {
-      loadTime: loadTime,
-      domReady: domReady,
-      date: new Date().toISOString(),
-      slow: loadTime > 3000
+        loadTime: loadTime,
+        domReady: domReady,
+        date: new Date().toISOString(),
+        slow: loadTime > 3000
     };
 
     const history = JSON.parse(localStorage.getItem('reason_speed_log') || '[]');
@@ -1152,14 +1161,13 @@ Szöveg: ${article.excerpt || ''}`;
     localStorage.setItem('reason_speed_log', JSON.stringify(history));
 
     if (report.slow) {
-      console.warn(`[Speed] ⚠️ Lassú oldal: ${loadTime}ms – SEO kockázat!`);
+        console.warn(`[Speed] ⚠️ Lassú oldal: ${loadTime}ms – SEO kockázat!`);
     } else {
-      console.log(`[Speed] ✓ Betöltési idő: ${loadTime}ms`);
+        console.log(`[Speed] ✓ Betöltési idő: ${loadTime}ms`);
     }
 
     return report;
-  }
-
+}
 
   // ==================== 30. PROGRAMMATIC SEO – KATEGÓRIA/TAG OLDALAK ====================
   // Egy cikkből automatikusan generál kategória, tag és összesítő oldalakat.
@@ -1227,14 +1235,18 @@ Szöveg: ${article.excerpt || ''}`;
   // A Google így tudja hogy ugyanaz a tartalom két nyelven elérhető,
   // és mindkét nyelvű keresőforgalmat hozza.
   function generateHreflangTags(article) {
+    const escapeUrl = (str) => {
+        return encodeURI(str);
+    };
+    
     const huUrl = `${SITE_URL}/cikk/${article.id}`;
     const enUrl = `${SITE_URL}/en/article/${article.id}`;
 
     return `
-<link rel="alternate" hreflang="hu" href="${huUrl}" />
-<link rel="alternate" hreflang="en" href="${enUrl}" />
-<link rel="alternate" hreflang="x-default" href="${huUrl}" />`.trim();
-  }
+<link rel="alternate" hreflang="hu" href="${escapeUrl(huUrl)}" />
+<link rel="alternate" hreflang="en" href="${escapeUrl(enUrl)}" />
+<link rel="alternate" hreflang="x-default" href="${escapeUrl(huUrl)}" />`.trim();
+}
 
 
   // ==================== 32. FAQ SCHEMA AUTOMATIKUS GENERÁLÁS ====================
@@ -1291,6 +1303,16 @@ Minden válasz max 60 szó.`;
   // Ha más oldal beágyazza, automatikusan visszalinkel a Reason-re.
   // Ez passzív backlink szerzés – nulláról is működik.
   function generateEmbedCode(article) {
+    const escapeXml = (str) => {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    };
+    
     const embedHtml = `
 <div style="border:1px solid #e0e0e0;border-radius:8px;padding:1.2rem;max-width:500px;font-family:Georgia,serif;">
   <div style="font-size:0.75rem;color:#999;margin-bottom:0.5rem;letter-spacing:2px;">REASON · ${(article.type || '').toUpperCase()}</div>
@@ -1317,7 +1339,7 @@ Minden válasz max 60 szó.`;
 
     console.log(`[Embed] Embed kód generálva: ${article.id}`);
     return embedBlock;
-  }
+}
 
 
   // ==================== 34. ENTITY MARKUP (Wikidata) ====================
@@ -1377,12 +1399,22 @@ Max 5 entitás, csak a legfontosabbak.`;
   // külön AMP karuzelben jelennek meg a találatokban.
   // Az AMP oldal elérhető: /amp/cikk/{id}
   function generateAMPVersion(article, processedHtml) {
+    const escapeXml = (str) => {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    };
+    
     // AMP-kompatibilis HTML – külső JS és CSS tilos, csak inline style
     const cleanHtml = (processedHtml || article.excerpt || '')
-      .replace(/<script[\s\S]*?<\/script>/gi, '') // JS eltávolítása
-      .replace(/<ins[\s\S]*?<\/ins>/gi, '')        // AdSense eltávolítása (AMP-ban külön kell)
-      .replace(/style="[^"]*"/gi, '')              // inline style eltávolítása (AMP saját CSS)
-      .slice(0, 5000);
+        .replace(/<script[\s\S]*?<\/script>/gi, '') // JS eltávolítása
+        .replace(/<ins[\s\S]*?<\/ins>/gi, '')        // AdSense eltávolítása (AMP-ban külön kell)
+        .replace(/style="[^"]*"/gi, '')              // inline style eltávolítása (AMP saját CSS)
+        .slice(0, 5000);
 
     const amp = `<!doctype html>
 <html ⚡ lang="hu">
@@ -1423,7 +1455,7 @@ Max 5 entitás, csak a legfontosabbak.`;
     localStorage.setItem(`reason_amp_${article.id}`, amp);
     console.log(`[AMP] AMP verzió generálva: ${article.id}`);
     return amp;
-  }
+}
 
 
   // ==================== 36. WIKIPEDIA HIVATKOZÁS GENERÁLÁS ====================
@@ -1431,6 +1463,16 @@ Max 5 entitás, csak a legfontosabbak.`;
   // szerkesztési javaslatot a "Külső hivatkozások" szekcióba.
   // Egy Wikipedia backlink SEO értékben felülmúl 1000 normál backlinkét.
   async function generateWikipediaReference(article) {
+    const escapeXml = (str) => {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    };
+    
     if (typeof groqNoStreamFallback !== 'function') return null;
 
     const prompt = `Van-e ennek a cikknek olyan témája aminek valószínűleg van Wikipedia oldala?
@@ -1438,48 +1480,47 @@ Cím: ${article.title}
 Tartalom: ${article.excerpt || ''}
 
 Válasz csak JSON formátumban:
-{"hasWikiPage": true/false, "wikiTopic": "a Wikipedia cikk valószínű neve magyarul", "referenceText": "* [${SITE_URL}/cikk/${article.id} ${article.title}] – REASON, ${new Date(article.timestamp || Date.now()).toLocaleDateString('hu')}"}
+{"hasWikiPage": true/false, "wikiTopic": "a Wikipedia cikk valószínű neve magyarul", "referenceText": "* [${SITE_URL}/cikk/${article.id} ${escapeXml(article.title)}] – REASON, ${new Date(article.timestamp || Date.now()).toLocaleDateString('hu')}"}
 
 Ha nincs releváns Wikipedia oldal, hasWikiPage legyen false.`;
 
     try {
-      const result = await groqNoStreamFallback(0, 'llama-3.3-70b-versatile', 'Wikipedia szerkesztő vagy.', prompt, 300);
-      const jsonMatch = result.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error('Nincs JSON');
-      const data = JSON.parse(jsonMatch[0]);
+        const result = await groqNoStreamFallback(0, 'llama-3.3-70b-versatile', 'Wikipedia szerkesztő vagy.', prompt, 300);
+        const jsonMatch = result.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) throw new Error('Nincs JSON');
+        const data = JSON.parse(jsonMatch[0]);
 
-      if (!data.hasWikiPage) {
-        console.log('[Wikipedia] Nincs releváns Wikipedia oldal ehhez a cikkhez');
-        return null;
-      }
-
-      // Wikipedia API – ellenőrzi hogy létezik-e az oldal
-      const wikiCheckUrl = `https://hu.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(data.wikiTopic)}`;
-      try {
-        const wikiResp = await fetch(wikiCheckUrl);
-        if (!wikiResp.ok) {
-          console.log(`[Wikipedia] Oldal nem található: ${data.wikiTopic}`);
-          return null;
+        if (!data.hasWikiPage) {
+            console.log('[Wikipedia] Nincs releváns Wikipedia oldal ehhez a cikkhez');
+            return null;
         }
-        const wikiData = await wikiResp.json();
-        const ref = {
-          wikiUrl: `https://hu.wikipedia.org/wiki/${encodeURIComponent(data.wikiTopic)}`,
-          wikiTitle: wikiData.title,
-          referenceText: data.referenceText,
-          editUrl: `https://hu.wikipedia.org/w/index.php?title=${encodeURIComponent(data.wikiTopic)}&action=edit`
-        };
-        localStorage.setItem(`reason_wiki_ref_${article.id}`, JSON.stringify(ref));
-        console.log(`[Wikipedia] Hivatkozás javaslat generálva: ${wikiData.title}`);
-        return ref;
-      } catch(e) {
-        console.warn('[Wikipedia] API hiba:', e);
-        return null;
-      }
+
+        const wikiCheckUrl = `https://hu.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(data.wikiTopic)}`;
+        try {
+            const wikiResp = await fetch(wikiCheckUrl);
+            if (!wikiResp.ok) {
+                console.log(`[Wikipedia] Oldal nem található: ${data.wikiTopic}`);
+                return null;
+            }
+            const wikiData = await wikiResp.json();
+            const ref = {
+                wikiUrl: `https://hu.wikipedia.org/wiki/${encodeURIComponent(data.wikiTopic)}`,
+                wikiTitle: wikiData.title,
+                referenceText: data.referenceText,
+                editUrl: `https://hu.wikipedia.org/w/index.php?title=${encodeURIComponent(data.wikiTopic)}&action=edit`
+            };
+            localStorage.setItem(`reason_wiki_ref_${article.id}`, JSON.stringify(ref));
+            console.log(`[Wikipedia] Hivatkozás javaslat generálva: ${wikiData.title}`);
+            return ref;
+        } catch(e) {
+            console.warn('[Wikipedia] API hiba:', e);
+            return null;
+        }
     } catch(e) {
-      console.error('[Wikipedia] Hiba:', e);
-      return null;
+        console.error('[Wikipedia] Hiba:', e);
+        return null;
     }
-  }
+}
 
 
   // ==================== 37. GOOGLE KNOWLEDGE GRAPH BEJEGYZÉS ====================
@@ -1545,32 +1586,40 @@ Ha nincs releváns Wikipedia oldal, hasWikiPage legyen false.`;
   // A Google E-E-A-T rendszerben a tudományos forrásokra hivatkozó oldalakat
   // magasabbra rangsorolja – ez a legtöbb híroldalnál teljesen hiányzik.
   async function injectExpertSources(article, articleHtml) {
+    const escapeXml = (str) => {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    };
+    
     if (!articleHtml) return articleHtml;
 
     try {
-      // Semantic Scholar API – ingyenes, kulcs nélkül is működik
-      const query = encodeURIComponent(article.title.slice(0, 60));
-      const resp = await fetch(
-        `https://api.semanticscholar.org/graph/v1/paper/search?query=${query}&limit=3&fields=title,authors,year,url,abstract`,
-        { headers: { 'Accept': 'application/json' } }
-      );
+        const query = encodeURIComponent(article.title.slice(0, 60));
+        const resp = await fetch(
+            `https://api.semanticscholar.org/graph/v1/paper/search?query=${query}&limit=3&fields=title,authors,year,url,abstract`,
+            { headers: { 'Accept': 'application/json' } }
+        );
 
-      if (!resp.ok) return articleHtml;
-      const data = await resp.json();
-      if (!data.data || data.data.length === 0) return articleHtml;
+        if (!resp.ok) return articleHtml;
+        const data = await resp.json();
+        if (!data.data || data.data.length === 0) return articleHtml;
 
-      // Forrás blokk generálása
-      const sourceItems = data.data
-        .filter(p => p.url && p.title)
-        .map(p => {
-          const authors = (p.authors || []).slice(0, 2).map(a => a.name).join(', ');
-          const year = p.year || '';
-          return `<li><a href="${p.url}" target="_blank" rel="noopener noreferrer">${escapeXml(p.title)}</a>${authors ? ` – ${escapeXml(authors)}` : ''}${year ? ` (${year})` : ''}</li>`;
-        }).join('');
+        const sourceItems = data.data
+            .filter(p => p.url && p.title)
+            .map(p => {
+                const authors = (p.authors || []).slice(0, 2).map(a => a.name).join(', ');
+                const year = p.year || '';
+                return `<li><a href="${p.url}" target="_blank" rel="noopener noreferrer">${escapeXml(p.title)}</a>${authors ? ` – ${escapeXml(authors)}` : ''}${year ? ` (${year})` : ''}</li>`;
+            }).join('');
 
-      if (!sourceItems) return articleHtml;
+        if (!sourceItems) return articleHtml;
 
-      const sourcesBlock = `
+        const sourcesBlock = `
 <div class="reason-sources" style="margin:2.5rem 0;padding:1.5rem;background:#f8f8f8;border-left:3px solid #111;border-radius:0 6px 6px 0;">
   <h4 style="margin:0 0 0.75rem;font-size:0.9rem;letter-spacing:2px;color:#666;">TUDOMÁNYOS HÁTTÉR</h4>
   <ul style="margin:0;padding-left:1.2rem;font-size:0.9rem;line-height:1.8;">
@@ -1578,13 +1627,13 @@ Ha nincs releváns Wikipedia oldal, hasWikiPage legyen false.`;
   </ul>
 </div>`;
 
-      console.log(`[ExpertSources] ${data.data.length} tudományos forrás beillesztve`);
-      return articleHtml + sourcesBlock;
+        console.log(`[ExpertSources] ${data.data.length} tudományos forrás beillesztve`);
+        return articleHtml + sourcesBlock;
     } catch(e) {
-      console.warn('[ExpertSources] Hiba:', e);
-      return articleHtml;
+        console.warn('[ExpertSources] Hiba:', e);
+        return articleHtml;
     }
-  }
+}
 
 
   // ==================== 39. TARTALOM RÉS ELEMZÉS (Content Gap) ====================
