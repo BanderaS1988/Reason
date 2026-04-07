@@ -1,10 +1,39 @@
 {
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "x-robots-tag",
+          "value": "index, follow"
+        }
+      ]
+    }
+  ],
   "rewrites": [
-    { "source": "/sitemap.xml", "destination": "/api/sitemap.xml" },
-    { "source": "/rss.xml", "destination": "/api/rss.xml" },
-    { "source": "/robots.txt", "destination": "/api/robots.txt" },
-    { "source": "/news-sitemap.xml", "destination": "/api/news-sitemap.xml" },
-    { "source": "/llms.txt", "destination": "/api/llms.txt" },
-    { "source": "/cikk/:id", "destination": "/api/cikk/$1" }
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap.xml"
+    },
+    {
+      "source": "/rss.xml",
+      "destination": "/api/rss.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "/api/robots.txt"
+    },
+    {
+      "source": "/news-sitemap.xml",
+      "destination": "/api/news-sitemap.xml"
+    },
+    {
+      "source": "/llms.txt",
+      "destination": "/api/llms.txt"
+    },
+    {
+      "source": "/cikk/:id",
+      "destination": "/api/cikk/$1"
+    }
   ]
 }
