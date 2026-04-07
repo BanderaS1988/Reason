@@ -159,7 +159,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .modal-title{font-family:var(--font-d);font-size:32px;font-weight:800;line-height:1.22;color:var(--text);margin-bottom:16px}
 .modal-meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--text4)}
 .modal-meta-item{display:flex;align-items:center;gap:4px}
-.modal-body{padding:36px 44px 48px;font-family:var(--font-d);font-size:18px;line-height:2.05;color:var(--text2)}
+.modal-body{padding:36px 44px 28px;font-family:var(--font-d);font-size:18px;line-height:2.05;color:var(--text2)}
 .modal-body p{margin-bottom:22px;text-align:justify}
 .modal-body p:first-child::first-letter{font-size:3.5em;font-weight:700;float:left;margin:0 8px -8px 0;line-height:.78;color:var(--accent);font-family:var(--font-d)}
 .modal-body h2{font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--text);margin:40px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
@@ -251,7 +251,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
   .featured-card{grid-template-columns:1fr}
   .modal-title{font-size:22px}
   .modal-header{padding:20px 20px 16px}
-  .modal-body{padding:20px 20px 32px;font-size:16px}
+  .modal-body{padding:20px 20px 20px;font-size:16px}
+  #modalActionBar{padding:0 20px 20px!important}
+  #modalCommentsSection{padding:0 20px 36px!important}
   .articles-grid{grid-template-columns:1fr}
 }
 </style>
@@ -385,6 +387,36 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
       <div class="modal-meta" id="modalMeta"></div>
     </div>
     <div class="modal-body" id="modalBody"></div>
+
+    <!-- ── AKCIÓ SÁV: lájk + megosztás ── -->
+    <div id="modalActionBar" style="display:none;padding:0 44px 28px">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:20px;border-top:1px solid var(--border)">
+        <button id="modalLikeBtn" onclick="handleModalLike()" style="display:flex;align-items:center;gap:7px;padding:9px 18px;background:var(--bg2);border:2px solid var(--border);border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;transition:.15s;color:var(--text);font-family:var(--font-s)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span id="modalLikeCount">0</span>
+        </button>
+        <button onclick="handleModalShare()" style="display:flex;align-items:center;gap:7px;padding:9px 18px;background:var(--accent);border:none;border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;color:#fff;font-family:var(--font-s)">
+          ↗ Megosztás
+        </button>
+        <span id="modalShareMsg" style="font-size:12px;color:#1a7a3c;font-weight:600"></span>
+      </div>
+    </div>
+
+    <!-- ── KOMMENTEK ── -->
+    <div id="modalCommentsSection" style="display:none;padding:0 44px 48px">
+      <div style="border-top:2px solid var(--border);padding-top:28px">
+        <h2 style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--text);margin-bottom:18px">Hozzászólások</h2>
+        <div id="modalCommentList"></div>
+        <div style="margin-top:24px">
+          <h3 style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px">Írj hozzászólást</h3>
+          <input id="modalCAuthor" type="text" maxlength="80" placeholder="Neved (opcionális)" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13px;margin-bottom:10px;box-sizing:border-box;background:var(--bg);color:var(--text);font-family:var(--font-s)">
+          <textarea id="modalCBody" maxlength="1000" placeholder="Hozzászólásod..." style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13px;min-height:90px;resize:vertical;box-sizing:border-box;background:var(--bg);color:var(--text);font-family:var(--font-s)"></textarea>
+          <button onclick="submitModalComment()" style="margin-top:8px;padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-s)">Küldés</button>
+          <div id="modalCMsg" style="font-size:12px;margin-top:8px;min-height:16px"></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -898,6 +930,33 @@ function openModal(art){
   document.getElementById('modalBody').innerHTML=paras.length
     ?paras.map(p=>`<p>${esc(p.trim())}</p>`).join('')
     :`<p>${esc(body)}</p>`;
+
+  // ── AKCIÓ SÁV + KOMMENTEK ──
+  const actionBar = document.getElementById('modalActionBar');
+  const commentsSection = document.getElementById('modalCommentsSection');
+  actionBar.style.display = 'block';
+  commentsSection.style.display = 'block';
+
+  // Lájk szám és állapot
+  document.getElementById('modalLikeCount').textContent = art.like_count ?? 0;
+  const likeBtn = document.getElementById('modalLikeBtn');
+  const likeKey = 'reason_liked_' + art.id;
+  if (localStorage.getItem(likeKey)) {
+    likeBtn.style.cssText += ';background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important';
+  } else {
+    likeBtn.style.background = '';
+    likeBtn.style.color = '';
+    likeBtn.style.borderColor = '';
+  }
+  likeBtn.dataset.articleId = art.id;
+  document.getElementById('modalShareMsg').textContent = '';
+  document.getElementById('modalCMsg').textContent = '';
+  document.getElementById('modalCBody').value = '';
+  document.getElementById('modalCAuthor').value = '';
+
+  // Kommentek betöltése
+  loadModalComments(art.id);
+
   document.getElementById('articleModal').classList.add('open');
   document.body.style.overflow='hidden';
   document.getElementById('articleModalBox').scrollTop=0;
@@ -1067,6 +1126,160 @@ function openSupport(){ document.getElementById('supportModal').classList.add('o
 function closeSupport(){ document.getElementById('supportModal').classList.remove('open'); }
 window.openAuth=openAuth; window.closeAuth=closeAuth;
 window.openSupport=openSupport; window.closeSupport=closeSupport;
+
+// ── MODAL LÁJK ──────────────────────────────────────────────────────────────
+async function handleModalLike() {
+  const btn = document.getElementById('modalLikeBtn');
+  const countEl = document.getElementById('modalLikeCount');
+  const articleId = btn.dataset.articleId;
+  if (!articleId) return;
+  const likeKey = 'reason_liked_' + articleId;
+  if (localStorage.getItem(likeKey)) return; // már lájkolta
+
+  // Optimista UI
+  const prev = parseInt(countEl.textContent, 10) || 0;
+  countEl.textContent = prev + 1;
+  btn.style.background = 'var(--accent)';
+  btn.style.color = '#fff';
+  btn.style.borderColor = 'var(--accent)';
+  localStorage.setItem(likeKey, '1');
+
+  // Szerver frissítés: GET + PATCH
+  try {
+    const getR = await fetch(
+      SB_URL + '/rest/v1/articles?id=eq.' + articleId + '&select=like_count&limit=1',
+      { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } }
+    );
+    const getData = await getR.json();
+    const current = getData?.[0]?.like_count ?? prev;
+    const patchR = await fetch(
+      SB_URL + '/rest/v1/articles?id=eq.' + articleId,
+      {
+        method: 'PATCH',
+        headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify({ like_count: current + 1 })
+      }
+    );
+    if (!patchR.ok) throw new Error('patch_failed');
+    countEl.textContent = current + 1;
+    // allArticles cache frissítése
+    const cached = allArticles.find(a => String(a.id) === String(articleId));
+    if (cached) cached.like_count = current + 1;
+  } catch(e) {
+    // Rollback
+    countEl.textContent = prev;
+    btn.style.background = '';
+    btn.style.color = '';
+    btn.style.borderColor = '';
+    localStorage.removeItem(likeKey);
+    console.error('[Like] Hiba:', e);
+  }
+}
+
+// ── MODAL MEGOSZTÁS ─────────────────────────────────────────────────────────
+async function handleModalShare() {
+  const btn = document.getElementById('modalLikeBtn');
+  const articleId = btn.dataset.articleId;
+  if (!articleId) return;
+  const art = allArticles.find(a => String(a.id) === String(articleId));
+  const url = 'https://reason-five.vercel.app/cikk/' + articleId;
+  const title = art ? art.title : 'REASON cikk';
+  const msgEl = document.getElementById('modalShareMsg');
+  msgEl.textContent = '';
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title, url });
+    } catch(e) {
+      if (e.name !== 'AbortError') console.error('[Share]', e);
+    }
+  } else {
+    try {
+      await navigator.clipboard.writeText(url);
+      msgEl.textContent = '✓ Link másolva!';
+      setTimeout(() => { msgEl.textContent = ''; }, 2500);
+    } catch(e) {
+      // execCommand fallback régi böngészőhöz
+      const ta = document.createElement('textarea');
+      ta.value = url;
+      ta.style.cssText = 'position:fixed;opacity:0';
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      try { document.execCommand('copy'); msgEl.textContent = '✓ Link másolva!'; }
+      catch(e2) { msgEl.textContent = url; }
+      document.body.removeChild(ta);
+      setTimeout(() => { msgEl.textContent = ''; }, 2500);
+    }
+  }
+}
+
+// ── KOMMENTEK BETÖLTÉSE ─────────────────────────────────────────────────────
+async function loadModalComments(articleId) {
+  const listEl = document.getElementById('modalCommentList');
+  listEl.innerHTML = '<div style="font-size:13px;color:var(--text4);padding:8px 0">Betöltés...</div>';
+  try {
+    const r = await fetch(
+      SB_URL + '/rest/v1/comments?article_id=eq.' + articleId + '&order=created_at.asc',
+      { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } }
+    );
+    const comments = await r.json();
+    if (!Array.isArray(comments) || comments.length === 0) {
+      listEl.innerHTML = '<div style="font-size:13px;color:var(--text4);padding:8px 0">Még nincs hozzászólás. Légy az első!</div>';
+      return;
+    }
+    listEl.innerHTML = comments.map(c => `
+      <div style="border-bottom:1px solid var(--border);padding:12px 0">
+        <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px">${esc(c.author || 'Névtelen')}</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6">${esc(c.body)}</div>
+        <div style="font-size:10px;color:var(--text4);margin-top:4px">${new Date(c.created_at).toLocaleString('hu-HU',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
+      </div>`).join('');
+  } catch(e) {
+    listEl.innerHTML = '<div style="font-size:13px;color:var(--text4)">Kommentek betöltése sikertelen.</div>';
+    console.error('[Comments] Hiba:', e);
+  }
+}
+
+// ── KOMMENT KÜLDÉS ──────────────────────────────────────────────────────────
+async function submitModalComment() {
+  const likeBtn = document.getElementById('modalLikeBtn');
+  const articleId = likeBtn.dataset.articleId;
+  if (!articleId) return;
+  const author = document.getElementById('modalCAuthor').value.trim() || 'Névtelen olvasó';
+  const body = document.getElementById('modalCBody').value.trim();
+  const msgEl = document.getElementById('modalCMsg');
+
+  if (body.length < 3) {
+    msgEl.style.color = 'var(--accent)';
+    msgEl.textContent = 'Túl rövid a hozzászólás.';
+    return;
+  }
+  msgEl.style.color = 'var(--text4)';
+  msgEl.textContent = 'Küldés...';
+
+  try {
+    const r = await fetch(SB_URL + '/rest/v1/comments', {
+      method: 'POST',
+      headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({ article_id: articleId, author, body })
+    });
+    if (!r.ok) throw new Error('post_failed');
+    msgEl.style.color = '#1a7a3c';
+    msgEl.textContent = 'Hozzászólás elküldve!';
+    document.getElementById('modalCBody').value = '';
+    document.getElementById('modalCAuthor').value = '';
+    // Kommentek újratöltése
+    await loadModalComments(articleId);
+    setTimeout(() => { msgEl.textContent = ''; }, 3000);
+  } catch(e) {
+    msgEl.style.color = 'var(--accent)';
+    msgEl.textContent = 'Hiba történt, próbáld újra.';
+    console.error('[Comment] Hiba:', e);
+  }
+}
+
+window.handleModalLike = handleModalLike;
+window.handleModalShare = handleModalShare;
+window.submitModalComment = submitModalComment;
 
 function switchTab(tab){
   document.getElementById('authLoginForm').style.display = tab==='login'?'':'none';
