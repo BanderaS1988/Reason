@@ -25,7 +25,7 @@ const REASON_CORE = (function() {
   const GROQ_API_KEY = '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';
 
   // AdSense publisher ID – ide a sajátod kerül ha megvan
-  const ADSENSE_CLIENT = 'ca-pub-XXXXXXXXXX';
+  const ADSENSE_CLIENT = 'ca-pub-7856205120757314';
 
   // Affiliate programok – minden kulcsszóhoz link
   const AFFILIATE_MAP = {
