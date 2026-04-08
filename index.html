@@ -822,18 +822,20 @@ function renderFeatured(art){
   const fc=document.getElementById('featuredCard');
   fc.style.background=col+'0a';
   fc.innerHTML=`
-    <div class="featured-img" style="background:linear-gradient(135deg,${col}20,${col}08)">${ico}</div>
-    <div class="featured-content">
-      <div class="featured-cat" style="color:${col}">${c}</div>
-      <div class="featured-title">${esc(art.title||'Cím nélkül')}</div>
-      <div class="featured-excerpt">${esc(art.excerpt||'')}</div>
-      <div class="featured-foot">
-        <span>🕐 ${fmtTime(art.created_at)}</span>
-        <span>⏱ ${art.read_time||'?'} perc</span>
-        ${art.is_premium?'<span style="color:#b8860b">⭐ Prémium</span>':''}
+    <a href="/cikk/${art.id}" style="text-decoration:none;color:inherit;display:grid;grid-template-columns:280px 1fr">
+      <div class="featured-img" style="background:linear-gradient(135deg,${col}20,${col}08)">${ico}</div>
+      <div class="featured-content">
+        <div class="featured-cat" style="color:${col}">${c}</div>
+        <div class="featured-title">${esc(art.title||'Cím nélkül')}</div>
+        <div class="featured-excerpt">${esc(art.excerpt||'')}</div>
+        <div class="featured-foot">
+          <span>🕐 ${fmtTime(art.created_at)}</span>
+          <span>⏱ ${art.read_time||'?'} perc</span>
+          ${art.is_premium?'<span style="color:#b8860b">⭐ Prémium</span>':''}
+        </div>
       </div>
-    </div>`;
-  fc.onclick=()=>openModal(art);
+    </a>`;
+ 
 }
 
 function renderCard(art){
@@ -843,7 +845,7 @@ function renderCard(art){
   const tl=TYPE_LABEL[(art.article_type||'').toLowerCase()]||art.article_type||'';
   const ex=art.excerpt||(art.body||'').slice(0,220);
   const id=art.id;
-  return `<div class="article-card" onclick="openModalById('${id}')">
+  return `<a href="/cikk/${id}" class="article-card" style="text-decoration:none;color:inherit;display:block">
     <div class="card-img" style="background:linear-gradient(135deg,${col}16,${col}08)">
       <div class="card-img-emoji">${ico}</div>
       <div class="card-img-badge">${c}</div>
@@ -863,9 +865,8 @@ function renderCard(art){
         <span class="card-readtime">⏱ ${art.read_time||'?'} perc</span>
       </div>
     </div>
-  </div>`;
+  </a>`;
 }
-
   
 function hlSearch(html){
   if(!searchQ) return html;
