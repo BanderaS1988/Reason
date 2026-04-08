@@ -6,6 +6,23 @@
         {
           "key": "x-robots-tag",
           "value": "index, follow"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "s-maxage=60, stale-while-revalidate=30"
         }
       ]
     }
@@ -33,7 +50,7 @@
     },
     {
       "source": "/cikk/:id",
-      "destination": "/api/cikk/$1"
+      "destination": "/api/cikk/:id"
     }
   ]
 }
