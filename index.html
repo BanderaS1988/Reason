@@ -1035,7 +1035,7 @@ async function pingVisitor() {
         'Content-Type': 'application/json',
         'Prefer': 'resolution=merge-duplicates'
       },
-      body: JSON.stringify({ session_id: SESSION_ID, last_seen: new Date().toISOString() })
+      body: JSON.stringify({ session_id: SESSION_ID, last_seen: new Date().toISOString(), is_admin: false })
     });
   } catch(e) {}
 }
