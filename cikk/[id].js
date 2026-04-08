@@ -63,6 +63,11 @@ export default function CikkPage({ article, comments }) {
     <>
       <head>
         <title>{esc(art.title)} – REASON</title>
+        
+        {/* GOOGLE ADSENSE */}
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7856205120757314"
+             crossorigin="anonymous"></script>
+        
         <meta name="description" content={esc((art.excerpt || '').slice(0, 160))} />
         <meta property="og:title" content={esc(art.title)} />
         <meta property="og:description" content={esc((art.excerpt || '').slice(0, 160))} />
@@ -99,6 +104,19 @@ export default function CikkPage({ article, comments }) {
           </div>
 
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '18px', lineHeight: '2', color: '#3d3a35' }} dangerouslySetInnerHTML={{ __html: bodyHtml }} />
+
+          {/* ADSENSE BANNER a kommentek felett */}
+          <div style={{ marginTop: '32px', marginBottom: '24px' }}>
+            <ins className="adsbygoogle"
+                 style={{ display: 'block' }}
+                 data-ad-client="ca-pub-7856205120757314"
+                 data-ad-slot="4427813320"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script dangerouslySetInnerHTML={{
+              __html: '(adsbygoogle = window.adsbygoogle || []).push({});'
+            }} />
+          </div>
 
           <div style={{ marginTop: '48px', borderTop: '2px solid #e8e4dc', paddingTop: '32px' }}>
             <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '22px', fontWeight: '700', marginBottom: '20px' }}>Hozzászólások</h2>
