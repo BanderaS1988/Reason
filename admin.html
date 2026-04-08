@@ -459,7 +459,8 @@ async function loadAll() {
 async function loadLiveReaders() {
   try {
     const since = new Date(Date.now() - 5*60*1000).toISOString();
-    const data = await sb(`/rest/v1/visitors?last_seen=gte.${since}&select=session_id`);
+    // Csak a nem-admin olvasók (is_admin = false)
+    const data = await sb(`/rest/v1/visitors?last_seen=gte.${since}&is_admin=eq.false&select=session_id`);
     const n = new Set(data.map(v => v.session_id)).size;
     document.getElementById('liveReaders').textContent = n;
   } catch(e) {}
