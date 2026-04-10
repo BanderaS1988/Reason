@@ -306,17 +306,18 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
   </div>
   <nav class="main-nav">
     <div class="nav-inner" id="mainNav">
-      <div class="nav-item active" data-cat="all">Összes <span class="nav-count" id="nc-all">0</span></div>
-      <div class="nav-item" data-cat="Világ">Világ <span class="nav-count" id="nc-Világ">0</span></div>
-      <div class="nav-item" data-cat="Tech">Tech <span class="nav-count" id="nc-Tech">0</span></div>
-      <div class="nav-item" data-cat="Gazdaság">Gazdaság <span class="nav-count" id="nc-Gazdaság">0</span></div>
-      <div class="nav-item" data-cat="Sport">Sport <span class="nav-count" id="nc-Sport">0</span></div>
-      <div class="nav-item" data-cat="Kultúra">Kultúra <span class="nav-count" id="nc-Kultúra">0</span></div>
-      <div class="nav-item" data-cat="Botrány">Botrány <span class="nav-count" id="nc-Botrány">0</span></div>
-      <div class="nav-item" data-cat="Életmód">Életmód <span class="nav-count" id="nc-Életmód">0</span></div>
-      <div class="nav-item" data-cat="Krimi">Krimi <span class="nav-count" id="nc-Krimi">0</span></div>
-      <div class="nav-item" data-cat="Politika">Politika <span class="nav-count" id="nc-Politika">0</span></div>
-    </div>
+  <div class="nav-item active" data-cat="all">Összes <span class="nav-count" id="nc-all">0</span></div>
+  <div class="nav-item" data-cat="Szórakozás">Szórakozás <span class="nav-count" id="nc-Szórakozás">0</span></div>
+  <div class="nav-item" data-cat="Tech">Tech <span class="nav-count" id="nc-Tech">0</span></div>
+  <div class="nav-item" data-cat="Életmód">Életmód <span class="nav-count" id="nc-Életmód">0</span></div>
+  <div class="nav-item" data-cat="Sport">Sport <span class="nav-count" id="nc-Sport">0</span></div>
+  <div class="nav-item" data-cat="Kultúra">Kultúra <span class="nav-count" id="nc-Kultúra">0</span></div>
+  <div class="nav-item" data-cat="Pénz">Pénz <span class="nav-count" id="nc-Pénz">0</span></div>
+  <div class="nav-item" data-cat="Egészség">Egészség <span class="nav-count" id="nc-Egészség">0</span></div>
+  <div class="nav-item" data-cat="Utazás">Utazás <span class="nav-count" id="nc-Utazás">0</span></div>
+  <div class="nav-item" data-cat="Trending">Trending <span class="nav-count" id="nc-Trending">0</span></div>
+</div>
+
   </nav>
 </header>
 
@@ -590,23 +591,31 @@ let lastCount = -1;
 let userCity = null, userLat = null, userLon = null;
 
 const CAT_COLOR = {
-  Világ:'#c8102e', Tech:'#0066cc', Gazdaság:'#1a7a3c',
-  Életmód:'#b86000', Kultúra:'#7c3aed', Botrány:'#e8152f',
-  Sport:'#0099cc', Krimi:'#2d2d2d', Politika:'#8b0000',
-  // legacy fallbacks so old DB articles still render
-  Vélemény:'#b8860b', Tudomány:'#2d6a4f'
+  Szórakozás: '#c8102e',
+  Tech:        '#0066cc',
+  Életmód:     '#1a7a3c',
+  Sport:       '#0099cc',
+  Kultúra:     '#7c3aed',
+  Pénz:        '#b86000',
+  Egészség:    '#e8152f',
+  Utazás:      '#b8860b',
+  Trending:    '#a855f7',
 };
 const CAT_EMOJI = {
-  Világ:'🌍', Tech:'💻', Gazdaság:'📈', Életmód:'🌿',
-  Kultúra:'🎭', Botrány:'💥', Sport:'⚽', Krimi:'🔍', Politika:'🏛',
-  Vélemény:'💬', Tudomány:'🔬'
+  Szórakozás: '🎬',
+  Tech:        '💻',
+  Életmód:     '🌿',
+  Sport:       '⚽',
+  Kultúra:     '🎭',
+  Pénz:        '💰',
+  Egészség:    '❤️',
+  Utazás:      '✈️',
+  Trending:    '🔥',
 };
 
-// Category remapping: old DB values → new display names
-const CAT_REMAP = {
-  'Vélemény': 'Botrány',
-  'Tudomány': 'Életmód'
-};
+
+const CAT_REMAP = {};
+
 
 const TYPE_LABEL = {
   blog:'Blog', hir:'Hír', seo:'SEO', elemzés:'Elemzés', riport:'Riport', interjú:'Interjú'
@@ -1123,13 +1132,21 @@ function updateNavCounts(){
 }
 
 function updateStripTitle(){
-  const map={
-    all:'Legfrissebb',Világ:'Világ',Tech:'Tech',Gazdaság:'Gazdaság',
-    Sport:'Sport',Kultúra:'Kultúra',Botrány:'Botrány',
-    Életmód:'Életmód',Krimi:'Krimi',Politika:'Politika'
+  const map = {
+    all:        'Legfrissebb',
+    Szórakozás: 'Szórakozás',
+    Tech:       'Tech',
+    Életmód:    'Életmód',
+    Sport:      'Sport',
+    Kultúra:    'Kultúra',
+    Pénz:       'Pénz',
+    Egészség:   'Egészség',
+    Utazás:     'Utazás',
+    Trending:   'Trending',
   };
-  document.getElementById('stripTitle').textContent=map[cat]||cat;
+  document.getElementById('stripTitle').textContent = map[cat] || cat;
 }
+
 
 // ── TICKER ──
 function updateTicker(arts){
