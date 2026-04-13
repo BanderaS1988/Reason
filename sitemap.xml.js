@@ -13,9 +13,13 @@ export async function getServerSideProps({ res }) {
   
   const articles = await response.json();
   
-  // 2. Sitemap XML generálása
-  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+      <url>
+        <loc>${SITE}/</loc>
+        <changefreq>hourly</changefreq>
+        <priority>1.0</priority>
+      </url>
       ${articles.map(article => `
         <url>
           <loc>${SITE}/cikk/${article.id}</loc>
