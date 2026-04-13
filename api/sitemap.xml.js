@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   let articles = [];
   try {
     const r = await fetch(
-      `${SB_URL}/rest/v1/articles?select=id,updated_at,created_at&order=created_at.desc&limit=1000`,
+      `${SB_URL}/rest/v1/articles?select=id,updated_at,created_at&order=created_at.desc&limit=5000`,
       { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
     );
     if (r.ok) articles = await r.json();
