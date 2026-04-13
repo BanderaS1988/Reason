@@ -1,9 +1,24 @@
 <!DOCTYPE html>
-<html lang="hu">
+<html lang="hu" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>REASON – Független Hírek</title>
+
+  <meta name="description" content="REASON – Független, valós idejű hírek. Belpolitika, pártok, elemzések torzítás nélkül.">
+<meta property="og:site_name" content="REASON">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://reason-five.vercel.app/">
+<meta property="og:title" content="REASON – Független Hírek">
+<meta property="og:description" content="Független, valós idejű hírek. Belpolitika, pártok, elemzések torzítás nélkül.">
+<meta property="og:image" content="https://reason-five.vercel.app/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="hu_HU">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="REASON – Független Hírek">
+<meta name="twitter:description" content="Független, valós idejű hírek torzítás nélkül.">
+<meta name="twitter:image" content="https://reason-five.vercel.app/og-default.png">
 
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7856205120757314" crossorigin="anonymous"></script>
 
@@ -22,8 +37,20 @@
   --font-d:'Playfair Display',Georgia,serif;
   --font-s:'Inter',system-ui,sans-serif;
   --font-m:'JetBrains Mono',monospace;
+
+  
+}
+
+  [data-theme="dark"] {
+  --bg:#0f0e0c;--bg2:#1a1814;--bg3:#242018;
+  --surface:#1a1814;--border:#2e2a24;--border2:#3d3830;
+  --text:#f0ede6;--text2:#c8c4bc;--text3:#9e9890;--text4:#706b62;
+  --tag-bg:#242018;--tag-text:#9e9890;
 }
 html{scroll-behavior:smooth}
+
+  
+
 body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:15px;line-height:1.6;min-height:100vh}
 
 /* TICKER */
@@ -350,8 +377,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
       <div class="logo" onclick="filterByCat('all')">RE<span>A</span>SON</div>
       <div class="logo-tagline">Független · Valós idejű · Megbízható</div>
     </div>
-    <div class="header-right">
-      <div class="clock-block">
+   <div class="header-right">
+  <button id="themeToggle" ...>🌙</button>
+  <div class="clock-block">
         <div id="clock-display">00:00:00</div>
         <div id="date-display">–</div>
       </div>
@@ -675,6 +703,8 @@ function tick() {
   document.getElementById('date-display').textContent = d.charAt(0).toUpperCase() + d.slice(1);
 }
 setInterval(tick, 1000); tick();
+
+
 
 // ── WEATHER ──
 const WICO = id => {
@@ -1617,6 +1647,22 @@ fetchActiveReaders(); fetchTotalViews();
 setInterval(() => { fetchActiveReaders(); fetchTotalViews(); }, 30 * 1000);
 initAuth(); initGDPR(); renderSupportBanner();
 
+
+// Téma
+function toggleTheme() {
+  const html = document.documentElement;
+  const dark = html.dataset.theme === 'dark';
+  html.dataset.theme = dark ? 'light' : 'dark';
+  document.getElementById('themeToggle').textContent = dark ? '🌙' : '☀️';
+  localStorage.setItem('reason_theme', dark ? 'light' : 'dark');
+}
+window.toggleTheme = toggleTheme;
+const savedTheme = localStorage.getItem('reason_theme');
+if (savedTheme) {
+  document.documentElement.dataset.theme = savedTheme;
+  document.getElementById('themeToggle').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+}
+  
 // Feliratkozás
 const subForm = document.getElementById('subscribeForm');
 if (subForm) {
