@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://kqugolmndqonbnjetdyi.supabase.co">
+<link rel="preconnect" href="https://api.openweathermap.org">
 <title>REASON – Független Hírek</title>
 
   <meta name="description" content="REASON – Független, valós idejű hírek. Belpolitika, pártok, elemzések torzítás nélkül.">
@@ -1682,6 +1686,16 @@ if (subForm) {
     } catch { msgDiv.style.color = '#e8152f'; msgDiv.textContent = 'Hiba történt, próbáld később.'; }
   });
 }
+
+// Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(() => console.log('SW registered'))
+      .catch(() => {});
+  });
+}
+  
 </script>
 
 <footer style="background:var(--text);color:var(--text4);text-align:center;padding:20px;font-size:11px;line-height:2">
