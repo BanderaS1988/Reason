@@ -1,21 +1,21 @@
 const SB_URL = 'https://kqugolmndqonbnjetdyi.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxdWdvbG1uZHFvbmJuamV0ZHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2OTM3NjMsImV4cCI6MjA4ODI2OTc2M30.wGEBEJDPUKsUPu9W5vxvH7Do0wX9U3FdgKzEzny_zBg';
-const SITE   = 'https://reason-five.vercel.app';
-
-async function getArticles() {
-  const r = await fetch(
-    `${SB_URL}/rest/v1/articles?select=id,title,created_at&order=created_at.desc&limit=500`,
-    { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
-  );
-  return r.ok ? r.json() : [];
-}
+const SITE = 'https://reason-five.vercel.app';
 
 export default async function handler(req, res) {
-  const articles = await getArticles();
+  let articles = [];
+  try {
+    const r = await fetch(
+      `${SB_URL}/rest/v1/articles?select=id,updated_at,created_at&order=created_at.desc&limit=1000`,
+      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+    );
+    if (r.ok) articles = await r.json();
+  } catch { /* nem kritikus */ }
+
   const urls = articles.map(a => `
   <url>
     <loc>${SITE}/cikk/${a.id}</loc>
-    <lastmod>${new Date(a.created_at).toISOString()}</lastmod>
+    <lastmod>${(a.updated_at || a.created_at || new Date().toISOString()).slice(0, 10)}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>`).join('');
@@ -30,6 +30,6 @@ export default async function handler(req, res) {
 </urlset>`;
 
   res.setHeader('Content-Type', 'application/xml');
-  res.setHeader('Cache-Control', 's-maxage=3600');
+  res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=300');
   res.send(xml);
 }
