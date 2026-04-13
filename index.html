@@ -899,7 +899,9 @@ function renderFeatured(art) {
   const c = art.category || 'Egyéb', col = CAT_COLOR[c] || '#888', ico = CAT_EMOJI[c] || '📰';
   const fc = document.getElementById('featuredCard');
   fc.style.background = col + '0a';
-  fc.innerHTML = `<a href="/cikk/${art.id}" style="text-decoration:none;color:inherit;display:grid;grid-template-columns:280px 1fr">
+  fc.style.cursor = 'pointer';
+  fc.onclick = () => openArticleById(art.id);
+  fc.innerHTML = `<div style="display:grid;grid-template-columns:280px 1fr">
     <div class="featured-img" style="background:linear-gradient(135deg,${col}20,${col}08)">${ico}</div>
     <div class="featured-content">
       <div class="featured-cat" style="color:${col}">${c}</div>
@@ -911,13 +913,13 @@ function renderFeatured(art) {
         ${art.is_premium ? '<span style="color:#b8860b">⭐ Prémium</span>' : ''}
       </div>
     </div>
-  </a>`;
+  </div>`;
 }
 
 function renderCard(art) {
   const c = art.category || 'Egyéb', col = CAT_COLOR[c] || '#888', ico = CAT_EMOJI[c] || '📰';
   const ex = art.excerpt || (art.body || '').slice(0, 220);
-  return `<a href="/cikk/${art.id}" class="article-card" style="text-decoration:none;color:inherit;display:block">
+  return `<div class="article-card" onclick="openArticleById('${art.id}')" style="cursor:pointer">
     <div class="card-img" style="background:linear-gradient(135deg,${col}16,${col}08)">
       <div class="card-img-emoji">${ico}</div>
       <div class="card-img-badge">${c}</div>
@@ -936,8 +938,14 @@ function renderCard(art) {
         <span class="card-readtime">⏱ ${art.read_time || '?'} perc</span>
       </div>
     </div>
-  </a>`;
+  </div>`;
 }
+
+function openArticleById(id) {
+  const art = allArticles.find(a => String(a.id) === String(id));
+  if (art) openModal(art);
+}
+window.openArticleById = openArticleById;
 
 function hlSearch(html) {
   if (!searchQ) return html;
