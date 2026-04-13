@@ -4,11 +4,11 @@ const SITE = 'https://reason-five.vercel.app';
 const ADSENSE_CLIENT = 'ca-pub-7856205120757314';
 
 const CAT_COLOR = {
-  'Tisza Párt': '#0066cc', 'Fidesz': '#f0a500', 'Mi Hazánk': '#1a7a3c',
-  'Belpolitika': '#c8102e', 'Világ': '#c8102e', 'Választások': '#7c3aed',
-  'Tech': '#0066cc', 'Gazdaság': '#1a7a3c', 'Életmód': '#b86000',
-  'Kultúra': '#7c3aed', 'Botrány': '#e8152f', 'Sport': '#0099cc',
-  'Krimi': '#2d2d2d', 'Politika': '#8b0000',
+  'Tisza Párt': '#0066cc',
+  'Fidesz': '#f0a500',
+  'Mi Hazánk': '#1a7a3c',
+  'Belpolitika': '#c8102e',
+  'Vita indító gondolatok': '#7c3aed',
 };
 
 const SB_HEADERS = {
@@ -89,7 +89,7 @@ export default function CikkPage({ article, comments }) {
   const col = CAT_COLOR[art.category] || '#c8102e';
   const likeCount = art.like_count ?? 0;
 
-  // Bekezdések félkövér first-letter támogatással
+  // Bekezdések
   const paras = (art.body || art.excerpt || '')
     .split(/\n\n+|\n/)
     .filter(p => p.trim().length > 4)
@@ -118,16 +118,18 @@ export default function CikkPage({ article, comments }) {
 
   const publishedISO = new Date(art.created_at).toISOString();
   const dateFormatted = new Date(art.created_at).toLocaleString('hu-HU', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-  const descriptionEsc = esc((art.meta_description || art.excerpt || '').slice(0, 160));
 
+  // ── SEO: meta_description prioritás, fallback: excerpt ──
+  const descriptionEsc = esc((art.meta_description || art.excerpt || '').slice(0, 160));
   const titleEsc = esc(art.title || '');
   const imageUrl = art.image_url || `${SITE}/og-default.png`;
 
+  // ── Schema.org: meta_description prioritás ──────────────
   const schemaJson = JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
     headline: art.title,
-    description: (art.excerpt || '').slice(0, 160),
+    description: (art.meta_description || art.excerpt || '').slice(0, 160),
     datePublished: publishedISO,
     dateModified: publishedISO,
     author: { '@type': 'Organization', name: 'REASON Szerkesztőség' },
@@ -144,15 +146,15 @@ export default function CikkPage({ article, comments }) {
 
   return (
     <>
- <head>
-  <meta charSet="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>{titleEsc} – REASON</title>
-  <meta name="description" content={descriptionEsc} />
-  {art.seo_keywords && (
-    <meta name="keywords" content={esc(art.seo_keywords)} />
-  )}
-  <meta name="robots" content="index, follow" />
+      <head>
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>{titleEsc} – REASON</title>
+        <meta name="description" content={descriptionEsc} />
+        {art.seo_keywords && (
+          <meta name="keywords" content={esc(art.seo_keywords)} />
+        )}
+        <meta name="robots" content="index, follow" />
 
         {/* Open Graph */}
         <meta property="og:title" content={titleEsc} />
