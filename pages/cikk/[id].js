@@ -118,7 +118,8 @@ export default function CikkPage({ article, comments }) {
 
   const publishedISO = new Date(art.created_at).toISOString();
   const dateFormatted = new Date(art.created_at).toLocaleString('hu-HU', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-  const descriptionEsc = esc((art.excerpt || '').slice(0, 160));
+  const descriptionEsc = esc((art.meta_description || art.excerpt || '').slice(0, 160));
+
   const titleEsc = esc(art.title || '');
   const imageUrl = art.image_url || `${SITE}/og-default.png`;
 
@@ -143,12 +144,15 @@ export default function CikkPage({ article, comments }) {
 
   return (
     <>
-      <head>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <title>{titleEsc} – REASON</title>
-        <meta name="description" content={descriptionEsc} />
-        <meta name="robots" content="index, follow" />
+ <head>
+  <meta charSet="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{titleEsc} – REASON</title>
+  <meta name="description" content={descriptionEsc} />
+  {art.seo_keywords && (
+    <meta name="keywords" content={esc(art.seo_keywords)} />
+  )}
+  <meta name="robots" content="index, follow" />
 
         {/* Open Graph */}
         <meta property="og:title" content={titleEsc} />
