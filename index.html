@@ -683,10 +683,10 @@ const OWM_KEY = 'f5fd940d4f21028b4e87084b50e00dfb';
 const PAGE_SIZE = 12;
 const DISC_PAGE_SIZE = 10;
 
-let allArticles = [], filteredArticles = [];
-let page = 1, cat = 'all', sort = 'newest', view = 'grid', searchQ = '';
-let lastCount = -1;
-let discPage = 1, allDiscs = [], discTotal = 0;
+window.allArticles = []; window.filteredArticles = [];
+window.page = 1; window.cat = 'all'; window.sort = 'newest'; window.view = 'grid'; window.searchQ = '';
+window.lastCount = -1;
+window.discPage = 1; window.allDiscs = []; window.discTotal = 0;
 
 const SB_HDR = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' };
 
