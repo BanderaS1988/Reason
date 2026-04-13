@@ -312,7 +312,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
       <div class="nav-item" data-cat="Mi Hazánk">Mi Hazánk <span class="nav-count" id="nc-Mi Hazánk">0</span></div>
       <div class="nav-item" data-cat="Belpolitika">Belpolitika <span class="nav-count" id="nc-Belpolitika">0</span></div>
       <div class="nav-item" data-cat="Világ">Világ <span class="nav-count" id="nc-Világ">0</span></div>
-      <div class="nav-item" data-cat="Választások">Választások <span class="nav-count" id="nc-Választások">0</span></div>
+      
     </div>
   </nav>
 </header>
@@ -539,7 +539,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
         <div class="s-title">ℹ️ A REASON-ról</div>
         <div style="font-size:12px;color:var(--text3);line-height:1.75">
           <p style="margin-bottom:8px">A <strong>REASON</strong> valós, ellenőrzött híreket közöl megbízható hazai és nemzetközi forrásokból – gyorsan, torzítás nélkül.</p>
-          <p style="margin-bottom:8px">Témáink: belpolitika, pártok, választások, világpolitika.</p>
+          <p style="margin-bottom:8px">Témáink: belpolitika, pártok, világpolitika.</p>
           <p style="font-size:11px;color:var(--text4)">© 2025 REASON · Minden jog fenntartva</p>
         </div>
       </div>
@@ -577,7 +577,7 @@ const CAT_COLOR = {
   'Mi Hazánk':  '#1a7a3c',
   'Belpolitika':'#c8102e',
   'Világ':      '#7c3aed',
-  'Választások':'#b86000',
+ 
 };
 const CAT_EMOJI = {
   'Tisza Párt': '🔵',
@@ -585,7 +585,7 @@ const CAT_EMOJI = {
   'Mi Hazánk':  '🟢',
   'Belpolitika':'🏛',
   'Világ':      '🌍',
-  'Választások':'🗳',
+ 
 };
 
 const CAT_REMAP = {};
@@ -1095,7 +1095,7 @@ function updateStripTitle(){
     'Mi Hazánk':  'Mi Hazánk',
     'Belpolitika':'Belpolitika',
     'Világ':      'Világ',
-    'Választások':'Választások',
+   
   };
   document.getElementById('stripTitle').textContent = map[cat] || cat;
 }
