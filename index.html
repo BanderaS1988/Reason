@@ -789,6 +789,10 @@ async function fetchArticles() {
     if (!Array.isArray(data)) throw new Error();
     const prev = lastCount; lastCount = data.length; allArticles = data;
     if (prev >= 0 && data.length > prev) showToast(`🆕 ${data.length - prev} új cikk érkezett!`, 'success');
+    if (prev >= 0 && data.length > prev) {
+  fetch('https://www.bing.com/indexnow?url=https://reason-five.vercel.app&key=reason2025xyz')
+    .catch(() => {});
+}
     if (data.length) updateTicker(data);
     applyFilters(); updateStats(); updateCatSidebar(); updateNavCounts();
     setStatus('Utoljára frissítve: ' + new Date().toLocaleTimeString('hu-HU'));
