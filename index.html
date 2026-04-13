@@ -807,7 +807,7 @@ document.getElementById('mainNav').addEventListener('click', e => {
   item.classList.add('active');
   if (c === 'Vita indító gondolatok') {
     document.getElementById('articlesSection').style.display = 'none';
-    document.getElementById('vitaSection').style.display = '';
+    document.getElementById('vitaSection').style.display = 'block';
     cat = c; updateStripTitle();
     if (!allDiscs.length) loadDiscs();
   } else {
@@ -823,7 +823,7 @@ function filterByCat(c) {
   document.querySelectorAll('.nav-item').forEach(i => i.classList.toggle('active', i.dataset.cat === c));
   if (c === 'Vita indító gondolatok') {
     document.getElementById('articlesSection').style.display = 'none';
-    document.getElementById('vitaSection').style.display = '';
+    document.getElementById('vitaSection').style.display = 'block';
     if (!allDiscs.length) loadDiscs();
   } else {
     document.getElementById('articlesSection').style.display = '';
