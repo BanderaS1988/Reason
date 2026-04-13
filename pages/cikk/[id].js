@@ -23,33 +23,13 @@ function esc(s) {
   return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-export async function getServerSideProps({ params, req, res: ssrRes }) {
-  const { id } = params;
+// ─── LIKE API ROUTE HELYETT: külön Next.js API endpoint ───────────────────────
+// pages/api/like.js fájlban kezeljük a POST-ot (ld. alább),
+// itt a getServerSideProps CSAK GET-et kezel.
+// ──────────────────────────────────────────────────────────────────────────────
 
-  if (req.method === 'POST') {
-    try {
-      const getR = await fetch(
-        `${SB_URL}/rest/v1/articles?id=eq.${id}&select=like_count&limit=1`,
-        { headers: SB_HEADERS }
-      );
-      const getData = await getR.json();
-      const current = getData?.[0]?.like_count ?? 0;
-      const patchR = await fetch(`${SB_URL}/rest/v1/articles?id=eq.${id}`, {
-        method: 'PATCH',
-        headers: { ...SB_HEADERS, Prefer: 'return=minimal' },
-        body: JSON.stringify({ like_count: current + 1 }),
-      });
-      if (!patchR.ok) throw new Error('patch_failed');
-      ssrRes.setHeader('Content-Type', 'application/json');
-      ssrRes.end(JSON.stringify({ like_count: current + 1 }));
-      return { props: {} };
-    } catch (e) {
-      ssrRes.statusCode = 500;
-      ssrRes.setHeader('Content-Type', 'application/json');
-      ssrRes.end(JSON.stringify({ error: String(e) }));
-      return { props: {} };
-    }
-  }
+export async function getServerSideProps({ params }) {
+  const { id } = params;
 
   const [artRes, commentsRes] = await Promise.all([
     fetch(`${SB_URL}/rest/v1/articles?id=eq.${id}&select=*&limit=1`, { headers: SB_HEADERS }),
@@ -170,12 +150,11 @@ export default function CikkPage({ article, comments }) {
     .ad-wrap{margin:2rem 0;text-align:center;min-height:90px}
   `;
 
+  // ── JAVÍTOTT clientScript: like POST az /api/like endpoint-ra megy ──────────
   const clientScript = `
     const ARTICLE_ID = '${art.id}';
     const ARTICLE_TITLE = ${JSON.stringify(art.title)};
     const ARTICLE_URL = '${SITE}/cikk/${art.id}';
-    const SB_URL_C = '${SB_URL}';
-    const SB_KEY_C = '${SB_KEY}';
     const LIKE_KEY = 'reason_liked_' + ARTICLE_ID;
     const btn = document.getElementById('likeBtn');
     const countEl = document.getElementById('likeCount');
@@ -188,7 +167,11 @@ export default function CikkPage({ article, comments }) {
       btn.classList.add('liked');
       localStorage.setItem(LIKE_KEY, '1');
       try {
-        const r = await fetch(ARTICLE_URL + '?action=like', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+        const r = await fetch('/api/like', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: ARTICLE_ID })
+        });
         if (!r.ok) throw new Error();
         const data = await r.json();
         countEl.textContent = data.like_count;
@@ -220,9 +203,14 @@ export default function CikkPage({ article, comments }) {
       if (body.length < 3) { msg.style.color='#c8102e'; msg.textContent='Túl rövid.'; return; }
       msg.style.color='#9e9890'; msg.textContent='Küldés...';
       try {
-        const r = await fetch(SB_URL_C + '/rest/v1/comments', {
+        const r = await fetch('${SB_URL}/rest/v1/comments', {
           method: 'POST',
-          headers: { apikey: SB_KEY_C, Authorization: 'Bearer ' + SB_KEY_C, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+          headers: {
+            apikey: '${SB_KEY}',
+            Authorization: 'Bearer ${SB_KEY}',
+            'Content-Type': 'application/json',
+            Prefer: 'return=minimal'
+          },
           body: JSON.stringify({ article_id: ARTICLE_ID, author, body })
         });
         if (!r.ok) throw new Error();
