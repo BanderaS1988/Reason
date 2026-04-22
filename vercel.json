@@ -50,7 +50,7 @@
     },
     {
       "source": "/cikk/:id",
-      "destination": "/api/cikk/:id"
+      "destination": "/cikk.html"
     }
   ]
 }
