@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   let articles = [];
   try {
     const r = await fetch(
-      `${SB_URL}/rest/v1/articles?select=id,updated_at,created_at&order=created_at.desc&limit=5000`,
+      `${SB_URL}/rest/v1/articles?select=id,created_at&order=created_at.desc&limit=5000`,
       { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
     );
     if (r.ok) {
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
   }
 
   const urls = articles.map(a => {
-    const lastmod = (a.updated_at || a.created_at || new Date().toISOString()).slice(0, 10);
+    const lastmod = (a.created_at || new Date().toISOString()).slice(0, 10);
     return `
   <url>
     <loc>${SITE}/cikk/${a.id}</loc>
