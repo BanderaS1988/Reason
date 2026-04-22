@@ -1324,8 +1324,9 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
 function closeModal() { document.getElementById('articleModal').classList.remove('open'); document.body.style.overflow = ''; }
 
 // ── STATS / SIDEBAR ──
-const SESSION_ID = 'sess_' + Math.random().toString(36).slice(2) + '_' + Date.now();
-  const IS_ADMIN = localStorage.getItem('reason_is_admin') === '1';
+const SESSION_ID = localStorage.getItem('reason_session') || 
+  (() => { const id = 'sess_' + Math.random().toString(36).slice(2) + '_' + Date.now(); localStorage.setItem('reason_session', id); return id; })();
+const IS_ADMIN = localStorage.getItem('reason_is_admin') === '1';
 
 
 async function pingVisitor() {
