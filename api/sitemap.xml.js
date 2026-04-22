@@ -40,8 +40,19 @@ export default async function handler(req, res) {
 
   // DEBUG – töröld ki ha már működik
   if (req.query.debug === '1') {
+    let debugInfo = { count: articles.length, first: articles[0] || null, error: null, status: null };
+    try {
+      const testR = await fetch(
+        `${SB_URL}/rest/v1/articles?select=id&limit=1`,
+        { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+      );
+      debugInfo.status = testR.status;
+      debugInfo.body = await testR.text();
+    } catch(e) {
+      debugInfo.error = e.message;
+    }
     res.setHeader('Content-Type', 'application/json');
-    res.status(200).json({ count: articles.length, first: articles[0] || null });
+    res.status(200).json(debugInfo);
     return;
   }
 
