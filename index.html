@@ -1325,13 +1325,19 @@ function closeModal() { document.getElementById('articleModal').classList.remove
 
 // ── STATS / SIDEBAR ──
 const SESSION_ID = 'sess_' + Math.random().toString(36).slice(2) + '_' + Date.now();
+  const IS_ADMIN = localStorage.getItem('reason_is_admin') === '1';
+
 
 async function pingVisitor() {
   try {
     await fetch(`${SB_URL}/rest/v1/visitors`, {
       method: 'POST',
       headers: { ...SB_HDR, 'Prefer': 'resolution=merge-duplicates' },
-      body: JSON.stringify({ session_id: SESSION_ID, last_seen: new Date().toISOString(), is_admin: false })
+      body: JSON.stringify({
+        session_id: SESSION_ID,
+        last_seen: new Date().toISOString(),
+        is_admin: IS_ADMIN
+      })
     });
   } catch { }
 }
@@ -1339,13 +1345,16 @@ async function pingVisitor() {
 async function fetchActiveReaders() {
   try {
     const since = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-    const r = await fetch(`${SB_URL}/rest/v1/visitors?last_seen=gte.${since}&select=session_id`, { headers: SB_HDR });
+    const r = await fetch(
+      `${SB_URL}/rest/v1/visitors?last_seen=gte.${since}&is_admin=eq.false&select=session_id`,
+      { headers: SB_HDR }
+    );
     if (!r.ok) return;
     const data = await r.json();
-    document.getElementById('statActiveReaders').textContent = new Set(data.map(v => v.session_id)).size;
+    document.getElementById('statActiveReaders').textContent =
+      new Set(data.map(v => v.session_id)).size;
   } catch { }
 }
-
 async function trackArticleView(articleId) {
   try {
     await fetch(`${SB_URL}/rest/v1/rpc/increment_view`, {
