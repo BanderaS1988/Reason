@@ -28,7 +28,7 @@ function esc(s) {
 // itt a getServerSideProps CSAK GET-et kezel.
 // ──────────────────────────────────────────────────────────────────────────────
 
-export async function getServerSideProps({ params }) {
+export async function getServerSideProps({ params, res }) {
   const { id } = params;
 
   const [artRes, commentsRes] = await Promise.all([
@@ -50,7 +50,7 @@ export async function getServerSideProps({ params }) {
       body: JSON.stringify({ p_article_id: String(id) }),
     });
   } catch { }
-
+res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
   return {
     props: {
       article: art,
