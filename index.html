@@ -402,17 +402,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
       </div>
     </div>
   </div>
-  <nav class="main-nav">
+<nav class="main-nav">
     <div class="nav-inner" id="mainNav">
       <div class="nav-item active" data-cat="all">Összes <span class="nav-count" id="nc-all">0</span></div>
-      <div class="nav-item" data-cat="Tisza Párt">Tisza Párt <span class="nav-count" id="nc-Tisza Párt">0</span></div>
-      <div class="nav-item" data-cat="Fidesz">Fidesz <span class="nav-count" id="nc-Fidesz">0</span></div>
-      <div class="nav-item" data-cat="Mi Hazánk">Mi Hazánk <span class="nav-count" id="nc-Mi Hazánk">0</span></div>
-      <div class="nav-item" data-cat="Belpolitika">Belpolitika <span class="nav-count" id="nc-Belpolitika">0</span></div>
-      <div class="nav-item" data-cat="Vita indító gondolatok">💬 Vita <span class="nav-count" id="nc-vita">0</span></div>
+      <div class="nav-item" data-cat="Tech & AI hírek">🤖 Tech & AI <span class="nav-count" id="nc-Tech">0</span></div>
+      <div class="nav-item" data-cat="Időjárás & környezet">🌍 Időjárás & környezet <span class="nav-count" id="nc-kornyezet">0</span></div>
+      <div class="nav-item" data-cat="Bűnügyek & rejtélyek">🔍 Bűnügyek & rejtélyek <span class="nav-count" id="nc-bunugy">0</span></div>
+      <div class="nav-item" data-cat="Gasztro & utazás">🍜 Gasztro & utazás <span class="nav-count" id="nc-gasztro">0</span></div>
     </div>
-  </nav>
-</header>
+</nav>
 
 <!-- AdSense -->
 <div style="margin:16px auto 0;max-width:1400px;padding:0 28px">
@@ -690,14 +688,21 @@ window.discPage = 1; window.allDiscs = []; window.discTotal = 0;
 
 const SB_HDR = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' };
 
+
 const CAT_COLOR = {
-  'Tisza Párt': '#0066cc', 'Fidesz': '#f0a500', 'Mi Hazánk': '#1a7a3c',
-  'Belpolitika': '#c8102e', 'Vita indító gondolatok': '#7c3aed',
+  'Tech & AI hírek': '#0066cc',
+  'Időjárás & környezet': '#10b981',
+  'Bűnügyek & rejtélyek': '#7c3aed',
+  'Gasztro & utazás': '#f59e0b',
 };
+
 const CAT_EMOJI = {
-  'Tisza Párt': '🔵', 'Fidesz': '🟠', 'Mi Hazánk': '🟢',
-  'Belpolitika': '🏛', 'Vita indító gondolatok': '💬',
+  'Tech & AI hírek': '🤖',
+  'Időjárás & környezet': '🌍',
+  'Bűnügyek & rejtélyek': '🔍',
+  'Gasztro & utazás': '🍜',
 };
+
 
 // ── CLOCK ──
 function tick() {
@@ -1408,9 +1413,16 @@ function updateNavCounts() {
 }
 
 function updateStripTitle() {
-  const map = { all: 'Legfrissebb', 'Tisza Párt': 'Tisza Párt', 'Fidesz': 'Fidesz', 'Mi Hazánk': 'Mi Hazánk', 'Belpolitika': 'Belpolitika', 'Vita indító gondolatok': 'Vita indító gondolatok' };
+  const map = { 
+    all: 'Legfrissebb', 
+    'Tech & AI hírek': '🤖 Tech & AI hírek', 
+    'Időjárás & környezet': '🌍 Időjárás & környezet', 
+    'Bűnügyek & rejtélyek': '🔍 Bűnügyek & rejtélyek', 
+    'Gasztro & utazás': '🍜 Gasztro & utazás' 
+  };
   document.getElementById('stripTitle').textContent = map[cat] || cat;
 }
+
 
 function updateTicker(arts) {
   if (!arts || !arts.length) return;
