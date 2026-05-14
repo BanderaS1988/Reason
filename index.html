@@ -1618,7 +1618,11 @@ const STRIPE_LINKS = {
 };
 function setSupportMsg(msg, type) { const el = document.getElementById('supportMsg'); if (el) { el.textContent = msg; el.className = 'auth-msg ' + (type || ''); } }
 function doSupport(amount) {
-  const link = STRIPE_LINKS[amount]; if (!link) { setSupportMsg('Ismeretlen összeg.', 'err'); return; }
+  console.log('doSupport meghívva, amount:', amount);
+  console.log('STRIPE_LINKS:', STRIPE_LINKS);
+  console.log('link:', STRIPE_LINKS[amount]);
+  const link = STRIPE_LINKS[amount];
+  if (!link) { setSupportMsg('Ismeretlen összeg.', 'err'); return; }
   const ep = currentUser?.email ? '?prefilled_email=' + encodeURIComponent(currentUser.email) : '';
   window.open(link + ep, '_blank', 'noopener'); setSupportMsg('✅ A fizetési oldal új lapon nyílt meg. Köszönjük!', 'ok');
 }
