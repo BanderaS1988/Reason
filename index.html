@@ -916,16 +916,6 @@ function renderFeatured(art) {
         ${art.is_premium ? '<span style="color:#b8860b">⭐ Prémium</span>' : ''}
       </div>
     </div>`;
-      <div class="featured-cat" style="color:${col}">${c}</div>
-      <div class="featured-title">${esc(art.title || 'Cím nélkül')}</div>
-      <div class="featured-excerpt">${esc(art.excerpt || '')}</div>
-      <div class="featured-foot">
-        <span>🕐 ${fmtTime(art.created_at)}</span>
-        <span>⏱ ${art.read_time || '?'} perc</span>
-        ${art.is_premium ? '<span style="color:#b8860b">⭐ Prémium</span>' : ''}
-      </div>
-    </div>
-  </div>`;
 }
 
 function renderCard(art) {
