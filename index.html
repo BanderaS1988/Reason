@@ -790,8 +790,11 @@ async function fetchArticles() {
     const prev = lastCount; lastCount = data.length; allArticles = data;
     if (prev >= 0 && data.length > prev) showToast(`🆕 ${data.length - prev} új cikk érkezett!`, 'success');
     if (prev >= 0 && data.length > prev) {
-  fetch('https://www.bing.com/indexnow?url=https://reason-five.vercel.app&key=reason2025xyz')
-    .catch(() => {});
+  fetch('/api/indexnow', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ url: 'https://reason-five.vercel.app' })
+}).catch(() => {});
 }
     if (data.length) updateTicker(data);
     applyFilters(); updateStats(); updateCatSidebar(); updateNavCounts();
@@ -901,9 +904,18 @@ function renderFeatured(art) {
   fc.style.background = col + '0a';
   fc.style.cursor = 'pointer';
   fc.onclick = () => openArticleById(art.id);
-  fc.innerHTML = `<div style="display:grid;grid-template-columns:280px 1fr">
+  fc.innerHTML = `
     <div class="featured-img" style="background:linear-gradient(135deg,${col}20,${col}08)">${ico}</div>
     <div class="featured-content">
+      <div class="featured-cat" style="color:${col}">${c}</div>
+      <div class="featured-title">${esc(art.title || 'Cím nélkül')}</div>
+      <div class="featured-excerpt">${esc(art.excerpt || '')}</div>
+      <div class="featured-foot">
+        <span>🕐 ${fmtTime(art.created_at)}</span>
+        <span>⏱ ${art.read_time || '?'} perc</span>
+        ${art.is_premium ? '<span style="color:#b8860b">⭐ Prémium</span>' : ''}
+      </div>
+    </div>`;
       <div class="featured-cat" style="color:${col}">${c}</div>
       <div class="featured-title">${esc(art.title || 'Cím nélkül')}</div>
       <div class="featured-excerpt">${esc(art.excerpt || '')}</div>
@@ -954,9 +966,11 @@ function hlSearch(html) {
 }
 
 function loadMore() {
-  page++;
   const startIdx = (cat === 'all' && !searchQ && filteredArticles.length > 0) ? 1 : 0;
-  document.getElementById('articlesGrid').innerHTML = filteredArticles.slice(startIdx, page * PAGE_SIZE).map(renderCard).join('');
+  const prevEnd = page * PAGE_SIZE;
+  page++;
+  const newCards = filteredArticles.slice(Math.max(prevEnd, startIdx), page * PAGE_SIZE);
+  document.getElementById('articlesGrid').insertAdjacentHTML('beforeend', newCards.map(renderCard).join(''));
   document.getElementById('lmWrap').style.display = filteredArticles.length > page * PAGE_SIZE ? '' : 'none';
   window.scrollBy({ top: 300, behavior: 'smooth' });
 }
@@ -1608,8 +1622,8 @@ async function initAuth() {
 
 // ── SUPPORT ──
 const STRIPE_LINKS = {
-  500: 'https://buy.stripe.com/dRmfZjbhdg3EfkeeOogIo03',
-  1500: 'https://buy.stripe.com/fZueVfbhd7x8c82ay8gIo04',
+  500:  'https://buy.stripe.com/dRmfZjbhdg3EfkeeOogIo03',
+  1000: 'https://buy.stripe.com/fZueVfbhd7x8c82ay8gIo04',
   3000: 'https://buy.stripe.com/28E3cxbhd6t43Bw5dOgIo05',
 };
 function setSupportMsg(msg, type) { const el = document.getElementById('supportMsg'); if (el) { el.textContent = msg; el.className = 'auth-msg ' + (type || ''); } }
