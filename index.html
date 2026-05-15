@@ -1409,7 +1409,12 @@ function updateCatSidebar() {
 function updateNavCounts() {
   const counts = { all: allArticles.length };
   allArticles.forEach(a => { const c = a.category || 'Egyéb'; counts[c] = (counts[c] || 0) + 1; });
-  Object.entries(counts).forEach(([c, n]) => { const el = document.getElementById('nc-' + c); if (el) el.textContent = n; });
+
+  document.getElementById('nc-all').textContent        = counts['all'] || 0;
+  document.getElementById('nc-Tech').textContent       = counts['Tech & AI hírek'] || 0;
+  document.getElementById('nc-kornyezet').textContent  = counts['Időjárás & környezet'] || 0;
+  document.getElementById('nc-bunugy').textContent     = counts['Bűnügyek & rejtélyek'] || 0;
+  document.getElementById('nc-gasztro').textContent    = counts['Gasztro & utazás'] || 0;
 }
 
 function updateStripTitle() {
