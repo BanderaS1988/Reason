@@ -1978,53 +1978,88 @@ class LipSyncMotor {
     else this._updateIdle(dt,cfg);
   }
 
-  _updateAnimating(now,cfg,dt) {
-    const elapsed=now-this._startTime;
-    let activePh=null;
-    for(const ph of this._phonemeQueue){
-      if(elapsed>=ph.startT&&elapsed<=ph.endT){activePh=ph;break;}
-      if(elapsed<ph.startT) break;
-    }
-    let target={};
-    if(activePh&&!activePh.isSilence){
-      const {startT,openEndT,peakEndT,closeEndT}=activePh;
-      let blend=0;
-      if(elapsed<openEndT) blend=openEndT>startT?(elapsed-startT)/(openEndT-startT):1;
-      else if(elapsed<peakEndT) blend=1;
-      else {
-        const cl=closeEndT-peakEndT, t2=elapsed-peakEndT;
-        blend=cl>0?1-t2/cl:0;
-        blend=Math.min(1,Math.max(0,blend));
-        blend*=cfg.pCloseFrac+(1-cfg.pCloseFrac)*blend;
-      }
-      blend=Math.min(1,Math.max(0,blend));
-      const scale=cfg.m3dMorphScale*(activePh.isVowel?cfg.mVowelBoost:cfg.mConsDamp);
-      const mt=getMorphTarget(activePh.phType,cfg);
-      for(const [k,v] of Object.entries(mt)){
-        let val=v*blend*scale;
-        if(k==='mouthFunnel') val*=cfg.mFunnelScale;
-        if(k==='mouthPucker') val*=cfg.mPuckerScale;
-        if(k==='mouthLeft'||k==='mouthRight') val*=cfg.mMouthLRScale;
-        if(k==='jawOpen') val=Math.min(val,cfg.mJawMax);
-        target[k]=val;
-      }
-    } else {
-      target.jawOpen=cfg.mJawIdleMin||0;
-    }
-    this._breathT+=(dt*0.001)*0.22;
-    const bv=Math.sin(this._breathT*Math.PI*2);
-    if(!activePh||activePh.isSilence){
-      target.jawOpen=Math.max(target.jawOpen||0,Math.max(0,(cfg.mJawIdleMin||0)+0.008*bv));
-    }
-    target.mouthRollLower=Math.max(target.mouthRollLower||0,Math.max(0,0.03+0.02*bv));
-    this._applyBlink(target,dt,cfg);
-    this._applySaccade(target,dt);
-    this._applyBrow(target,dt);
-    this._applyTone(target,dt,activePh);
-    this._applyMicroExp(target,dt);
-    this._lerpToTarget(target,cfg.m3dLerp);
-    this._writeMorphs(this._current);
-  }
+_updateIdle(dt, cfg) {
+  const t = dt * 0.001;
+
+  // ── Légzés (lassú, természetes ritmus) ──
+  this._breathT += t * 0.18;
+  const breathSlow = Math.sin(this._breathT * Math.PI * 2);
+  const breathFast = Math.sin(this._breathT * Math.PI * 4.3); // kis irregularitás
+
+  // ── Természetes szájtartás ──
+  const jawIdle = Math.max(0,
+    (cfg.mJawIdleMin || 0)
+    + 0.018 * breathSlow
+    + 0.006 * breathFast
+  );
+
+  // ── Ajak finom mozgás ──
+  const lipWave = Math.sin(this._breathT * Math.PI * 3.1 + 0.9);
+  const lipPress = Math.max(0, 0.04 + 0.025 * lipWave);
+
+  // ── Enyhe természetes fejbólintás (nem gépies) ──
+  this._idleNodT = (this._idleNodT || 0) + t * 0.11;
+  const nodA = Math.sin(this._idleNodT * Math.PI * 2);
+  const nodB = Math.sin(this._idleNodT * Math.PI * 1.3 + 1.1); // aszimmetria
+  const nodMix = nodA * 0.6 + nodB * 0.4;
+
+  // ── Enyhe fejfordulat (oldalra) ──
+  this._idleTiltT = (this._idleTiltT || 0) + t * 0.07;
+  const tiltWave = Math.sin(this._idleTiltT * Math.PI * 2 + 0.4);
+
+  // ── Arc tónus (arcizom-rezdülés) ──
+  this._idleFaceT = (this._idleFaceT || 0) + t * 0.09;
+  const faceWave = Math.sin(this._idleFaceT * Math.PI * 2);
+  const cheekVal = Math.max(0, 0.06 + 0.04 * faceWave);
+
+  // ── Szemöldök aszimmetrikus, finom emelkedés ──
+  this._browWaveT += t * 0.085;
+  const browL = 0.05 + 0.04 * Math.sin(this._browWaveT * Math.PI * 2);
+  const browR = 0.05 + 0.04 * Math.sin(this._browWaveT * Math.PI * 2 + 1.2);
+  const browInner = Math.max(0, 0.03 + 0.025 * Math.sin(this._browWaveT * Math.PI * 2 + 2.1));
+
+  // ── Szemszárazság – időnkénti félig csukódás ──
+  this._idleDryT = (this._idleDryT || 0) + t;
+  const dryCycle = Math.sin(this._idleDryT * 0.4);
+  const squintBase = Math.max(0, dryCycle * 0.08);
+
+  const target = {
+    // Száj
+    jawOpen: jawIdle,
+    mouthRollLower: Math.max(0, 0.05 + 0.03 * breathSlow),
+    mouthRollUpper: Math.max(0, 0.02 + 0.015 * breathSlow),
+    mouthPressLeft:  lipPress,
+    mouthPressRight: lipPress * 0.85, // enyhe aszimmetria
+    mouthSmileLeft:  Math.max(0, 0.04 + 0.02 * faceWave),
+    mouthSmileRight: Math.max(0, 0.035 + 0.018 * faceWave),
+    mouthShrugLower: Math.max(0, 0.02 + 0.015 * breathSlow),
+
+    // Arc
+    cheekSquintLeft:  cheekVal,
+    cheekSquintRight: cheekVal * 0.9,
+
+    // Szemöldök
+    browOuterUpLeft:  browL,
+    browOuterUpRight: browR,
+    browInnerUp:      browInner,
+
+    // Szemszárazság + finom squint
+    eyeSquintLeft:  squintBase,
+    eyeSquintRight: squintBase * 0.8,
+
+    // Orrszárny enyhe lüktetés
+    noseSneerLeft:  Math.max(0, 0.01 + 0.008 * breathSlow),
+    noseSneerRight: Math.max(0, 0.01 + 0.008 * breathSlow),
+  };
+
+  // Pislogás, saccade, mikrokifejezések
+  this._applyBlink(target, dt, cfg);
+  this._applySaccade(target, dt);
+  this._applyMicroExp(target, dt);
+
+  this._lerpToTarget(target, cfg.m3dLerp);
+  this._writeMorphs(this._current);
+}
 
 _updateIdle(dt, cfg) {
   const t = dt * 0.001;
