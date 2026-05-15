@@ -1454,7 +1454,7 @@ function renderSupportBanner() {
       character.position.y -= center.y * scale;
       character.position.z -= center.z * scale;
 
-   const HIDDEN = new Set(['Streamoji_Hands', 'EyeLeft', 'EyeRight', 'Streamoji_Head', 'Streamoji_Teeth', 'Streamoji_Shirt']);
+   const HIDDEN = new Set(['Streamoji_Hands']);
 character.traverse(obj => {
   if (HIDDEN.has(obj.name)) obj.visible = false;
 });
