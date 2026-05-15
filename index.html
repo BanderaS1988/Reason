@@ -406,6 +406,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
       <h1 class="modal-title" id="modalTitle">–</h1>
       <div class="modal-meta" id="modalMeta"></div>
     </div>
+
+<div id="modalStatsBar" style="display:none;padding:10px 44px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:20px;font-size:12px;color:var(--text3)">
+  <span>❤️ <strong id="modalStatLikes">0</strong> lájk</span>
+  <span>💬 <strong id="modalStatComments">0</strong> komment</span>
+  <span id="modalStatViewsWrap">👁 <strong id="modalStatViews">0</strong> megtekintés</span>
+</div>
+    
     <div class="modal-toolbar">
       <span class="modal-toolbar-label">Betűméret</span>
       <button class="modal-tool-btn" onclick="modalFontChange(-2)" title="Kicsinyítés">A−</button>
@@ -1137,6 +1144,16 @@ function openModal(art) {
     <span>👤 REASON Szerkesztőség</span>
     <span>⏱ ${art.read_time || '?'} perc olvasás</span>`;
 
+  // ── STATS BAR ──────────────────────────────────────────────────
+  const statsBar = document.getElementById('modalStatsBar');
+  if (statsBar) {
+    statsBar.style.display = 'flex';
+    document.getElementById('modalStatLikes').textContent    = (art.like_count  ?? 0).toLocaleString('hu');
+    document.getElementById('modalStatViews').textContent    = (art.view_count  ?? 0).toLocaleString('hu');
+    document.getElementById('modalStatComments').textContent = '…';
+  }
+  // ──────────────────────────────────────────────────────────────
+
   if (art.is_premium && !currentUser) {
     document.getElementById('modalBody').innerHTML = `
       <div style="text-align:center;padding:60px 20px">
@@ -1171,7 +1188,6 @@ function openModal(art) {
   document.getElementById('modalCBody').value = '';
   document.getElementById('modalCAuthor').value = '';
 
-  // Komment szám inicializálás
   document.getElementById('modalCommentCountBadge').textContent = '…';
   document.getElementById('modalCommentCountText').textContent = '';
   loadModalComments(art.id);
@@ -1316,6 +1332,8 @@ async function handleModalLike() {
       body: JSON.stringify({ like_count: cur + 1 })
     });
     countEl.textContent = cur + 1;
+    const statLikes = document.getElementById('modalStatLikes');
+if (statLikes) statLikes.textContent = (cur + 1).toLocaleString('hu');
     const c = allArticles.find(a => String(a.id) === String(articleId));
     if (c) c.like_count = cur + 1;
   } catch {
@@ -1360,6 +1378,8 @@ async function loadModalComments(articleId) {
     const comments = await sbFetch(`/rest/v1/comments?article_id=eq.${articleId}&order=created_at.asc`);
     const cnt = comments.length;
     badgeEl.textContent = cnt;
+    const statCnt = document.getElementById('modalStatComments');
+if (statCnt) statCnt.textContent = cnt;
     if (cnt === 0) {
       textEl.textContent = 'Még nincs hozzászólás';
       listEl.innerHTML = '<div style="font-size:13px;color:var(--text4);padding:8px 0">Még nincs hozzászólás. Légy az első!</div>';
