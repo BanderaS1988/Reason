@@ -442,9 +442,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
       <span class="modal-toolbar-label">Téma</span>
       <button class="theme-btn" id="themeBtnLight" onclick="setTheme('light')">☀️ Világos</button>
       <button class="theme-btn" id="themeBtnDark" onclick="setTheme('dark')">🌙 Sötét</button>
-      <button class="modal-tool-btn" id="read3dBtn" style="background:#7c3aed; color:#fff; border-color:#7c3aed;">
-  🎭 3D olvasó
-</button>
+      
     </div>
 
     <div class="modal-body" id="modalBody"></div>
@@ -1313,15 +1311,7 @@ setInterval(() => { fetchActiveReaders(); fetchTotalViews(); }, 30 * 1000);
 initAuth(); initGDPR(); renderSupportBanner();
 
 
-  // 3D felolvasás megnyitása
-document.getElementById('read3dBtn')?.addEventListener('click', () => {
-  const cim = document.getElementById('modalTitle').textContent;
-  const szoveg = document.getElementById('modalBody').innerText;
-  const win = window.open('/pages/hirolvaso3d.html', 'TTSPlayer', 'width=900,height=650');
-  win.addEventListener('load', () => {
-    win.postMessage({ type: 'tts-speak', text: szoveg }, '*');
-  });
-});
+
 
 // Feliratkozás
 const subForm = document.getElementById('subscribeForm');
