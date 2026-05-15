@@ -53,12 +53,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .logo-a {
   color: var(--accent);
   display: inline-block;
-  transform-style: preserve-3d;
   animation: pulse-a 3s ease-in-out infinite;
 }
 @keyframes pulse-a {
-  0%, 100% { transform: translateZ(0px); opacity: 1; }
-  50% { transform: translateZ(12px); opacity: 0.8; }
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
 }
 .logo-a.spin {
   animation: spin-a .6s cubic-bezier(.4,0,.2,1) forwards;
