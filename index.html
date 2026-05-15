@@ -1454,6 +1454,10 @@ function renderSupportBanner() {
       character.position.y -= center.y * scale;
       character.position.z -= center.z * scale;
 
+      character.traverse(obj => {
+  if (obj.isMesh || obj.isBone) console.log(obj.type, '→', obj.name);
+});
+
       scene.add(character);
 
       // OrbitControls célpontja az origó (ahol a modell most van)
