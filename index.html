@@ -1167,7 +1167,7 @@ async function doLogin() {
     localStorage.setItem('reason_token', d.access_token);
     localStorage.setItem('reason_refresh', d.refresh_token);
     await loadUser(d.access_token);
-    closeAuth(); showToast('👋 Üdvözöljük vissza!', 'success');
+    closeAuth(); showToast('👋 Üdvözöljük újra!', 'success');
   } catch (e) { setAuthMsg(e.message, 'err'); }
 }
 window.doLogin = doLogin;
