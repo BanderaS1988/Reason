@@ -1401,7 +1401,16 @@ function renderSupportBanner() {
 
   const scene  = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
-  camera.position.set(0, 1.2, 4);
+  camera.position.set(0, 0, 4);
+
+  // ── OrbitControls ──
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping    = true;
+  controls.dampingFactor    = 0.08;
+  controls.minDistance      = 1;
+  controls.maxDistance      = 12;
+  controls.enablePan        = true;
+  controls.autoRotate       = false;
 
   // Csillagok
   const starGeo = new THREE.BufferGeometry();
@@ -1417,44 +1426,51 @@ function renderSupportBanner() {
   dirLight.position.set(3, 5, 3);
   scene.add(dirLight);
 
-  // Karakter betöltés
   let character = null;
-  let mixer = null;
-  const clock = new THREE.Clock();
+  let mixer     = null;
+  const clock   = new THREE.Clock();
 
-  const loader = new THREE.GLTFLoader();
-  // !! CSERÉLD KI a saját jsDelivr URL-edre !!
- const MODEL_URL = 'https://kqugolmndqonbnjetdyi.supabase.co/storage/v1/object/public/models/csavo.glb';
+  const loader    = new THREE.GLTFLoader();
+  const MODEL_URL = 'https://kqugolmndqonbnjetdyi.supabase.co/storage/v1/object/public/models/csavo.glb';
 
   loader.load(
     MODEL_URL,
     (gltf) => {
       character = gltf.scene;
 
-      // Automatikus méretezés – bármilyen modell belefér
-      const box = new THREE.Box3().setFromObject(character);
-      const size = box.getSize(new THREE.Vector3());
+      // Bounding box alapú pontos középre igazítás
+      const box    = new THREE.Box3().setFromObject(character);
+      const size   = box.getSize(new THREE.Vector3());
       const center = box.getCenter(new THREE.Vector3());
       const maxDim = Math.max(size.x, size.y, size.z);
-      const scale = 2.5 / maxDim;
+      const scale  = 2.5 / maxDim;
+
       character.scale.setScalar(scale);
-      character.position.sub(center.multiplyScalar(scale));
-      character.position.y -= size.y * scale * 0.5;
+
+      // Modellt pontosan origóba húzzuk
+      character.position.x -= center.x * scale;
+      character.position.y -= center.y * scale;
+      character.position.z -= center.z * scale;
 
       scene.add(character);
 
-      // Animációk kezelése (ha van)
+      // OrbitControls célpontja az origó (ahol a modell most van)
+      controls.target.set(0, 0, 0);
+      controls.update();
+
+      // Animációk
       if (gltf.animations && gltf.animations.length > 0) {
         mixer = new THREE.AnimationMixer(character);
-        const action = mixer.clipAction(gltf.animations[0]);
-        action.play();
+        mixer.clipAction(gltf.animations[0]).play();
       }
 
       document.getElementById('space3dLabel').textContent = '🌌 REASON karakter';
     },
     (xhr) => {
-      const pct = Math.round(xhr.loaded / xhr.total * 100);
-      document.getElementById('space3dLabel').textContent = `⏳ Betöltés ${pct}%`;
+      if (xhr.total) {
+        const pct = Math.round(xhr.loaded / xhr.total * 100);
+        document.getElementById('space3dLabel').textContent = `⏳ Betöltés ${pct}%`;
+      }
     },
     (err) => {
       console.error('GLB betöltési hiba:', err);
@@ -1474,7 +1490,9 @@ function renderSupportBanner() {
     requestAnimationFrame(animate);
     const delta = clock.getDelta();
     if (mixer) mixer.update(delta);
-    if (character) character.rotation.y += 0.005; // lassú forogás
+    controls.update(); // damping miatt kell minden frame-ben
+    // Manuális forgatás csak ha a user nem fogja épp
+    if (character && !controls.enabled) character.rotation.y += 0.005;
     renderer.render(scene, camera);
   }
   animate();
@@ -1483,7 +1501,7 @@ function renderSupportBanner() {
 
   window.toggle3D = function(){
     expanded = !expanded;
-    if(expanded){
+    if (expanded) {
       widget.classList.add('expanded');
       overlay.classList.add('visible');
       expandBtn.textContent = '✕';
