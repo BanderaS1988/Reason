@@ -63,9 +63,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
   animation: spin-a .6s cubic-bezier(.4,0,.2,1) forwards;
 }
 @keyframes spin-a {
-  0%{ transform: rotate(0deg); opacity:1; }
-  50%{ transform: rotate(180deg); opacity:.5; }
-  100%{ transform: rotate(360deg); opacity:1; }
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
 }
 
 /* TICKER */
