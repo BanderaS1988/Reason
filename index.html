@@ -908,7 +908,7 @@ function renderCard(art) {
       ${isSelected ? 'checked' : ''}
       onchange="ttsCardToggle('${art.id}', this.checked)"
       style="width:14px;height:14px;accent-color:var(--accent);cursor:pointer">
-    🔊 Felolvasáshoz
+    🔊 <span style="color:var(--accent)">Felolvasáshoz</span>
   </label>
   ${isSelected ? '<span style="font-size:9px;background:var(--accent);color:#fff;padding:1px 7px;border-radius:10px;font-weight:700;">Kijelölve</span>' : ''}
 </div>
