@@ -24,6 +24,7 @@
 <meta name="twitter:image" content="https://reason-five.vercel.app/og-default.png">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7856205120757314" crossorigin="anonymous"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -239,6 +240,82 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .weather-big-temp{font-size:32px;font-weight:700;font-family:var(--font-m);color:var(--text)}
 .weather-big-icon{font-size:36px}
 .weather-details{font-size:11px;color:var(--text3);line-height:1.8}
+
+/* ── 3D WIDGET ── */
+#space3dWidget{
+  background:#000;
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+  position:relative;
+  width:100%;
+  height:260px;
+  transition:
+    border-radius .45s cubic-bezier(.4,0,.2,1),
+    box-shadow .45s cubic-bezier(.4,0,.2,1);
+}
+#space3dWidget.expanded{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:min(92vw,860px);
+  height:min(88vh,600px);
+  z-index:700;
+  border-radius:20px;
+  box-shadow:0 40px 120px rgba(0,0,0,.45);
+}
+#space3dCanvas{
+  width:100%;
+  height:100%;
+  display:block;
+}
+#space3dLabel{
+  position:absolute;
+  bottom:12px;
+  left:16px;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.55);
+  pointer-events:none;
+  font-family:var(--font-s);
+}
+#space3dExpandBtn{
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:32px;
+  height:32px;
+  border-radius:8px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);
+  color:#fff;
+  font-size:15px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.2s;
+  backdrop-filter:blur(4px);
+  z-index:5;
+}
+#space3dExpandBtn:hover{
+  background:rgba(255,255,255,.25);
+}
+#space3dOverlay{
+  position:fixed;
+  inset:0;
+  z-index:699;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .4s;
+}
+#space3dOverlay.visible{
+  opacity:1;
+  pointer-events:auto;
+}
 
 /* AUTH MODAL */
 .auth-overlay{position:fixed;inset:0;z-index:600;background:rgba(20,18,14,.8);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}
@@ -471,6 +548,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
   </div>
 </div>
 
+<!-- 3D OVERLAY (body szintű, a widget expand/collapse-hoz) -->
+<div id="space3dOverlay" onclick="collapse3D()"></div>
+
 <div class="toast-wrap" id="toastWrap"></div>
 
 <!-- MAIN -->
@@ -536,6 +616,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
         </div>
         <div class="stat-row"><span style="font-size:12px;color:var(--text3)">Összes olvasás</span><span class="stat-val" id="statTotalViews">–</span></div>
         <div class="stat-row"><span style="font-size:12px;color:var(--text3)">Utolsó frissítés</span><span class="stat-val" id="statLast" style="font-size:11px">–</span></div>
+      </div>
+
+      <!-- 3D TÉR WIDGET – Portálstatisztika után -->
+      <div id="space3dWidget">
+        <canvas id="space3dCanvas"></canvas>
+        <div id="space3dLabel">🌌 </div>
+        <button id="space3dExpandBtn" onclick="toggle3D()" title="Nagyítás / Kicsinyítés">⛶</button>
       </div>
 
       <div class="s-widget">
@@ -1297,11 +1384,78 @@ function renderSupportBanner() {
   mc.appendChild(b);
 }
 
+// ── 3D TÉR WIDGET ──
+(function init3D(){
+  const canvas    = document.getElementById('space3dCanvas');
+  const widget    = document.getElementById('space3dWidget');
+  const overlay   = document.getElementById('space3dOverlay');
+  const expandBtn = document.getElementById('space3dExpandBtn');
+  let expanded = false;
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 1);
+
+  const scene  = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
+  camera.position.set(0, 0, 5);
+
+  // Csillagok
+  const starGeo = new THREE.BufferGeometry();
+  const starCount = 800;
+  const positions = new Float32Array(starCount * 3);
+  for (let i = 0; i < starCount * 3; i++) positions[i] = (Math.random() - 0.5) * 200;
+  starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.18, sizeAttenuation: true });
+  scene.add(new THREE.Points(starGeo, starMat));
+
+  
+
+  function resize(){
+    const w = widget.clientWidth, h = widget.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+
+  function animate(){
+    requestAnimationFrame(animate);
+    
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  new ResizeObserver(resize).observe(widget);
+
+  window.toggle3D = function(){
+    expanded = !expanded;
+    if(expanded){
+      widget.classList.add('expanded');
+      overlay.classList.add('visible');
+      expandBtn.textContent = '✕';
+      expandBtn.title = 'Bezárás';
+      setTimeout(resize, 60);
+    } else {
+      collapse3D();
+    }
+  };
+
+  window.collapse3D = function(){
+    expanded = false;
+    widget.classList.remove('expanded');
+    overlay.classList.remove('visible');
+    expandBtn.textContent = '⛶';
+    expandBtn.title = 'Nagyítás';
+    setTimeout(resize, 60);
+  };
+})();
+
 // ── INIT ──
 initWeather();
 setInterval(initWeather, 10 * 60 * 1000);
 fetchArticles();
-setInterval(fetchArticles, 10 * 1000); // 30 helyett 10 másodperc
+setInterval(fetchArticles, 10 * 1000);
 renderArticles();
 pingVisitor();
 setInterval(pingVisitor, 60 * 1000);
