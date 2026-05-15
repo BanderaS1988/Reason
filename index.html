@@ -25,6 +25,8 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7856205120757314" crossorigin="anonymous"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/loaders/GLTFLoader.js"></script>
+
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -1392,13 +1394,14 @@ function renderSupportBanner() {
   const expandBtn = document.getElementById('space3dExpandBtn');
   let expanded = false;
 
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setClearColor(0x000000, 1);
+  renderer.shadowMap.enabled = true;
 
   const scene  = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
-  camera.position.set(0, 0, 5);
+  camera.position.set(0, 1.2, 4);
 
   // Csillagok
   const starGeo = new THREE.BufferGeometry();
@@ -1406,10 +1409,58 @@ function renderSupportBanner() {
   const positions = new Float32Array(starCount * 3);
   for (let i = 0; i < starCount * 3; i++) positions[i] = (Math.random() - 0.5) * 200;
   starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.18, sizeAttenuation: true });
-  scene.add(new THREE.Points(starGeo, starMat));
+  scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.18, sizeAttenuation: true })));
 
-  
+  // Fények
+  scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+  const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+  dirLight.position.set(3, 5, 3);
+  scene.add(dirLight);
+
+  // Karakter betöltés
+  let character = null;
+  let mixer = null;
+  const clock = new THREE.Clock();
+
+  const loader = new THREE.GLTFLoader();
+  // !! CSERÉLD KI a saját jsDelivr URL-edre !!
+  const MODEL_URL = 'https://cdn.jsdelivr.net/gh/BanderaS1988/Reason@main/csavo.glb';
+
+  loader.load(
+    MODEL_URL,
+    (gltf) => {
+      character = gltf.scene;
+
+      // Automatikus méretezés – bármilyen modell belefér
+      const box = new THREE.Box3().setFromObject(character);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const scale = 2.5 / maxDim;
+      character.scale.setScalar(scale);
+      character.position.sub(center.multiplyScalar(scale));
+      character.position.y -= size.y * scale * 0.5;
+
+      scene.add(character);
+
+      // Animációk kezelése (ha van)
+      if (gltf.animations && gltf.animations.length > 0) {
+        mixer = new THREE.AnimationMixer(character);
+        const action = mixer.clipAction(gltf.animations[0]);
+        action.play();
+      }
+
+      document.getElementById('space3dLabel').textContent = '🌌 REASON karakter';
+    },
+    (xhr) => {
+      const pct = Math.round(xhr.loaded / xhr.total * 100);
+      document.getElementById('space3dLabel').textContent = `⏳ Betöltés ${pct}%`;
+    },
+    (err) => {
+      console.error('GLB betöltési hiba:', err);
+      document.getElementById('space3dLabel').textContent = '⚠️ Modell nem elérhető';
+    }
+  );
 
   function resize(){
     const w = widget.clientWidth, h = widget.clientHeight;
@@ -1421,7 +1472,9 @@ function renderSupportBanner() {
 
   function animate(){
     requestAnimationFrame(animate);
-    
+    const delta = clock.getDelta();
+    if (mixer) mixer.update(delta);
+    if (character) character.rotation.y += 0.005; // lassú forogás
     renderer.render(scene, camera);
   }
   animate();
@@ -1450,6 +1503,7 @@ function renderSupportBanner() {
     setTimeout(resize, 60);
   };
 })();
+
 
 // ── INIT ──
 initWeather();
