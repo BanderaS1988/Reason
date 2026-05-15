@@ -1301,7 +1301,7 @@ function renderSupportBanner() {
 initWeather();
 setInterval(initWeather, 10 * 60 * 1000);
 fetchArticles();
-setInterval(fetchArticles, 30 * 1000);
+setInterval(fetchArticles, 10 * 1000); // 30 helyett 10 másodperc
 renderArticles();
 pingVisitor();
 setInterval(pingVisitor, 60 * 1000);
