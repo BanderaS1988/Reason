@@ -1132,27 +1132,29 @@ function openModal(art) {
   const c = art.category || 'Egyéb', col = CAT_COLOR[c] || '#888';
   const tl = art.article_type || '';
   _currentModalArticleId = String(art.id);
-  document.getElementById('modalCat').textContent = c;
-  document.getElementById('modalCat').style.color = col;
+
+  document.getElementById('modalCat').textContent  = c;
+  document.getElementById('modalCat').style.color  = col;
+
   const tb = document.getElementById('modalTypeBadge');
-  tb.textContent = tl;
+  tb.textContent   = tl;
   tb.style.display = tl ? '' : 'none';
+
   document.getElementById('modalPremium').style.display = art.is_premium ? '' : 'none';
-  document.getElementById('modalTitle').textContent = art.title || '–';
+  document.getElementById('modalTitle').textContent     = art.title || '–';
   document.getElementById('modalMeta').innerHTML = `
     <span>🕐 ${fmtTimeFull(art.created_at)}</span>
     <span>👤 REASON Szerkesztőség</span>
     <span>⏱ ${art.read_time || '?'} perc olvasás</span>`;
 
-  // ── STATS BAR ──────────────────────────────────────────────────
   const statsBar = document.getElementById('modalStatsBar');
   if (statsBar) {
     statsBar.style.display = 'flex';
-    document.getElementById('modalStatLikes').textContent    = (art.like_count  ?? 0).toLocaleString('hu');
-    document.getElementById('modalStatViews').textContent    = (art.view_count  ?? 0).toLocaleString('hu');
+    document.getElementById('modalStatLikes').textContent    = (art.like_count ?? 0).toLocaleString('hu');
+    document.getElementById('modalStatViews').textContent    = '…';
     document.getElementById('modalStatComments').textContent = '…';
+    loadModalViewCount(art.id);
   }
-  // ──────────────────────────────────────────────────────────────
 
   if (art.is_premium && !currentUser) {
     document.getElementById('modalBody').innerHTML = `
@@ -1167,29 +1169,30 @@ function openModal(art) {
     return;
   }
 
-  const body = art.body || art.excerpt || '';
+  const body  = art.body || art.excerpt || '';
   const paras = body.split(/\n\n+|\n/).filter(p => p.trim().length > 4);
   document.getElementById('modalBody').innerHTML = paras.length
     ? paras.map(p => `<p>${esc(p.trim())}</p>`).join('')
     : `<p>${esc(body)}</p>`;
 
-  document.getElementById('modalActionBar').style.display = 'block';
+  document.getElementById('modalActionBar').style.display       = 'block';
   document.getElementById('modalCommentsSection').style.display = 'block';
-  document.getElementById('modalLikeCount').textContent = art.like_count ?? 0;
+  document.getElementById('modalLikeCount').textContent         = art.like_count ?? 0;
 
   const likeBtn = document.getElementById('modalLikeBtn');
   likeBtn.dataset.articleId = art.id;
   const lk = 'reason_liked_' + art.id;
   likeBtn.style.cssText = localStorage.getItem(lk)
-    ? 'background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important' : '';
+    ? 'background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important'
+    : '';
 
   document.getElementById('modalShareMsg').textContent = '';
-  document.getElementById('modalCMsg').textContent = '';
-  document.getElementById('modalCBody').value = '';
-  document.getElementById('modalCAuthor').value = '';
+  document.getElementById('modalCMsg').textContent     = '';
+  document.getElementById('modalCBody').value          = '';
+  document.getElementById('modalCAuthor').value        = '';
 
   document.getElementById('modalCommentCountBadge').textContent = '…';
-  document.getElementById('modalCommentCountText').textContent = '';
+  document.getElementById('modalCommentCountText').textContent  = '';
   loadModalComments(art.id);
 
   const curTheme = document.documentElement.dataset.theme || 'light';
@@ -1201,6 +1204,7 @@ function openModal(art) {
   document.body.style.overflow = 'hidden';
   document.getElementById('articleModalBox').scrollTop = 0;
 }
+
 
 document.getElementById('modalClose').onclick = closeModal;
 document.getElementById('articleModal').addEventListener('click', e => {
@@ -1313,37 +1317,70 @@ function updateTicker(arts) {
 //  MODAL LIKE / SHARE / KOMMENTEK
 // ══════════════════════════════════════════════════════════════════
 async function handleModalLike() {
-  const btn = document.getElementById('modalLikeBtn');
-  const countEl = document.getElementById('modalLikeCount');
+  const btn       = document.getElementById('modalLikeBtn');
+  const countEl   = document.getElementById('modalLikeCount');
+  const statLikes = document.getElementById('modalStatLikes');
   const articleId = btn.dataset.articleId;
   if (!articleId) return;
+
   const lk = 'reason_liked_' + articleId;
-  if (localStorage.getItem(lk)) return;
+  if (localStorage.getItem(lk)) {
+    showToast('Ezt a cikket már lájkoltad! 👍', 'info');
+    return;
+  }
+
   const prev = parseInt(countEl.textContent, 10) || 0;
-  countEl.textContent = prev + 1;
+  const next  = prev + 1;
+  countEl.textContent = next;
+  if (statLikes) statLikes.textContent = next.toLocaleString('hu');
   btn.style.cssText = 'background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important';
   localStorage.setItem(lk, '1');
+
   try {
-    const d = await sbFetch('/rest/v1/articles?id=eq.' + articleId + '&select=like_count&limit=1');
-    const cur = d?.[0]?.like_count ?? prev;
+    const rows = await sbFetch('/rest/v1/articles?id=eq.' + articleId + '&select=like_count&limit=1');
+    const cur  = rows?.[0]?.like_count ?? prev;
+
     await sbFetch('/rest/v1/articles?id=eq.' + articleId, {
-      method: 'PATCH',
+      method:  'PATCH',
       headers: { ...SB_HDR, 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ like_count: cur + 1 })
+      body:    JSON.stringify({ like_count: cur + 1 })
     });
-    countEl.textContent = cur + 1;
-    const statLikes = document.getElementById('modalStatLikes');
-if (statLikes) statLikes.textContent = (cur + 1).toLocaleString('hu');
-    const c = allArticles.find(a => String(a.id) === String(articleId));
-    if (c) c.like_count = cur + 1;
+
+    const real = cur + 1;
+    countEl.textContent = real;
+    if (statLikes) statLikes.textContent = real.toLocaleString('hu');
+
+    const cached = allArticles.find(a => String(a.id) === String(articleId));
+    if (cached) cached.like_count = real;
+
+    showToast('❤️ Köszönjük a lájkot!', 'success');
   } catch {
     countEl.textContent = prev;
+    if (statLikes) statLikes.textContent = prev.toLocaleString('hu');
     btn.style.cssText = '';
     localStorage.removeItem(lk);
+    showToast('Hiba történt, próbáld újra.', 'warn');
   }
 }
 window.handleModalLike = handleModalLike;
 
+
+
+async function loadModalViewCount(articleId) {
+  const el = document.getElementById('modalStatViews');
+  if (!el) return;
+  try {
+    const rows = await sbFetch(
+      '/rest/v1/article_views?article_id=eq.' + articleId + '&select=view_count&limit=1'
+    );
+    el.textContent = (rows?.[0]?.view_count ?? 0).toLocaleString('hu');
+  } catch {
+    el.textContent = '–';
+  }
+}
+
+
+  
 async function handleModalShare() {
   const articleId = document.getElementById('modalLikeBtn').dataset.articleId;
   if (!articleId) return;
@@ -1368,18 +1405,17 @@ async function handleModalShare() {
   }
 }
 window.handleModalShare = handleModalShare;
-
 async function loadModalComments(articleId) {
-  const listEl = document.getElementById('modalCommentList');
+  const listEl  = document.getElementById('modalCommentList');
   const badgeEl = document.getElementById('modalCommentCountBadge');
-  const textEl = document.getElementById('modalCommentCountText');
+  const textEl  = document.getElementById('modalCommentCountText');
   listEl.innerHTML = '<div style="font-size:13px;color:var(--text4);padding:8px 0">Betöltés...</div>';
   try {
     const comments = await sbFetch(`/rest/v1/comments?article_id=eq.${articleId}&order=created_at.asc`);
     const cnt = comments.length;
     badgeEl.textContent = cnt;
     const statCnt = document.getElementById('modalStatComments');
-if (statCnt) statCnt.textContent = cnt;
+    if (statCnt) statCnt.textContent = cnt;
     if (cnt === 0) {
       textEl.textContent = 'Még nincs hozzászólás';
       listEl.innerHTML = '<div style="font-size:13px;color:var(--text4);padding:8px 0">Még nincs hozzászólás. Légy az első!</div>';
