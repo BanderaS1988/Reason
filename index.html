@@ -1528,6 +1528,12 @@ function renderSupportBanner(){
   mc.appendChild(b);
 }
 
+
+
+
+
+
+  
 // ════════════════════════════════════════════════════════
 //  3D TÉR WIDGET + LIP SYNC
 // ════════════════════════════════════════════════════════
@@ -1570,75 +1576,7 @@ function renderSupportBanner(){
   let character=null, mixer=null;
   const clock=new THREE.Clock();
 
-  // ── Egyszerű lip sync állapot ──
-  // Ezek a morfok a 3D modellen a szájmozgást vezérlik
-  // A Streamoji modell jawOpen morph-ot használ
-  let _lipActive = false;
-  let _lipT      = 0;
-  let _lipRate   = 1;
-  let _lipPhonemeSeq = [];
-  let _lipPhonemeIdx = 0;
-  let _lipStartTime  = 0;
-
-  // Magyar fonéma térkép – egyszerűsített verzió a jaw mozgáshoz
-  function _textToJawSeq(text, rate) {
-    const s = text.toLowerCase();
-    const seq = [];
-    let i = 0;
-    const msPer = (0.09 / rate) * 1000;
-    while (i < s.length) {
-      const c = s[i];
-      let jawVal = 0;
-      if ('aáeéiíoóöőuúüű'.includes(c))       jawVal = 0.45 + Math.random()*0.2;
-      else if ('mbp'.includes(c))              jawVal = 0.02;
-      else if ('fv'.includes(c))              jawVal = 0.08;
-      else if (' .,;:!?'.includes(c))         jawVal = 0;
-      else                                    jawVal = 0.15 + Math.random()*0.1;
-      seq.push({ jaw: jawVal, dur: msPer * (c === ' ' ? 1.4 : 1) });
-      i++;
-    }
-    return seq;
-  }
-
-  // Morph írás a modellre
-  function _writeMorphJaw(jawVal) {
-    if (!character) return;
-    character.traverse(obj => {
-      if (!obj.isMesh || !obj.morphTargetDictionary) return;
-      const dict = obj.morphTargetDictionary;
-      // jawOpen vagy hasonló nevek
-      const keys = ['jawOpen','JawOpen','jaw_open','jaw'];
-      for (const k of keys) {
-        if (dict[k] !== undefined) {
-          obj.morphTargetInfluences[dict[k]] = Math.max(0, Math.min(1, jawVal));
-        }
-      }
-    });
-  }
-
-  // Lip sync API – amit a TTS rendszer hív
-  window._tts3dLipStart = function(text, rate) {
-    _lipActive = true;
-    _lipRate   = rate || 1;
-    _lipPhonemeSeq = _textToJawSeq(text, _lipRate);
-    _lipPhonemeIdx = 0;
-    _lipStartTime  = performance.now();
-    _lipT = 0;
-  };
-
-  window._tts3dLipStop = function() {
-    _lipActive = false;
-    _lipPhonemeSeq = [];
-    _lipPhonemeIdx = 0;
-    _writeMorphJaw(0);
-  };
-
-  window._tts3dLipWord = function(charIndex, totalLen) {
-    // Szóhatáron szinkronizálás: ugrás a megfelelő fonémára
-    if (!_lipActive || _lipPhonemeSeq.length === 0) return;
-    const targetIdx = Math.floor((charIndex / Math.max(1, totalLen)) * _lipPhonemeSeq.length);
-    if (targetIdx > _lipPhonemeIdx) _lipPhonemeIdx = targetIdx;
-  };
+  
 
   const loader    = new THREE.GLTFLoader();
   const MODEL_URL = 'https://kqugolmndqonbnjetdyi.supabase.co/storage/v1/object/public/models/csavo.glb';
@@ -1668,6 +1606,19 @@ function renderSupportBanner(){
         mixer.clipAction(gltf.animations[0]).play();
       }
       document.getElementById('space3dLabel').textContent='🌌 REASON felolvasó';
+      const lipSync = new LipSyncMotor();
+lipSync.setModel(character);
+window.lipSync = lipSync;
+
+window._tts3dLipStart = function(text) {
+  const cfg = getConfig();
+  const phonemes = textToPhonemes(text, cfg);
+  lipSync.startAnimation(phonemes);
+};
+
+window._tts3dLipStop = function() {
+  lipSync.stop();
+};
     },
     (xhr)=>{
       if (xhr.total){
@@ -1693,39 +1644,13 @@ function renderSupportBanner(){
   let _tgtJaw = 0;
 
   function animate(){
-    requestAnimationFrame(animate);
-    const delta=clock.getDelta();
-    if (mixer) mixer.update(delta);
-    controls.update();
-
-    // Lip sync tick
-    if (_lipActive && _lipPhonemeSeq.length > 0) {
-      const now = performance.now();
-      // Kumulált idő alapján haladunk a szekvencián
-      let cum = 0;
-      let found = false;
-      for (let i = 0; i < _lipPhonemeSeq.length; i++) {
-        cum += _lipPhonemeSeq[i].dur;
-        if (now - _lipStartTime < cum) {
-          _tgtJaw = _lipPhonemeSeq[i].jaw;
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        // Lejárt a szekvencia, de még _lipActive (TTS még megy) – idle jaw
-        _tgtJaw = 0.05 + Math.sin(now*0.005)*0.04;
-      }
-    } else {
-      _tgtJaw = 0;
-    }
-
-    // Simítás
-    _curJaw += (_tgtJaw - _curJaw) * 0.35;
-    _writeMorphJaw(_curJaw);
-
-    renderer.render(scene,camera);
-  }
+  requestAnimationFrame(animate);
+  const delta=clock.getDelta();
+  if (mixer) mixer.update(delta);
+  controls.update();
+  if (window.lipSync) window.lipSync.update();
+  renderer.render(scene,camera);
+}
   animate();
 
   new ResizeObserver(resize).observe(widget);
@@ -1794,6 +1719,481 @@ if ('serviceWorker' in navigator) {
   <a href="/aszf.html" style="color:#f0c040;text-decoration:none">ÁSZF</a> ·
   <a href="/adatkezeles.html" style="color:#f0c040;text-decoration:none">Adatkezelés</a> ·
   <a href="/cookie.html" style="color:#f0c040;text-decoration:none">Cookie tájékoztató</a>
+
+
+<script>
+'use strict';
+
+// ── Segédfüggvény ─────────────────────────────────────────────────────────────
+function lerp(a, b, t) {
+  return a + (b - a) * Math.max(0, Math.min(1, t));
+}
+
+// ── Hardcoded konfiguráció (képeken látható értékek) ──────────────────────────
+function getConfig() {
+  return {
+    pMsPerChar:   0.090,
+    pOpenRatio:   0.50,
+    pPeakRatio:   0.35,
+    pCloseRatio:  0.15,
+    pCloseFrac:   0.40,
+    pSpaceMul:    1.44,
+    pPunctMul:    8.00,
+    pStartDelay:  0.050,
+    pEndPause:    0.120,
+    pEndExtra:    0.200,
+
+    vAjaw:  0.60, vAfun:   0.05,
+    vEjaw:  0.35, vEml:    0.30,
+    vIjaw:  0.20, vIml:    0.45,
+    vOjaw:  0.45, vOfun:   0.70,
+    vOEjaw: 0.30, vOEpuck: 0.80,
+    vUjaw:  0.25, vUpuck:  0.90,
+    vUEjaw: 0.20, vUEpuck: 0.85,
+
+    cMBPjaw:  0.08,
+    cFVjaw:   0.15, cFVpuck: 0.15,
+    cSZjaw:   0.18, cSZml:   0.18,
+    cDefjaw:  0.15, cDefml:  0.05,
+
+    m3dMorphScale:  0.65,
+    m3dLerp:        0.10,
+    m3dJawAngle:    0.42,
+    m3dHeadAngle:   0.12,
+    mOpenSpeed:     0.45,
+    mCloseSpeed:    0.28,
+    mConsClose:     0.35,
+    mCharMs:        0.75,
+    mIdleAmp:       0.08,
+    mLerpMin:       0.06,
+    mLerpMax:       0.40,
+    mJawMax:        0.90,
+    mJawIdleMin:    0.00,
+    mVowelBoost:    1.10,
+    mConsDamp:      0.70,
+    mFunnelScale:   1.20,
+    mPuckerScale:   1.20,
+    mMouthLRScale:  1.00,
+    mSilenceThresh: 0.015,
+    mSilenceDelay:  250,
+    mIdleWaveAmp:   0.04,
+    mIdleWaveSpeed: 1.80,
+    mRmsGain:       1.20,
+    mLowBandRatio:  0.25,
+    mHighBandRatio: 0.65,
+    mVowelThresh:   1.20,
+    mFftSmooth:     0.75,
+    mLabial:        0.08,
+    mLabiodent:     0.15,
+    mSibilant:      0.18,
+    mDefault:       0.15,
+
+    m3dBlinkDur:    0.18,
+    m3dBlinkMin:    1.51,
+    m3dBlinkMax:    4.01,
+    m3dHeadSwing:   0.04,
+    m3dBob:         0.57,
+  };
+}
+
+// ── Magyar fonéma elemző ──────────────────────────────────────────────────────
+function phType(c) {
+  if ('aá'.includes(c))       return 'vowel_a';
+  if ('eé'.includes(c))       return 'vowel_e';
+  if ('ií'.includes(c))       return 'vowel_i';
+  if ('oó'.includes(c))       return 'vowel_o';
+  if ('öő'.includes(c))       return 'vowel_oe';
+  if ('uú'.includes(c))       return 'vowel_u';
+  if ('üű'.includes(c))       return 'vowel_ue';
+  if ('mbp'.includes(c))      return 'cons_mbp';
+  if ('fv'.includes(c))       return 'cons_fv';
+  if (['sz','zs','s','z','cs'].includes(c)) return 'cons_sz';
+  return 'cons_default';
+}
+
+function textToPhonemes(text, cfg) {
+  const s = text.toLowerCase();
+  const result = [];
+  let i = 0;
+  while (i < s.length) {
+    const three = s.slice(i, i+3);
+    if (three === 'dzs') {
+      result.push({ char:'dzs', type:'cons_sz', dur:cfg.pMsPerChar });
+      i+=3; continue;
+    }
+    const two = s.slice(i, i+2);
+    if (['sz','zs','cs','ty','gy','ny','dz'].includes(two)) {
+      result.push({ char:two, type:phType(two), dur:cfg.pMsPerChar });
+      i+=2; continue;
+    }
+    const c = s[i];
+    if (c===' '||c==='\t') {
+      result.push({ char:c, type:'silence', dur:cfg.pMsPerChar*cfg.pSpaceMul });
+    } else if ('.,:;!?…–—'.includes(c)) {
+      result.push({ char:c, type:'silence', dur:cfg.pMsPerChar*cfg.pPunctMul });
+    } else {
+      result.push({ char:c, type:phType(c), dur:cfg.pMsPerChar });
+    }
+    i++;
+  }
+  return result;
+}
+
+// ── Morph célértékek fonématípusonként ────────────────────────────────────────
+function getMorphTarget(type, cfg) {
+  switch(type) {
+    case 'vowel_a': return {
+      jawOpen:cfg.vAjaw, mouthFunnel:cfg.vAfun, mouthPucker:0,
+      mouthLeft:0, mouthRight:0,
+      mouthLowerDownLeft:cfg.vAjaw*0.4, mouthLowerDownRight:cfg.vAjaw*0.4,
+      mouthUpperUpLeft:cfg.vAjaw*0.15, mouthUpperUpRight:cfg.vAjaw*0.15,
+    };
+    case 'vowel_e': return {
+      jawOpen:cfg.vEjaw, mouthLeft:cfg.vEml, mouthRight:cfg.vEml,
+      mouthSmileLeft:cfg.vEml*0.4, mouthSmileRight:cfg.vEml*0.4,
+      mouthFunnel:0, mouthPucker:0,
+      mouthLowerDownLeft:cfg.vEjaw*0.2, mouthLowerDownRight:cfg.vEjaw*0.2,
+    };
+    case 'vowel_i': return {
+      jawOpen:cfg.vIjaw, mouthLeft:cfg.vIml, mouthRight:cfg.vIml,
+      mouthSmileLeft:cfg.vIml*0.5, mouthSmileRight:cfg.vIml*0.5,
+      mouthDimpleLeft:cfg.vIml*0.3, mouthDimpleRight:cfg.vIml*0.3,
+      mouthFunnel:0, mouthPucker:0,
+    };
+    case 'vowel_o': return {
+      jawOpen:cfg.vOjaw, mouthFunnel:cfg.vOfun, mouthPucker:cfg.vOfun*0.5,
+      mouthLeft:0, mouthRight:0,
+      mouthLowerDownLeft:cfg.vOjaw*0.3, mouthLowerDownRight:cfg.vOjaw*0.3,
+    };
+    case 'vowel_oe': return {
+      jawOpen:cfg.vOEjaw, mouthPucker:cfg.vOEpuck, mouthFunnel:cfg.vOEpuck*0.4,
+      mouthLeft:0, mouthRight:0,
+      mouthLowerDownLeft:cfg.vOEjaw*0.25, mouthLowerDownRight:cfg.vOEjaw*0.25,
+    };
+    case 'vowel_u': return {
+      jawOpen:cfg.vUjaw, mouthPucker:cfg.vUpuck, mouthFunnel:cfg.vUpuck*0.6,
+      mouthLeft:0, mouthRight:0,
+      mouthLowerDownLeft:cfg.vUjaw*0.2, mouthLowerDownRight:cfg.vUjaw*0.2,
+    };
+    case 'vowel_ue': return {
+      jawOpen:cfg.vUEjaw, mouthPucker:cfg.vUEpuck, mouthFunnel:cfg.vUEpuck*0.5,
+      mouthLeft:0, mouthRight:0,
+    };
+    case 'cons_mbp': return {
+      jawOpen:cfg.cMBPjaw, mouthClose:0.6, mouthRollLower:0.4, mouthRollUpper:0.4,
+      mouthPressLeft:0.3, mouthPressRight:0.3,
+      mouthFunnel:0, mouthPucker:0, mouthLeft:0, mouthRight:0,
+    };
+    case 'cons_fv': return {
+      jawOpen:cfg.cFVjaw, mouthPucker:cfg.cFVpuck, mouthShrugUpper:0.25,
+      mouthRollLower:0.2, mouthPressLeft:0.1, mouthPressRight:0.1,
+      mouthFunnel:0, mouthLeft:0, mouthRight:0,
+    };
+    case 'cons_sz': return {
+      jawOpen:cfg.cSZjaw, mouthLeft:cfg.cSZml, mouthRight:cfg.cSZml,
+      mouthPressLeft:0.2, mouthPressRight:0.2,
+      mouthStretchLeft:0.1, mouthStretchRight:0.1,
+      mouthFunnel:0, mouthPucker:0,
+    };
+    case 'cons_default': return {
+      jawOpen:cfg.cDefjaw, mouthLeft:cfg.cDefml, mouthRight:cfg.cDefml,
+      mouthLowerDownLeft:cfg.cDefjaw*0.2, mouthLowerDownRight:cfg.cDefjaw*0.2,
+      mouthFunnel:0, mouthPucker:0,
+    };
+    default: return {
+      jawOpen:0, mouthFunnel:0, mouthPucker:0,
+      mouthLeft:0, mouthRight:0, mouthClose:0,
+      mouthLowerDownLeft:0, mouthLowerDownRight:0,
+      mouthUpperUpLeft:0, mouthUpperUpRight:0,
+      mouthSmileLeft:0, mouthSmileRight:0,
+    };
+  }
+}
+
+// ── LipSyncMotor osztály ──────────────────────────────────────────────────────
+class LipSyncMotor {
+  constructor() {
+    this._meshNodes=[]; this._isAnimating=false;
+    this._phonemeQueue=[]; this._phonemeSeq=[];
+    this._startTime=0; this._totalMs=0;
+    this._lastFrameTime=performance.now();
+    this._endTimer=null; this._current={};
+    this._blinkTimer=0; this._blinkNext=2000;
+    this._blinkPhase=0; this._blinkT=0;
+    this._breathT=0; this._idleWaveT=0;
+    this._saccadeT=0; this._saccadeNext=3000;
+    this._saccadeTimer=0; this._saccadeCurX=0;
+    this._saccadeCurY=0; this._saccadeTgtX=0;
+    this._saccadeTgtY=0; this._saccadeDur=120;
+    this._saccadePhase=0; this._saccadeFromX=0; this._saccadeFromY=0;
+    this._browWaveT=0; this._toneWaveT=0;
+    this._microExpTimer=0; this._microExpNext=5000+Math.random()*8000;
+    this._microExpPhase=0; this._microExpT=0; this._microExpType=0;
+  }
+
+  setModel(model) {
+    this._meshNodes=[];
+    model.traverse(n=>{
+      if(n.isMesh&&n.morphTargetDictionary&&n.morphTargetInfluences){
+        this._meshNodes.push({mesh:n,dict:n.morphTargetDictionary});
+      }
+    });
+    this._current={};
+  }
+
+  _buildQueue() {
+    const cfg=getConfig();
+    const q=[]; let t=cfg.pStartDelay*1000;
+    for(const ph of this._phonemeSeq){
+      const dur=ph.dur*1000;
+      const openEnd=t+dur*cfg.pOpenRatio;
+      const peakEnd=openEnd+dur*cfg.pPeakRatio;
+      const closeEnd=peakEnd+dur*cfg.pCloseRatio;
+      q.push({startT:t,openEndT:openEnd,peakEndT:peakEnd,closeEndT:closeEnd,endT:closeEnd,
+        phType:ph.type,isVowel:ph.type.startsWith('vowel_'),isSilence:ph.type==='silence'});
+      t=closeEnd;
+    }
+    this._totalMs=t+(cfg.pEndPause||0.15)*1000;
+    this._phonemeQueue=q;
+  }
+
+  startAnimation(phonemeSeq) {
+    this.stop();
+    if(!phonemeSeq||!phonemeSeq.length) return;
+    this._phonemeSeq=phonemeSeq;
+    this._buildQueue();
+    this._isAnimating=true;
+    this._startTime=performance.now();
+    if(this._endTimer) clearTimeout(this._endTimer);
+    this._endTimer=setTimeout(()=>this.stop(), this._totalMs+300);
+  }
+
+  update() {
+    const now=performance.now();
+    const dt=now-this._lastFrameTime;
+    this._lastFrameTime=now;
+    if(!this._meshNodes.length) return;
+    const cfg=getConfig();
+    if(this._isAnimating) this._updateAnimating(now,cfg,dt);
+    else this._updateIdle(dt,cfg);
+  }
+
+  _updateAnimating(now,cfg,dt) {
+    const elapsed=now-this._startTime;
+    let activePh=null;
+    for(const ph of this._phonemeQueue){
+      if(elapsed>=ph.startT&&elapsed<=ph.endT){activePh=ph;break;}
+      if(elapsed<ph.startT) break;
+    }
+    let target={};
+    if(activePh&&!activePh.isSilence){
+      const {startT,openEndT,peakEndT,closeEndT}=activePh;
+      let blend=0;
+      if(elapsed<openEndT) blend=openEndT>startT?(elapsed-startT)/(openEndT-startT):1;
+      else if(elapsed<peakEndT) blend=1;
+      else {
+        const cl=closeEndT-peakEndT, t2=elapsed-peakEndT;
+        blend=cl>0?1-t2/cl:0;
+        blend=Math.min(1,Math.max(0,blend));
+        blend*=cfg.pCloseFrac+(1-cfg.pCloseFrac)*blend;
+      }
+      blend=Math.min(1,Math.max(0,blend));
+      const scale=cfg.m3dMorphScale*(activePh.isVowel?cfg.mVowelBoost:cfg.mConsDamp);
+      const mt=getMorphTarget(activePh.phType,cfg);
+      for(const [k,v] of Object.entries(mt)){
+        let val=v*blend*scale;
+        if(k==='mouthFunnel') val*=cfg.mFunnelScale;
+        if(k==='mouthPucker') val*=cfg.mPuckerScale;
+        if(k==='mouthLeft'||k==='mouthRight') val*=cfg.mMouthLRScale;
+        if(k==='jawOpen') val=Math.min(val,cfg.mJawMax);
+        target[k]=val;
+      }
+    } else {
+      target.jawOpen=cfg.mJawIdleMin||0;
+    }
+    this._breathT+=(dt*0.001)*0.22;
+    const bv=Math.sin(this._breathT*Math.PI*2);
+    if(!activePh||activePh.isSilence){
+      target.jawOpen=Math.max(target.jawOpen||0,Math.max(0,(cfg.mJawIdleMin||0)+0.008*bv));
+    }
+    target.mouthRollLower=Math.max(target.mouthRollLower||0,Math.max(0,0.03+0.02*bv));
+    this._applyBlink(target,dt,cfg);
+    this._applySaccade(target,dt);
+    this._applyBrow(target,dt);
+    this._applyTone(target,dt,activePh);
+    this._applyMicroExp(target,dt);
+    this._lerpToTarget(target,cfg.m3dLerp);
+    this._writeMorphs(this._current);
+  }
+
+  _updateIdle(dt,cfg) {
+    const t=dt*0.001;
+    this._breathT+=t*0.22;
+    const bv=Math.sin(this._breathT*Math.PI*2);
+    const target={
+      jawOpen:Math.max(0,cfg.mJawIdleMin+0.012*bv),
+      mouthRollLower:Math.max(0,0.04+0.03*bv),
+    };
+    this._applyBlink(target,dt,cfg);
+    this._applySaccade(target,dt);
+    this._applyBrow(target,dt);
+    this._applyTone(target,dt,null);
+    this._applyMicroExp(target,dt);
+    this._lerpToTarget(target,cfg.m3dLerp);
+    this._writeMorphs(this._current);
+  }
+
+  _applyBlink(target,dt,cfg) {
+    this._blinkTimer+=dt;
+    if(this._blinkPhase===0&&this._blinkTimer>=this._blinkNext){
+      this._blinkPhase=1; this._blinkT=0;
+      this._blinkNext=Math.random()<0.3?200:
+        (cfg.m3dBlinkMin*1000+Math.random()*(cfg.m3dBlinkMax-cfg.m3dBlinkMin)*1000);
+      this._blinkTimer=0;
+    }
+    let blink=0;
+    if(this._blinkPhase>0){
+      this._blinkT+=dt;
+      const half=(cfg.m3dBlinkDur*1000)/2;
+      if(this._blinkPhase===1){
+        blink=Math.min(1,this._blinkT/half);
+        if(this._blinkT>=half){this._blinkPhase=2;this._blinkT=0;}
+      } else {
+        blink=1-Math.min(1,this._blinkT/half);
+        if(this._blinkT>=half){this._blinkPhase=0;blink=0;}
+      }
+    }
+    target.eyeBlinkLeft=blink; target.eyeBlinkRight=blink;
+    target.eyeSquintLeft=blink*0.35; target.eyeSquintRight=blink*0.35;
+  }
+
+  _applySaccade(target,dt) {
+    this._saccadeTimer+=dt;
+    if(this._saccadePhase===0&&this._saccadeTimer>=this._saccadeNext){
+      this._saccadeFromX=this._saccadeCurX; this._saccadeFromY=this._saccadeCurY;
+      this._saccadeTgtX=(Math.random()-0.5)*0.55;
+      this._saccadeTgtY=(Math.random()-0.5)*0.32;
+      this._saccadeDur=80+Math.random()*100;
+      this._saccadeT=0; this._saccadePhase=1;
+      this._saccadeNext=900+Math.random()*2200; this._saccadeTimer=0;
+    }
+    if(this._saccadePhase===1){
+      this._saccadeT+=dt;
+      const p=Math.min(1,this._saccadeT/this._saccadeDur);
+      const ease=p<0.5?2*p*p:-1+(4-2*p)*p;
+      this._saccadeCurX=lerp(this._saccadeFromX,this._saccadeTgtX,ease);
+      this._saccadeCurY=lerp(this._saccadeFromY,this._saccadeTgtY,ease);
+      if(p>=1){this._saccadeCurX=this._saccadeTgtX;this._saccadeCurY=this._saccadeTgtY;this._saccadePhase=0;}
+    }
+    target.eyeLookInLeft=Math.max(0,this._saccadeCurX);
+    target.eyeLookInRight=Math.max(0,-this._saccadeCurX);
+    target.eyeLookOutLeft=Math.max(0,-this._saccadeCurX);
+    target.eyeLookOutRight=Math.max(0,this._saccadeCurX);
+    target.eyeLookUpLeft=Math.max(0,-this._saccadeCurY);
+    target.eyeLookUpRight=Math.max(0,-this._saccadeCurY);
+    target.eyeLookDownLeft=Math.max(0,this._saccadeCurY);
+    target.eyeLookDownRight=Math.max(0,this._saccadeCurY);
+  }
+
+  _applyBrow(target,dt) {
+    this._browWaveT+=(dt*0.001)*0.07;
+    target.browOuterUpLeft=0.04+0.03*Math.sin(this._browWaveT*Math.PI*2);
+    target.browOuterUpRight=0.04+0.03*Math.sin(this._browWaveT*Math.PI*2+0.8);
+    target.browInnerUp=Math.max(0,0.02+0.02*Math.sin(this._browWaveT*Math.PI*2+1.4));
+  }
+
+  _applyTone(target,dt,activePh) {
+    this._toneWaveT+=(dt*0.001)*0.05;
+    target.cheekSquintLeft=Math.max(0,0.05+0.03*Math.sin(this._toneWaveT*Math.PI*2));
+    target.cheekSquintRight=target.cheekSquintLeft;
+    if(!activePh||activePh.isSilence){
+      target.mouthPressLeft=Math.max(0,0.02+0.015*Math.sin(this._toneWaveT*Math.PI*2+1.1));
+      target.mouthPressRight=target.mouthPressLeft;
+    }
+  }
+
+  _applyMicroExp(target,dt) {
+    this._microExpTimer+=dt;
+    if(this._microExpPhase===0&&this._microExpTimer>=this._microExpNext){
+      this._microExpPhase=1; this._microExpT=0;
+      this._microExpType=Math.floor(Math.random()*3);
+      this._microExpNext=6000+Math.random()*10000; this._microExpTimer=0;
+    }
+    if(this._microExpPhase>0){
+      this._microExpT+=dt;
+      const p=Math.min(1,this._microExpT/900);
+      const env=p<0.4?p/0.4:1-(p-0.4)/0.6;
+      const amp=Math.max(0,env);
+      if(this._microExpType===0){
+        target.mouthSmileLeft=(target.mouthSmileLeft||0)+amp*0.18;
+        target.mouthSmileRight=(target.mouthSmileRight||0)+amp*0.16;
+        target.eyeSquintLeft=(target.eyeSquintLeft||0)+amp*0.08;
+        target.eyeSquintRight=(target.eyeSquintRight||0)+amp*0.08;
+      } else if(this._microExpType===1){
+        target.browDownLeft=amp*0.16; target.browDownRight=amp*0.14;
+        target.browInnerUp=(target.browInnerUp||0)+amp*0.18;
+      } else {
+        target.eyeSquintLeft=(target.eyeSquintLeft||0)+amp*0.18;
+        target.eyeSquintRight=(target.eyeSquintRight||0)+amp*0.16;
+      }
+      if(p>=1) this._microExpPhase=0;
+    }
+  }
+
+  _lerpToTarget(target,lerpSpeed) {
+    const MOUTH=['jawOpen','jawForward','jawLeft','jawRight','mouthClose','mouthFunnel',
+      'mouthPucker','mouthLeft','mouthRight','mouthSmileLeft','mouthSmileRight',
+      'mouthFrownLeft','mouthFrownRight','mouthRollLower','mouthRollUpper',
+      'mouthShrugLower','mouthShrugUpper','mouthLowerDownLeft','mouthLowerDownRight',
+      'mouthUpperUpLeft','mouthUpperUpRight','mouthDimpleLeft','mouthDimpleRight',
+      'mouthStretchLeft','mouthStretchRight','mouthPressLeft','mouthPressRight'];
+    const BLINK=['eyeBlinkLeft','eyeBlinkRight'];
+    const GAZE=['eyeLookInLeft','eyeLookInRight','eyeLookOutLeft','eyeLookOutRight',
+      'eyeLookUpLeft','eyeLookUpRight','eyeLookDownLeft','eyeLookDownRight',
+      'eyeSquintLeft','eyeSquintRight','browOuterUpLeft','browOuterUpRight',
+      'browInnerUp','browDownLeft','browDownRight','cheekSquintLeft','cheekSquintRight'];
+    for(const k of MOUTH){
+      const tgt=target[k]!==undefined?target[k]:0;
+      const cur=this._current[k]||0;
+      const alpha=tgt>cur?Math.min(1,lerpSpeed*2.2):Math.min(1,lerpSpeed*1.4);
+      this._current[k]=lerp(cur,tgt,alpha);
+    }
+    for(const k of BLINK){
+      const tgt=target[k]!==undefined?target[k]:0;
+      this._current[k]=lerp(this._current[k]||0,tgt,Math.min(1,lerpSpeed*3));
+    }
+    for(const k of GAZE){
+      const tgt=target[k]!==undefined?target[k]:0;
+      this._current[k]=lerp(this._current[k]||0,tgt,Math.min(1,lerpSpeed*1.2));
+    }
+  }
+
+  _writeMorphs(values) {
+    for(const {mesh,dict} of this._meshNodes){
+      for(const [name,idx] of Object.entries(dict)){
+        const val=values[name]??0;
+        mesh.morphTargetInfluences[idx]=Math.max(0,Math.min(1,val));
+      }
+    }
+  }
+
+  stop() {
+    this._isAnimating=false;
+    this._phonemeQueue=[];
+    if(this._endTimer){clearTimeout(this._endTimer);this._endTimer=null;}
+    const MOUTH=['jawOpen','jawForward','jawLeft','jawRight','mouthClose','mouthFunnel',
+      'mouthPucker','mouthLeft','mouthRight','mouthSmileLeft','mouthSmileRight',
+      'mouthFrownLeft','mouthFrownRight','mouthRollLower','mouthRollUpper',
+      'mouthShrugLower','mouthShrugUpper','mouthLowerDownLeft','mouthLowerDownRight',
+      'mouthUpperUpLeft','mouthUpperUpRight','mouthDimpleLeft','mouthDimpleRight',
+      'mouthStretchLeft','mouthStretchRight','mouthPressLeft','mouthPressRight'];
+    for(const k of MOUTH) this._current[k]=0;
+    this._writeMorphs(this._current);
+  }
+}
+</script>
+
+  
 </footer>
 </body>
 </html>
