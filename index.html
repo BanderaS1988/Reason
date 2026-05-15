@@ -175,28 +175,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .theme-btn:hover{border-color:var(--border2);background:var(--bg3)}
 .theme-btn.active{background:var(--text);color:#fff;border-color:var(--text)}
 
-/* ── JELÖLŐNÉGYZET A MODALBAN ── */
-.modal-read-checkbox-wrap{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 44px;
-  background:var(--bg3);
-  border-bottom:1px solid var(--border);
-}
-.modal-read-checkbox-wrap label{
-  display:flex;align-items:center;gap:8px;
-  font-size:12px;font-weight:600;color:var(--text3);
-  cursor:pointer;user-select:none;
-}
-.modal-read-checkbox-wrap input[type=checkbox]{
-  width:16px;height:16px;accent-color:var(--accent);cursor:pointer;
-}
-.modal-read-badge{
-  font-size:10px;padding:2px 8px;border-radius:10px;
-  background:var(--accent);color:#fff;font-weight:700;
-  display:none;
-}
-.modal-read-badge.visible{display:inline-block;}
-
 .sidebar{display:flex;flex-direction:column;gap:20px;position:sticky;top:110px}
 .s-widget{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;overflow:hidden}
 .s-title{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text4);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
@@ -337,7 +315,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
   .modal-header{padding:20px 20px 16px}
   .modal-body{padding:20px 20px 20px;font-size:16px}
   .modal-toolbar{padding:10px 20px}
-  .modal-read-checkbox-wrap{padding:10px 20px}
+  
   #modalActionBar{padding:0 20px 20px!important}
   #modalCommentsSection{padding:0 20px 36px!important}
   .articles-grid{grid-template-columns:1fr}
@@ -478,14 +456,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
       <button class="theme-btn" id="themeBtnDark" onclick="setTheme('dark')">🌙 Sötét</button>
     </div>
 
-    <!-- JELÖLŐNÉGYZET A CIKK FELOLVASÁSÁHOZ -->
-    <div class="modal-read-checkbox-wrap" id="modalReadCheckWrap">
-      <label>
-        <input type="checkbox" id="modalReadCheckbox" onchange="onModalReadToggle()">
-        🔊 Jelöld ki felolvasáshoz
-      </label>
-      <span class="modal-read-badge" id="modalReadBadge">Kijelölve</span>
-    </div>
+   
 
     <div class="modal-body" id="modalBody"></div>
     <div id="modalActionBar" style="display:none;padding:0 44px 28px">
@@ -931,6 +902,16 @@ function renderCard(art) {
       </div>
       <div class="card-title">${hlSearch(esc(art.title||'Cím nélkül'))}</div>
       <div class="card-excerpt">${hlSearch(esc(ex))}</div>
+      <div onclick="event.stopPropagation()" style="padding:8px 16px 0;border-top:1px solid var(--border);display:flex;align-items:center;gap:7px">
+  <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);cursor:pointer;user-select:none">
+    <input type="checkbox"
+      ${isSelected ? 'checked' : ''}
+      onchange="ttsCardToggle('${art.id}', this.checked)"
+      style="width:14px;height:14px;accent-color:var(--accent);cursor:pointer">
+    🔊 Felolvasáshoz
+  </label>
+  ${isSelected ? '<span style="font-size:9px;background:var(--accent);color:#fff;padding:1px 7px;border-radius:10px;font-weight:700;">Kijelölve</span>' : ''}
+</div>
       <div class="card-foot">
         <span>REASON Szerkesztőség</span>
         <span class="card-readtime">⏱ ${art.read_time||'?'} perc</span>
@@ -988,34 +969,22 @@ document.getElementById('ttsPitch').addEventListener('input', function() {
 // Az aktuálisan nyitott modal cikk ID-ja
 let _currentModalArticleId = null;
 
-// Jelölőnégyzet toggle
-function onModalReadToggle() {
-  const cb = document.getElementById('modalReadCheckbox');
-  const badge = document.getElementById('modalReadBadge');
-  const id = _currentModalArticleId;
-  if (!id) return;
-
+function ttsCardToggle(id, checked) {
   const art = allArticles.find(a => String(a.id) === String(id));
   if (!art) return;
-
-  if (cb.checked) {
+  if (checked) {
     const rawText = (art.body || art.excerpt || art.title || '');
-    // Csak szöveget veszünk, HTML tagek nélkül
     const plainText = rawText.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
     ttsSelectedIds.set(String(id), { title: art.title || 'Cikk', text: plainText });
-    badge.classList.add('visible');
     showToast('✓ Cikk kijelölve felolvasáshoz', 'success');
   } else {
     ttsSelectedIds.delete(String(id));
-    badge.classList.remove('visible');
     showToast('Cikk eltávolítva a felolvasási sorból', '');
   }
-
   ttsRefreshQueueUI();
-  // Kártyákat újrarendereljük hogy megjelenjen/eltűnjön a jelölés
   renderArticles();
 }
-window.onModalReadToggle = onModalReadToggle;
+window.ttsCardToggle = ttsCardToggle;
 
 // Felolvasó sor UI frissítése
 function ttsRefreshQueueUI() {
@@ -1159,7 +1128,6 @@ function openModal(art) {
   const c=art.category||'Egyéb', col=CAT_COLOR[c]||'#888';
   const tl=art.article_type||'';
   _currentModalArticleId = String(art.id);
-
   document.getElementById('modalCat').textContent=c;
   document.getElementById('modalCat').style.color=col;
   const tb=document.getElementById('modalTypeBadge');
@@ -1170,16 +1138,6 @@ function openModal(art) {
     <span class="modal-meta-item">🕐 ${fmtTimeFull(art.created_at)}</span>
     <span class="modal-meta-item">👤 REASON Szerkesztőség</span>
     <span class="modal-meta-item">⏱ ${art.read_time||'?'} perc olvasás</span>`;
-
-  // Jelölőnégyzet állapota
-  const cb = document.getElementById('modalReadCheckbox');
-  const badge = document.getElementById('modalReadBadge');
-  const isSelected = ttsSelectedIds.has(String(art.id));
-  cb.checked = isSelected;
-  badge.classList.toggle('visible', isSelected);
-  // Premium cikknél is mutatjuk a checkboxot, de a tartalom védett
-  document.getElementById('modalReadCheckWrap').style.display = '';
-
   if (art.is_premium && !currentUser) {
     document.getElementById('modalBody').innerHTML=`
       <div style="text-align:center;padding:60px 20px">
