@@ -564,7 +564,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
           <span id="ttsQueueCount" style="font-size:10px;color:var(--text4)">0 kijelölt</span>
         </div>
         <div class="tts-queue" id="ttsQueueList">
-          <span style="color:var(--text4);font-style:italic">Nyiss meg egy cikket és jelöld ki felolvasáshoz.</span>
+          <span style="color:var(--text4);font-style:italic">Jelölj ki cikkeket felolvasáshoz.</span>
         </div>
         <div class="tts-sliders">
           <div class="tts-srow">
@@ -1667,7 +1667,7 @@ function renderSupportBanner(){
         mixer=new THREE.AnimationMixer(character);
         mixer.clipAction(gltf.animations[0]).play();
       }
-      document.getElementById('space3dLabel').textContent='🌌 REASON karakter';
+      document.getElementById('space3dLabel').textContent='🌌 REASON felolvasó';
     },
     (xhr)=>{
       if (xhr.total){
