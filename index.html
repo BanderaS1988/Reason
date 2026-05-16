@@ -2191,6 +2191,29 @@ if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
     const jawIdle    = Math.max(0, cfg.mJawIdleMin + 0.025 * breathVal);
     const rollLower  = Math.max(0, 0.06 + 0.05 * breathVal);
 
+    // LEBEGÉS
+    this._floatT = (this._floatT || 0) + t * 0.4;
+    const floatY = Math.sin(this._floatT * Math.PI * 2) * 0.018;
+    const floatX = Math.sin(this._floatT * Math.PI * 2 * 0.37) * 0.006;
+    if (this._meshNodes && this._meshNodes.length > 0) {
+      const root = this._meshNodes[0].mesh.parent;
+      if (root) {
+        root.position.y = (root._baseY || 0) + floatY;
+        root.position.x = (root._baseX || 0) + floatX;
+        if (!root._baseSet) {
+          root._baseY = root.position.y;
+          root._baseX = root.position.x;
+          root._baseSet = true;
+        }
+      }
+    }
+
+    // ÉLŐ SZÖVET MORFOLÓGIA
+    this._tissueT = (this._tissueT || 0) + t * 0.15;
+    const tissueWave1 = Math.sin(this._tissueT * Math.PI * 2) * 0.04;
+    const tissueWave2 = Math.sin(this._tissueT * Math.PI * 2 * 1.7 + 1.2) * 0.025;
+    const tissueWave3 = Math.sin(this._tissueT * Math.PI * 2 * 0.6 + 2.4) * 0.02;
+
     this._blinkTimer += dt;
     if (this._blinkPhase === 0 && this._blinkTimer >= this._blinkNext) {
       this._blinkPhase = 1; this._blinkT = 0;
@@ -2272,9 +2295,15 @@ if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
 
     const target = {
       jawOpen: jawIdle, jawForward: jawFwd, jawLeft: jawMicroL, jawRight: jawMicroR,
-      mouthRollLower: rollLower, mouthPressLeft: mouthPr, mouthPressRight: mouthPr,
+      mouthRollLower: rollLower + tissueWave3,
+      mouthPressLeft: mouthPr + tissueWave2, mouthPressRight: mouthPr + tissueWave2,
+      mouthShrugLower: Math.max(0, tissueWave1 * 0.5),
+      mouthShrugUpper: Math.max(0, tissueWave2 * 0.4),
+      noseSneerLeft:  Math.max(0, tissueWave1 * 0.3),
+      noseSneerRight: Math.max(0, tissueWave2 * 0.3),
       eyeBlinkLeft: blinkVal, eyeBlinkRight: blinkVal,
-      eyeSquintLeft: blinkSquint + microSquintL, eyeSquintRight: blinkSquint + microSquintR,
+      eyeSquintLeft: blinkSquint + microSquintL + Math.max(0, tissueWave1 * 0.15),
+      eyeSquintRight: blinkSquint + microSquintR + Math.max(0, tissueWave1 * 0.15),
       eyeLookInLeft:    Math.max(0,  this._saccadeCurX),
       eyeLookInRight:   Math.max(0, -this._saccadeCurX),
       eyeLookOutLeft:   Math.max(0, -this._saccadeCurX),
@@ -2293,6 +2322,8 @@ if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
     this._lerpToTarget(target, cfg.m3dLerp);
     this._writeMorphs(this._current);
   }
+
+  
 
 
   _lerpToTarget(target, lerpSpeed) {
