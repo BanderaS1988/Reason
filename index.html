@@ -1093,22 +1093,24 @@ function ttsReadNext() {
   utt.lang = 'hu-HU';
   if (huVoice) utt.voice = huVoice;
   utt.onstart = () => { if (window._tts3dLipStart) window._tts3dLipStart(fullText, utt.rate); };
-  utt.onboundary = (e) => { if (e.name !== 'word') return; if (window._tts3dLipWord) window._tts3dLipWord(e.charIndex, fullText.length); };
-  utt.onend = () => {
-    if (window._tts3dLipStop) window._tts3dLipStop();
-    ttsQueueIndex++;
-    setTimeout(ttsReadNext, 400);
-  };
-  utt.onerror = (e) => {
-    if (e.error === 'interrupted') return;
-    if (window._tts3dLipStop) window._tts3dLipStop();
-    ttsQueueIndex++;
-    setTimeout(ttsReadNext, 400);
-  };
-  ttsCurrentUtterance = utt;
-  if (speechSynthesis.speaking) speechSynthesis.cancel();
-  setTimeout(() => speechSynthesis.speak(utt), 80);
-}
+  utt.onboundary = (e) => {
+  if (e.name !== 'word') return;
+
+  // Lip sync újrakalibrálás a tényleges TTS pozícióhoz
+  if (window.lipSync && window.lipSync._isAnimating && window.lipSync._charIndexMap) {
+    const map = window.lipSync._charIndexMap;
+    let bestChar = 0;
+    for (const k of Object.keys(map)) {
+      const ki = parseInt(k);
+      if (ki <= e.charIndex && ki >= bestChar) bestChar = ki;
+    }
+    const qIdx = map[bestChar];
+    if (qIdx !== undefined && window.lipSync._phonemeQueue[qIdx]) {
+      const ph = window.lipSync._phonemeQueue[qIdx];
+      window.lipSync._startTime = performance.now() - ph.startT;  // ← újrakalibrálás
+    }
+  }
+};
 
 function ttsFinished() {
   ttsIsSpeaking = false;
@@ -1919,26 +1921,40 @@ class LipSyncMotor {
   }
 
   _buildQueue() {
-    const cfg = getConfig();
-    const q = [];
-    let t = cfg.pStartDelay * 1000;
-    for (const ph of this._phonemeSeq) {
-      const dur      = ph.dur * 1000;
-      const openEnd  = t + dur * cfg.pOpenRatio;
-      const peakEnd  = openEnd + dur * cfg.pPeakRatio;
-      const closeEnd = peakEnd + dur * cfg.pCloseRatio;
-      q.push({
-        startT: t, openEndT: openEnd, peakEndT: peakEnd,
-        closeEndT: closeEnd, endT: closeEnd,
-        phType: ph.type, char: ph.char,
-        isVowel: ph.type.startsWith('vowel_'),
-        isSilence: ph.type === 'silence',
-      });
-      t = closeEnd;
-    }
-    this._totalMs      = t + (cfg.pEndPause || 0.15) * 1000;
-    this._phonemeQueue = q;
+  const cfg = getConfig();
+  const q   = [];
+  const charMap = {};
+  let t = cfg.pStartDelay * 1000;
+  let charCursor = 0;
+
+  for (const ph of this._phonemeSeq) {
+    const dur      = ph.dur * 1000;
+    const openEnd  = t + dur * cfg.pOpenRatio;
+    const peakEnd  = openEnd + dur * cfg.pPeakRatio;
+    const closeEnd = peakEnd + dur * cfg.pCloseRatio;
+
+    charMap[charCursor] = q.length;   // ← charIndex → queue index
+
+    q.push({
+      startT:    t,
+      openEndT:  openEnd,
+      peakEndT:  peakEnd,
+      closeEndT: closeEnd,
+      endT:      closeEnd,
+      phType:    ph.type,
+      char:      ph.char,
+      isVowel:   ph.type.startsWith('vowel_'),
+      isSilence: ph.type === 'silence',
+    });
+
+    charCursor += ph.char ? ph.char.length : 1;
+    t = closeEnd;
   }
+
+  this._totalMs      = t + (cfg.pEndPause || 0.15) * 1000;
+  this._phonemeQueue = q;
+  this._charIndexMap = charMap;   // ← eltároljuk
+}
 
 
   startAnimation(phonemeSeq) {
