@@ -929,6 +929,8 @@ function renderCard(art) {
   const c = art.category || 'Egyéb', col = CAT_COLOR[c] || '#888', ico = CAT_EMOJI[c] || '📰';
   const ex = art.excerpt || (art.body || '').slice(0, 220);
   const isSelected = ttsSelectedIds.has(String(art.id));
+  const likes    = (art.like_count  ?? 0).toLocaleString('hu');
+  const views    = (art.view_count  ?? 0).toLocaleString('hu');
   return `<div class="article-card" onclick="openArticleById('${art.id}')" style="cursor:pointer;${isSelected ? 'border-color:var(--accent);box-shadow:0 0 0 2px rgba(200,16,46,.2)' : ''}">
     <div class="card-img" style="background:linear-gradient(135deg,${col}16,${col}08)">
       <div class="card-img-emoji">${ico}</div>
@@ -956,7 +958,11 @@ function renderCard(art) {
       </div>
       <div class="card-foot">
         <span>REASON Szerkesztőség</span>
-        <span class="card-readtime">⏱ ${art.read_time || '?'} perc</span>
+        <span style="display:flex;align-items:center;gap:10px;font-size:10px;color:var(--text4)">
+          <span title="Lájkok">❤️ ${likes}</span>
+          <span title="Megtekintések">👁 ${views}</span>
+          <span title="Olvasási idő">⏱ ${art.read_time || '?'} perc</span>
+        </span>
       </div>
     </div>
   </div>`;
