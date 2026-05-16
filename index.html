@@ -1345,10 +1345,7 @@ async function handleModalLike() {
     const patchRes = await fetch(SB_URL + '/rest/v1/articles?id=eq.' + articleId, {
       method:  'PATCH',
       headers: { ...SB_HDR, 'Prefer': 'return=representation' },
-      body:    JSON.stringify({
-        like_count: cur + 1,
-        updated_at: new Date().toISOString()   // ← ez volt a hiba
-      })
+      body:    JSON.stringify({ like_count: cur + 1 })
     });
 
     if (!patchRes.ok) {
@@ -1382,7 +1379,6 @@ async function handleModalLike() {
   }
 }
 window.handleModalLike = handleModalLike;
-
   
 
 
