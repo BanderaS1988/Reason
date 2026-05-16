@@ -1321,9 +1321,7 @@ async function handleModalLike() {
   const countEl   = document.getElementById('modalLikeCount');
   const statLikes = document.getElementById('modalStatLikes');
   const articleId = btn.dataset.articleId;
-
-  console.log('[LIKE] articleId:', articleId);
-  if (!articleId) { console.warn('[LIKE] Nincs articleId!'); return; }
+  if (!articleId) return;
 
   const lk = 'reason_liked_' + articleId;
   if (localStorage.getItem(lk)) {
@@ -1339,33 +1337,28 @@ async function handleModalLike() {
   localStorage.setItem(lk, '1');
 
   try {
-    // 1. Lekérjük az aktuális like_count értéket
     const rows = await sbFetch(
       '/rest/v1/articles?id=eq.' + articleId + '&select=id,like_count&limit=1'
     );
-    console.log('[LIKE] Lekért sor:', rows);
-
     const cur = rows?.[0]?.like_count ?? prev;
-    console.log('[LIKE] Jelenlegi like_count:', cur, '→ új:', cur + 1);
 
-    // 2. PATCH kísérlet
     const patchRes = await fetch(SB_URL + '/rest/v1/articles?id=eq.' + articleId, {
       method:  'PATCH',
       headers: { ...SB_HDR, 'Prefer': 'return=representation' },
-      body:    JSON.stringify({ like_count: cur + 1 })
+      body:    JSON.stringify({
+        like_count: cur + 1,
+        updated_at: new Date().toISOString()   // ← ez volt a hiba
+      })
     });
 
-    console.log('[LIKE] PATCH status:', patchRes.status);
-    const patchBody = await patchRes.text();
-    console.log('[LIKE] PATCH response:', patchBody);
-
     if (!patchRes.ok) {
-      throw new Error('PATCH sikertelen: ' + patchRes.status + ' – ' + patchBody);
+      const errBody = await patchRes.text();
+      throw new Error('PATCH ' + patchRes.status + ': ' + errBody);
     }
 
     let real = cur + 1;
     try {
-      const parsed = JSON.parse(patchBody);
+      const parsed = await patchRes.json();
       if (Array.isArray(parsed) && parsed[0]?.like_count != null) {
         real = parsed[0].like_count;
       }
@@ -1381,12 +1374,11 @@ async function handleModalLike() {
 
   } catch (err) {
     console.error('[LIKE] Hiba:', err);
-    // Rollback
     countEl.textContent = prev;
     if (statLikes) statLikes.textContent = prev.toLocaleString('hu');
     btn.style.cssText = '';
     localStorage.removeItem(lk);
-    showToast('Lájk sikertelen: ' + err.message, 'warn');
+    showToast('Hiba történt, próbáld újra.', 'warn');
   }
 }
 window.handleModalLike = handleModalLike;
