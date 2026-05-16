@@ -1092,25 +1092,43 @@ function ttsReadNext() {
   utt.volume = 1;
   utt.lang = 'hu-HU';
   if (huVoice) utt.voice = huVoice;
-  utt.onstart = () => { if (window._tts3dLipStart) window._tts3dLipStart(fullText, utt.rate); };
-  utt.onboundary = (e) => {
-  if (e.name !== 'word') return;
 
-  // Lip sync újrakalibrálás a tényleges TTS pozícióhoz
-  if (window.lipSync && window.lipSync._isAnimating && window.lipSync._charIndexMap) {
-    const map = window.lipSync._charIndexMap;
-    let bestChar = 0;
-    for (const k of Object.keys(map)) {
-      const ki = parseInt(k);
-      if (ki <= e.charIndex && ki >= bestChar) bestChar = ki;
+  utt.onstart = () => {
+    if (window._tts3dLipStart) window._tts3dLipStart(fullText, utt.rate);
+  };
+
+  utt.onboundary = (e) => {
+    if (e.name !== 'word') return;
+    if (window.lipSync && window.lipSync._isAnimating && window.lipSync._charIndexMap) {
+      const map = window.lipSync._charIndexMap;
+      let bestChar = 0;
+      for (const k of Object.keys(map)) {
+        const ki = parseInt(k);
+        if (ki <= e.charIndex && ki >= bestChar) bestChar = ki;
+      }
+      const qIdx = map[bestChar];
+      if (qIdx !== undefined && window.lipSync._phonemeQueue[qIdx]) {
+        const ph = window.lipSync._phonemeQueue[qIdx];
+        window.lipSync._startTime = performance.now() - ph.startT;
+      }
     }
-    const qIdx = map[bestChar];
-    if (qIdx !== undefined && window.lipSync._phonemeQueue[qIdx]) {
-      const ph = window.lipSync._phonemeQueue[qIdx];
-      window.lipSync._startTime = performance.now() - ph.startT;  // ← újrakalibrálás
-    }
-  }
-};
+  };  // ← ez a zárójel hiányzott
+
+  utt.onend = () => {
+    if (window._tts3dLipStop) window._tts3dLipStop();
+    ttsQueueIndex++;
+    setTimeout(ttsReadNext, 400);
+  };
+  utt.onerror = (e) => {
+    if (e.error === 'interrupted') return;
+    if (window._tts3dLipStop) window._tts3dLipStop();
+    ttsQueueIndex++;
+    setTimeout(ttsReadNext, 400);
+  };
+  ttsCurrentUtterance = utt;
+  if (speechSynthesis.speaking) speechSynthesis.cancel();
+  setTimeout(() => speechSynthesis.speak(utt), 80);
+}
 
 function ttsFinished() {
   ttsIsSpeaking = false;
