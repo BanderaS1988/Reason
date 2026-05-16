@@ -1329,7 +1329,6 @@ async function handleModalLike() {
     return;
   }
 
-  // Optimista UI
   const prev = parseInt(countEl.textContent, 10) || 0;
   countEl.textContent = prev + 1;
   if (statLikes) statLikes.textContent = (prev + 1).toLocaleString('hu');
@@ -1337,17 +1336,18 @@ async function handleModalLike() {
   localStorage.setItem(lk, '1');
 
   try {
-    const r = await fetch('/api/like', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: articleId })
+    const rows = await sbFetch(
+      '/rest/v1/articles?id=eq.' + articleId + '&select=like_count&limit=1'
+    );
+    const cur = rows?.[0]?.like_count ?? prev;
+
+    await sbFetch('/rest/v1/articles?id=eq.' + articleId, {
+      method:  'PATCH',
+      headers: { ...SB_HDR, 'Prefer': 'return=minimal' },
+      body:    JSON.stringify({ like_count: cur + 1 })
     });
 
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-
-    const data = await r.json();
-    const real = data.like_count ?? (prev + 1);
-
+    const real = cur + 1;
     countEl.textContent = real;
     if (statLikes) statLikes.textContent = real.toLocaleString('hu');
 
@@ -1358,7 +1358,6 @@ async function handleModalLike() {
 
   } catch (err) {
     console.error('[LIKE] Hiba:', err);
-    // Rollback
     countEl.textContent = prev;
     if (statLikes) statLikes.textContent = prev.toLocaleString('hu');
     btn.style.cssText = '';
