@@ -1329,37 +1329,24 @@ async function handleModalLike() {
     return;
   }
 
+  // Optimista UI
   const prev = parseInt(countEl.textContent, 10) || 0;
-  const next  = prev + 1;
-  countEl.textContent = next;
-  if (statLikes) statLikes.textContent = next.toLocaleString('hu');
+  countEl.textContent = prev + 1;
+  if (statLikes) statLikes.textContent = (prev + 1).toLocaleString('hu');
   btn.style.cssText = 'background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important';
   localStorage.setItem(lk, '1');
 
   try {
-    const rows = await sbFetch(
-      '/rest/v1/articles?id=eq.' + articleId + '&select=id,like_count&limit=1'
-    );
-    const cur = rows?.[0]?.like_count ?? prev;
-
-    const patchRes = await fetch(SB_URL + '/rest/v1/articles?id=eq.' + articleId, {
-      method:  'PATCH',
-      headers: { ...SB_HDR, 'Prefer': 'return=representation' },
-      body:    JSON.stringify({ like_count: cur + 1 })
+    const r = await fetch('/api/like', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: articleId })
     });
 
-    if (!patchRes.ok) {
-      const errBody = await patchRes.text();
-      throw new Error('PATCH ' + patchRes.status + ': ' + errBody);
-    }
+    if (!r.ok) throw new Error('HTTP ' + r.status);
 
-    let real = cur + 1;
-    try {
-      const parsed = await patchRes.json();
-      if (Array.isArray(parsed) && parsed[0]?.like_count != null) {
-        real = parsed[0].like_count;
-      }
-    } catch {}
+    const data = await r.json();
+    const real = data.like_count ?? (prev + 1);
 
     countEl.textContent = real;
     if (statLikes) statLikes.textContent = real.toLocaleString('hu');
@@ -1371,6 +1358,7 @@ async function handleModalLike() {
 
   } catch (err) {
     console.error('[LIKE] Hiba:', err);
+    // Rollback
     countEl.textContent = prev;
     if (statLikes) statLikes.textContent = prev.toLocaleString('hu');
     btn.style.cssText = '';
@@ -1379,7 +1367,6 @@ async function handleModalLike() {
   }
 }
 window.handleModalLike = handleModalLike;
-  
 
 
 
