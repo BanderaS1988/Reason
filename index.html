@@ -788,7 +788,7 @@ async function sbFetch(path, opts = {}) {
 async function fetchArticles() {
   try {
     const data = await sbFetch(
-      '/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium&order=created_at.desc&limit=50'
+      '/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium&order=created_at.desc&limit=50'
     );
     if (!Array.isArray(data)) throw new Error();
     lastCount = data.length;
@@ -2536,7 +2536,9 @@ let _lastKnownCreatedAt = null;
 async function pollForNewArticles() {
   try {
     const newest = await sbFetch(
-      '/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium&order=created_at.desc&limit=1'
+     '/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium&order=created_at.desc&limit=1'
+
+
     );
     if (!newest?.length) return;
 
