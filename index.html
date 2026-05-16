@@ -1926,6 +1926,7 @@ class LipSyncMotor {
     this._microExpPhase = 0;
     this._microExpT     = 0;
     this._microExpType  = 0;
+    this._charIndexMap  = {};
   }
 
   setModel(model) {
@@ -2079,19 +2080,19 @@ class LipSyncMotor {
     target.eyeSquintLeft  = blinkVal * 0.35;
     target.eyeSquintRight = blinkVal * 0.35;
 
-    // Saccade
-    this._saccadeTimer += dt;
-    if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
-      this._saccadeFromX = this._saccadeCurX;
-      this._saccadeFromY = this._saccadeCurY;
-      this._saccadeTgtX  = (Math.random() - 0.5) * 0.55;
-      this._saccadeTgtY  = (Math.random() - 0.5) * 0.32;
-      this._saccadeDur   = 80 + Math.random() * 100;
-      this._saccadeT     = 0;
-      this._saccadePhase = 1;
-      this._saccadeNext  = 900 + Math.random() * 2200;
-      this._saccadeTimer = 0;
-    }
+// Saccade
+this._saccadeTimer += dt;
+if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
+  this._saccadeFromX = this._saccadeCurX;
+  this._saccadeFromY = this._saccadeCurY;
+  this._saccadeTgtX  = (Math.random() - 0.5) * 0.55;
+  this._saccadeTgtY  = (Math.random() - 0.5) * 0.32;
+  this._saccadeDur   = 80 + Math.random() * 100;
+  this._saccadeT     = 0;
+  this._saccadePhase = 1;
+  this._saccadeNext  = 900 + Math.random() * 2200;
+  this._saccadeTimer = 0;
+}
     if (this._saccadePhase === 1) {
       this._saccadeT += dt;
       const p    = Math.min(1, this._saccadeT / this._saccadeDur);
@@ -2194,8 +2195,8 @@ class LipSyncMotor {
       this._saccadeT += dt;
       const p    = Math.min(1, this._saccadeT / this._saccadeDur);
       const ease = p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
-      this._saccadeCurX = lerp(this._saccadeCurX, this._saccadeTgtX, ease);
-      this._saccadeCurY = lerp(this._saccadeCurY, this._saccadeTgtY, ease);
+       this._saccadeCurX = lerp(this._saccadeFromX || 0, this._saccadeTgtX, ease);
+      this._saccadeCurY = lerp(this._saccadeFromY || 0, this._saccadeTgtY, ease);
       if (p >= 1) this._saccadePhase = 0;
     }
 
@@ -2301,11 +2302,12 @@ class LipSyncMotor {
   _writeMorphs(values) {
     for (const { mesh, dict } of this._meshNodes) {
       for (const [name, idx] of Object.entries(dict)) {
-        const val = values[name] ?? 0;
+        const val = values[name] ?? values[name.charAt(0).toUpperCase() + name.slice(1)] ?? 0;
         mesh.morphTargetInfluences[idx] = Math.max(0, Math.min(1, val));
       }
     }
   }
+
 
   stop() {
     this._isAnimating  = false;
