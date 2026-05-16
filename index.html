@@ -2493,15 +2493,43 @@ if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
   }
   resize();
 
-  function animate() {
-    requestAnimationFrame(animate);
-    const delta = clock.getDelta();
-    if (mixer) mixer.update(delta);
-    controls.update();
-    if (window.lipSync) window.lipSync.update();
-    renderer.render(scene, camera);
+let floatT = 0;
+let morphT = 0;
+
+function animate() {
+  requestAnimationFrame(animate);
+  const delta = clock.getDelta();
+
+  // LEBEGÉS – lassú, ízléses
+  floatT += delta * 0.08;
+  if (character) {
+    character.position.y = Math.sin(floatT * Math.PI * 2) * 0.006;
+    character.position.x = Math.sin(floatT * Math.PI * 2 * 0.31) * 0.002;
+    character.rotation.z = Math.sin(floatT * Math.PI * 2 * 0.27) * 0.008;
   }
-  animate();
+
+  // ÉLŐ SZÖVET MORFOLÓGIA – külön a mesh-ekre
+  morphT += delta * 0.12;
+  if (window.lipSync && window.lipSync._meshNodes && !window.lipSync._isAnimating) {
+    for (const { mesh, dict } of window.lipSync._meshNodes) {
+      const w1 = Math.sin(morphT * Math.PI * 2) * 0.03;
+      const w2 = Math.sin(morphT * Math.PI * 2 * 1.7 + 1.2) * 0.02;
+      const w3 = Math.sin(morphT * Math.PI * 2 * 0.6 + 2.4) * 0.015;
+      if (dict['mouthShrugUpper']  !== undefined) mesh.morphTargetInfluences[dict['mouthShrugUpper']]  = Math.max(0, w1);
+      if (dict['mouthShrugLower']  !== undefined) mesh.morphTargetInfluences[dict['mouthShrugLower']]  = Math.max(0, w2);
+      if (dict['mouthRollUpper']   !== undefined) mesh.morphTargetInfluences[dict['mouthRollUpper']]   = Math.max(0, w3);
+      if (dict['cheekPuff']        !== undefined) mesh.morphTargetInfluences[dict['cheekPuff']]        = Math.max(0, w1 * 0.4);
+      if (dict['noseSneerLeft']    !== undefined) mesh.morphTargetInfluences[dict['noseSneerLeft']]    = Math.max(0, w2 * 0.3);
+      if (dict['noseSneerRight']   !== undefined) mesh.morphTargetInfluences[dict['noseSneerRight']]   = Math.max(0, w3 * 0.3);
+    }
+  }
+
+  if (mixer) mixer.update(delta);
+  controls.update();
+  if (window.lipSync) window.lipSync.update();
+  renderer.render(scene, camera);
+}
+animate();
 
   new ResizeObserver(resize).observe(widget);
 
