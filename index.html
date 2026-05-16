@@ -1451,8 +1451,8 @@ async function submitModalComment() {
   const articleId = document.getElementById('modalLikeBtn').dataset.articleId;
   if (!articleId) return;
   const author = document.getElementById('modalCAuthor').value.trim() || 'Névtelen olvasó';
-  const body = document.getElementById('modalCBody').value.trim();
-  const msgEl = document.getElementById('modalCMsg');
+  const body   = document.getElementById('modalCBody').value.trim();
+  const msgEl  = document.getElementById('modalCMsg');
   if (body.length < 3) { msgEl.style.color = 'var(--accent)'; msgEl.textContent = 'Túl rövid a hozzászólás.'; return; }
   msgEl.style.color = 'var(--text4)';
   msgEl.textContent = 'Küldés...';
@@ -1462,9 +1462,23 @@ async function submitModalComment() {
       headers: { ...SB_HDR, 'Prefer': 'return=minimal' },
       body: JSON.stringify({ article_id: articleId, author, body })
     });
+
+    // comment_count növelése az articles táblában
+    const rows = await sbFetch('/rest/v1/articles?id=eq.' + articleId + '&select=comment_count&limit=1');
+    const cur  = rows?.[0]?.comment_count ?? 0;
+    await sbFetch('/rest/v1/articles?id=eq.' + articleId, {
+      method:  'PATCH',
+      headers: { ...SB_HDR, 'Prefer': 'return=minimal' },
+      body:    JSON.stringify({ comment_count: cur + 1, updated_at: new Date().toISOString() })
+    });
+
+    // Lokális cache frissítés
+    const cached = allArticles.find(a => String(a.id) === String(articleId));
+    if (cached) cached.comment_count = cur + 1;
+
     msgEl.style.color = '#1a7a3c';
     msgEl.textContent = 'Hozzászólás elküldve!';
-    document.getElementById('modalCBody').value = '';
+    document.getElementById('modalCBody').value   = '';
     document.getElementById('modalCAuthor').value = '';
     await loadModalComments(articleId);
     setTimeout(() => { msgEl.textContent = ''; }, 3000);
