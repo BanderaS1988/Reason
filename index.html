@@ -2189,31 +2189,8 @@ if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
     this._breathT   += t * 0.22;
     this._idleWaveT += t;
     const breathVal  = Math.sin(this._breathT * Math.PI * 2);
-    const jawIdle    = Math.max(0, cfg.mJawIdleMin + 0.025 * breathVal);
-    const rollLower  = Math.max(0, 0.06 + 0.05 * breathVal);
-
-    // LEBEGÉS
-    this._floatT = (this._floatT || 0) + t * 0.4;
-    const floatY = Math.sin(this._floatT * Math.PI * 2) * 0.018;
-    const floatX = Math.sin(this._floatT * Math.PI * 2 * 0.37) * 0.006;
-    if (this._meshNodes && this._meshNodes.length > 0) {
-      const root = this._meshNodes[0].mesh.parent;
-      if (root) {
-        root.position.y = (root._baseY || 0) + floatY;
-        root.position.x = (root._baseX || 0) + floatX;
-        if (!root._baseSet) {
-          root._baseY = root.position.y;
-          root._baseX = root.position.x;
-          root._baseSet = true;
-        }
-      }
-    }
-
-    // ÉLŐ SZÖVET MORFOLÓGIA
-    this._tissueT = (this._tissueT || 0) + t * 0.15;
-    const tissueWave1 = Math.sin(this._tissueT * Math.PI * 2) * 0.04;
-    const tissueWave2 = Math.sin(this._tissueT * Math.PI * 2 * 1.7 + 1.2) * 0.025;
-    const tissueWave3 = Math.sin(this._tissueT * Math.PI * 2 * 0.6 + 2.4) * 0.02;
+    const jawIdle    = Math.max(0, cfg.mJawIdleMin + 0.012 * breathVal);
+    const rollLower  = Math.max(0, 0.04 + 0.03 * breathVal);
 
     this._blinkTimer += dt;
     if (this._blinkPhase === 0 && this._blinkTimer >= this._blinkNext) {
@@ -2255,13 +2232,13 @@ if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
     }
 
     this._browWaveT += t * 0.07;
-    const browL     = 0.08 + 0.06 * Math.sin(this._browWaveT * Math.PI * 2);
-    const browR     = 0.08 + 0.06 * Math.sin(this._browWaveT * Math.PI * 2 + 0.8);
-    const browInner = Math.max(0, 0.05 + 0.04 * Math.sin(this._browWaveT * Math.PI * 2 + 1.4));
+    const browL     = 0.04 + 0.03 * Math.sin(this._browWaveT * Math.PI * 2);
+    const browR     = 0.04 + 0.03 * Math.sin(this._browWaveT * Math.PI * 2 + 0.8);
+    const browInner = Math.max(0, 0.02 + 0.02 * Math.sin(this._browWaveT * Math.PI * 2 + 1.4));
 
     this._toneWaveT += t * 0.05;
-    const cheekSq   = Math.max(0, 0.12 + 0.08 * Math.sin(this._toneWaveT * Math.PI * 2));
-    const mouthPr   = Math.max(0, 0.06 + 0.04 * Math.sin(this._toneWaveT * Math.PI * 2 + 1.1));
+    const cheekSq   = Math.max(0, 0.06 + 0.04 * Math.sin(this._toneWaveT * Math.PI * 2));
+    const mouthPr   = Math.max(0, 0.03 + 0.02 * Math.sin(this._toneWaveT * Math.PI * 2 + 1.1));
 
     this._headMicroT += t * 0.09;
     const jawMicroL  = Math.max(0, 0.015 * Math.sin(this._headMicroT * Math.PI * 2));
@@ -2284,7 +2261,7 @@ if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
       const env = p < 0.4 ? p / 0.4 : 1 - (p - 0.4) / 0.6;
       const amp = Math.max(0, env);
       if (this._microExpType === 0) {
-        microSmileL = amp * 0.35; microSmileR = amp * 0.32;
+        microSmileL = amp * 0.22; microSmileR = amp * 0.20;
         microSquintL = amp * 0.10; microSquintR = amp * 0.10;
       } else if (this._microExpType === 1) {
         microBrowDnL = amp * 0.18; microBrowDnR = amp * 0.16; microBrowIn = amp * 0.22;
@@ -2296,15 +2273,9 @@ if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
 
     const target = {
       jawOpen: jawIdle, jawForward: jawFwd, jawLeft: jawMicroL, jawRight: jawMicroR,
-      mouthRollLower: rollLower + tissueWave3,
-      mouthPressLeft: mouthPr + tissueWave2, mouthPressRight: mouthPr + tissueWave2,
-      mouthShrugLower: Math.max(0, tissueWave1 * 0.5),
-      mouthShrugUpper: Math.max(0, tissueWave2 * 0.4),
-      noseSneerLeft:  Math.max(0, tissueWave1 * 0.3),
-      noseSneerRight: Math.max(0, tissueWave2 * 0.3),
+      mouthRollLower: rollLower, mouthPressLeft: mouthPr, mouthPressRight: mouthPr,
       eyeBlinkLeft: blinkVal, eyeBlinkRight: blinkVal,
-      eyeSquintLeft: blinkSquint + microSquintL + Math.max(0, tissueWave1 * 0.15),
-      eyeSquintRight: blinkSquint + microSquintR + Math.max(0, tissueWave1 * 0.15),
+      eyeSquintLeft: blinkSquint + microSquintL, eyeSquintRight: blinkSquint + microSquintR,
       eyeLookInLeft:    Math.max(0,  this._saccadeCurX),
       eyeLookInRight:   Math.max(0, -this._saccadeCurX),
       eyeLookOutLeft:   Math.max(0, -this._saccadeCurX),
@@ -2493,37 +2464,9 @@ if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
   }
   resize();
 
-let floatT = 0;
-let morphT = 0;
-
 function animate() {
   requestAnimationFrame(animate);
   const delta = clock.getDelta();
-
-  // LEBEGÉS – lassú, ízléses
-  floatT += delta * 0.08;
-  if (character) {
-    character.position.y = Math.sin(floatT * Math.PI * 2) * 0.006;
-    character.position.x = Math.sin(floatT * Math.PI * 2 * 0.31) * 0.002;
-    character.rotation.z = Math.sin(floatT * Math.PI * 2 * 0.27) * 0.008;
-  }
-
-  // ÉLŐ SZÖVET MORFOLÓGIA – külön a mesh-ekre
-  morphT += delta * 0.12;
-  if (window.lipSync && window.lipSync._meshNodes && !window.lipSync._isAnimating) {
-    for (const { mesh, dict } of window.lipSync._meshNodes) {
-      const w1 = Math.sin(morphT * Math.PI * 2) * 0.03;
-      const w2 = Math.sin(morphT * Math.PI * 2 * 1.7 + 1.2) * 0.02;
-      const w3 = Math.sin(morphT * Math.PI * 2 * 0.6 + 2.4) * 0.015;
-      if (dict['mouthShrugUpper']  !== undefined) mesh.morphTargetInfluences[dict['mouthShrugUpper']]  = Math.max(0, w1);
-      if (dict['mouthShrugLower']  !== undefined) mesh.morphTargetInfluences[dict['mouthShrugLower']]  = Math.max(0, w2);
-      if (dict['mouthRollUpper']   !== undefined) mesh.morphTargetInfluences[dict['mouthRollUpper']]   = Math.max(0, w3);
-      if (dict['cheekPuff']        !== undefined) mesh.morphTargetInfluences[dict['cheekPuff']]        = Math.max(0, w1 * 0.4);
-      if (dict['noseSneerLeft']    !== undefined) mesh.morphTargetInfluences[dict['noseSneerLeft']]    = Math.max(0, w2 * 0.3);
-      if (dict['noseSneerRight']   !== undefined) mesh.morphTargetInfluences[dict['noseSneerRight']]   = Math.max(0, w3 * 0.3);
-    }
-  }
-
   if (mixer) mixer.update(delta);
   controls.update();
   if (window.lipSync) window.lipSync.update();
