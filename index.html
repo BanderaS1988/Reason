@@ -1841,42 +1841,85 @@ class LipSyncMotor {
     else this._updateIdle(dt, cfg);
   }
 
-  _updateAnimating(now, cfg, dt) {
-    const elapsed = now - this._startTime;
-    let activePh = null;
-    for (const ph of this._phonemeQueue) {
-      if (elapsed >= ph.startT && elapsed <= ph.endT) { activePh = ph; break; }
-    }
-    const target = {};
-    if (activePh && !activePh.isSilence) {
-      const morphTgt = getMorphTarget(activePh.phType, cfg);
-      let progress = 0;
-      const e = elapsed;
-      if (e < activePh.openEndT) {
-        progress = (e - activePh.startT) / (activePh.openEndT - activePh.startT);
-      } else if (e < activePh.peakEndT) {
-        progress = 1;
-      } else {
-        progress = 1 - (e - activePh.peakEndT) / (activePh.closeEndT - activePh.peakEndT);
-      }
-      progress = Math.max(0, Math.min(1, progress));
-      for (const [k, v] of Object.entries(morphTgt)) {
-        target[k] = (v || 0) * progress * cfg.m3dMorphScale;
-      }
-    } else {
-      target.jawOpen = 0;
-      target.mouthFunnel = 0;
-      target.mouthPucker = 0;
-      target.mouthLeft = 0;
-      target.mouthRight = 0;
-    }
-    this._applyBlink(target, dt, cfg);
-    this._applySaccade(target, dt);
-    this._applyTone(target, dt, activePh);
-    this._applyMicroExp(target, dt);
-    this._lerpToTarget(target, cfg.m3dLerp);
-    this._writeMorphs(this._current);
+  // A REASON kódban cseréld le a teljes _updateAnimating metódust erre:
+
+_updateAnimating(now, cfg, dt) {
+  const elapsed = now - this._startTime;
+
+  let activePh = null;
+  for (let i = 0; i < this._phonemeQueue.length; i++) {
+    const ph = this._phonemeQueue[i];
+    if (elapsed >= ph.startT && elapsed <= ph.endT) { activePh = ph; break; }
+    if (elapsed < ph.startT) break;
   }
+
+  const target = {};
+
+  if (activePh && !activePh.isSilence) {
+    const { startT, openEndT, peakEndT, closeEndT } = activePh;
+    let blend = 0;
+
+    if (elapsed < openEndT) {
+      blend = openEndT > startT ? (elapsed - startT) / (openEndT - startT) : 1;
+    } else if (elapsed < peakEndT) {
+      blend = 1;
+    } else {
+      const closeLen = closeEndT - peakEndT;
+      const t2 = elapsed - peakEndT;
+      blend = closeLen > 0 ? 1 - t2 / closeLen : 0;
+      blend = Math.min(1, Math.max(0, blend));
+      blend *= cfg.pCloseFrac + (1 - cfg.pCloseFrac) * blend;
+    }
+    blend = Math.min(1, Math.max(0, blend));
+
+    // ← FONTOS: vowelBoost + consDamp itt van, a másik rendszerben is így
+    const scale = cfg.m3dMorphScale
+      * (activePh.isVowel ? cfg.mVowelBoost : cfg.mConsDamp);
+
+    const morphTgt = getMorphTarget(activePh.phType, cfg);
+    for (const [k, v] of Object.entries(morphTgt)) {
+      let val = (v || 0) * blend * scale;
+      if (k === 'mouthFunnel') val *= cfg.mFunnelScale;
+      if (k === 'mouthPucker') val *= cfg.mPuckerScale;
+      if (k === 'mouthLeft' || k === 'mouthRight') val *= cfg.mMouthLRScale;
+      if (k === 'jawOpen')     val  = Math.min(val, cfg.mJawMax);
+      target[k] = val;
+    }
+  } else {
+    target.jawOpen = cfg.mJawIdleMin || 0;
+  }
+
+  // Légzés
+  this._breathT += (dt * 0.001) * 0.22;
+  const breathVal = Math.sin(this._breathT * Math.PI * 2);
+  if (!activePh || activePh.isSilence) {
+    target.jawOpen = Math.max(target.jawOpen || 0,
+      Math.max(0, (cfg.mJawIdleMin || 0) + 0.008 * breathVal));
+  }
+  target.mouthRollLower = Math.max(target.mouthRollLower || 0,
+    Math.max(0, 0.03 + 0.02 * breathVal));
+
+  // Pislogás
+  this._applyBlink(target, dt, cfg);
+
+  // Saccade
+  this._applySaccade(target, dt);
+
+  // Arcizom tónus
+  this._toneWaveT += (dt * 0.001) * 0.05;
+  target.cheekSquintLeft  = Math.max(0, 0.05 + 0.03 * Math.sin(this._toneWaveT * Math.PI * 2));
+  target.cheekSquintRight = target.cheekSquintLeft;
+  if (!activePh || activePh.isSilence) {
+    target.mouthPressLeft  = Math.max(0, 0.02 + 0.015 * Math.sin(this._toneWaveT * Math.PI * 2 + 1.1));
+    target.mouthPressRight = target.mouthPressLeft;
+  }
+
+  // Micro expression
+  this._applyMicroExp(target, dt);
+
+  this._lerpToTarget(target, cfg.m3dLerp);
+  this._writeMorphs(this._current);
+}
 
   _updateIdle(dt, cfg) {
     const t = dt * 0.001;
