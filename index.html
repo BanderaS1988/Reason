@@ -1675,122 +1675,200 @@ function renderSupportBanner() {
 // ══════════════════════════════════════════════════════════════════
 //  LIP SYNC SEGÉDFÜGGVÉNYEK
 // ══════════════════════════════════════════════════════════════════
-function lerp(a, b, t) { return a + (b - a) * Math.max(0, Math.min(1, t)); }
+function lerp(a, b, t) {
+  return a + (b - a) * Math.max(0, Math.min(1, t));
+}
+
 
 function getConfig() {
   return {
-    pMsPerChar:0.090, pOpenRatio:0.50, pPeakRatio:0.35, pCloseRatio:0.15,
-    pCloseFrac:0.40, pSpaceMul:1.44, pPunctMul:8.00, pStartDelay:0.050,
-    pEndPause:0.120, pEndExtra:0.200,
-    vAjaw:0.60, vAfun:0.05, vEjaw:0.35, vEml:0.30, vIjaw:0.20, vIml:0.45,
-    vOjaw:0.45, vOfun:0.70, vOEjaw:0.30, vOEpuck:0.80, vUjaw:0.25, vUpuck:0.90,
-    vUEjaw:0.20, vUEpuck:0.85,
-    cMBPjaw:0.08, cFVjaw:0.15, cFVpuck:0.15, cSZjaw:0.18, cSZml:0.18,
-    cDefjaw:0.15, cDefml:0.05,
-    m3dMorphScale:0.65, m3dLerp:0.10, m3dJawAngle:0.42, m3dHeadAngle:0.12,
-    mOpenSpeed:0.45, mCloseSpeed:0.28, mConsClose:0.35, mCharMs:0.75,
-    mIdleAmp:0.08, mLerpMin:0.06, mLerpMax:0.40, mJawMax:0.90, mJawIdleMin:0.00,
-    mVowelBoost:1.10, mConsDamp:0.70, mFunnelScale:1.20, mPuckerScale:1.20,
-    mMouthLRScale:1.00, mSilenceThresh:0.015, mSilenceDelay:250,
-    mIdleWaveAmp:0.04, mIdleWaveSpeed:1.80, mRmsGain:1.20, mLowBandRatio:0.25,
-    mHighBandRatio:0.65, mVowelThresh:1.20, mFftSmooth:0.75,
-    mLabial:0.08, mLabiodent:0.15, mSibilant:0.18, mDefault:0.15,
-    m3dBlinkDur:0.18, m3dBlinkMin:1.51, m3dBlinkMax:4.01,
-    m3dHeadSwing:0.04, m3dBob:0.57,
+    pMsPerChar: 0.090, pOpenRatio: 0.50, pPeakRatio: 0.35, pCloseRatio: 0.15,
+    pCloseFrac: 0.40,  pSpaceMul: 1.20,  pPunctMul: 3.50,
+    pStartDelay: 0.05, pEndPause: 0.15,  pEndExtra: 0.20,
+    vAjaw: 0.60,  vAfun: 0.05,
+    vEjaw: 0.35,  vEml: 0.30,
+    vIjaw: 0.20,  vIml: 0.45,
+    vOjaw: 0.45,  vOfun: 0.70,
+    vOEjaw: 0.30, vOEpuck: 0.80,
+    vUjaw: 0.25,  vUpuck: 0.90,
+    vUEjaw: 0.20, vUEpuck: 0.85,
+    cMBPjaw: 0.02,
+    cFVjaw: 0.08,  cFVpuck: 0.12,
+    cSZjaw: 0.10,  cSZml: 0.10,
+    cDefjaw: 0.18, cDefml: 0.05,
+    m3dMorphScale: 1.00, m3dLerp: 0.25,
+    m3dJawAngle: 0.42,   m3dHeadAngle: 0.12,
+    mOpenSpeed: 0.45,    mCloseSpeed: 0.28,
+    mConsClose: 0.35,    mCharMs: 0.75,
+    mIdleAmp: 0.08,      mLerpMin: 0.06,   mLerpMax: 0.40,
+    mJawMax: 0.90,       mJawIdleMin: 0.00,
+    mVowelBoost: 1.10,   mConsDamp: 0.70,
+    mFunnelScale: 1.20,  mPuckerScale: 1.20, mMouthLRScale: 1.00,
+    mSilenceThresh: 0.015, mSilenceDelay: 250,
+    mIdleWaveAmp: 0.04,  mIdleWaveSpeed: 1.80,
+    mRmsGain: 1.20,      mLowBandRatio: 0.25, mHighBandRatio: 0.65,
+    mVowelThresh: 1.20,  mFftSmooth: 0.75,
+    mLabial: 0.08,       mLabiodent: 0.15, mSibilant: 0.18, mDefault: 0.15,
+    m3dBlinkDur: 0.15,   m3dBlinkMin: 1.50, m3dBlinkMax: 4.00,
+    m3dHeadSwing: 0.06,  m3dBob: 0.08,
   };
 }
 
+
 function phType(c) {
-  if ('aá'.includes(c))  return 'vowel_a';
-  if ('eé'.includes(c))  return 'vowel_e';
-  if ('ií'.includes(c))  return 'vowel_i';
-  if ('oó'.includes(c))  return 'vowel_o';
-  if ('öő'.includes(c))  return 'vowel_oe';
-  if ('uú'.includes(c))  return 'vowel_u';
-  if ('üű'.includes(c))  return 'vowel_ue';
-  if ('mbp'.includes(c)) return 'cons_mbp';
-  if ('fv'.includes(c))  return 'cons_fv';
+  if ('aá'.includes(c))       return 'vowel_a';
+  if ('eé'.includes(c))       return 'vowel_e';
+  if ('ií'.includes(c))       return 'vowel_i';
+  if ('oó'.includes(c))       return 'vowel_o';
+  if ('öő'.includes(c))       return 'vowel_oe';
+  if ('uú'.includes(c))       return 'vowel_u';
+  if ('üű'.includes(c))       return 'vowel_ue';
+  if ('mbp'.includes(c))      return 'cons_mbp';
+  if ('fv'.includes(c))       return 'cons_fv';
   if (['sz','zs','s','z','cs'].includes(c)) return 'cons_sz';
+  if (['ty','gy','ny','dz','dzs'].includes(c)) return 'cons_default';
+  if ('tdnkgrlhjcqwxy'.includes(c)) return 'cons_default';
   return 'cons_default';
 }
-
 function textToPhonemes(text, cfg) {
   const s = text.toLowerCase();
   const result = [];
   let i = 0;
   while (i < s.length) {
-    const three = s.slice(i, i+3);
-    if (three === 'dzs') { result.push({ char:'dzs', type:'cons_sz', dur:cfg.pMsPerChar }); i+=3; continue; }
-    const two = s.slice(i, i+2);
-    if (['sz','zs','cs','ty','gy','ny','dz'].includes(two)) { result.push({ char:two, type:phType(two), dur:cfg.pMsPerChar }); i+=2; continue; }
+    const three = s.slice(i, i + 3);
+    if (three === 'dzs') {
+      result.push({ char: 'dzs', type: 'cons_sz', dur: cfg.pMsPerChar });
+      i += 3; continue;
+    }
+    const two = s.slice(i, i + 2);
+    if (['sz','zs','cs','ty','gy','ny','dz'].includes(two)) {
+      result.push({ char: two, type: phType(two), dur: cfg.pMsPerChar });
+      i += 2; continue;
+    }
     const c = s[i];
-    if (c===' '||c==='\t') result.push({ char:c, type:'silence', dur:cfg.pMsPerChar*cfg.pSpaceMul });
-    else if ('.,:;!?…–—'.includes(c)) result.push({ char:c, type:'silence', dur:cfg.pMsPerChar*cfg.pPunctMul });
-    else result.push({ char:c, type:phType(c), dur:cfg.pMsPerChar });
+    if (c === ' ' || c === '\t') {
+      result.push({ char: c, type: 'silence', dur: cfg.pMsPerChar * cfg.pSpaceMul });
+    } else if ('.,:;!?…–—'.includes(c)) {
+      result.push({ char: c, type: 'silence', dur: cfg.pMsPerChar * cfg.pPunctMul });
+    } else {
+      result.push({ char: c, type: phType(c), dur: cfg.pMsPerChar });
+    }
     i++;
   }
   return result;
 }
 
+
 function getMorphTarget(type, cfg) {
-  switch(type) {
-    case 'vowel_a': return { jawOpen:cfg.vAjaw, mouthFunnel:cfg.vAfun, mouthPucker:0, mouthLeft:0, mouthRight:0, mouthLowerDownLeft:cfg.vAjaw*0.4, mouthLowerDownRight:cfg.vAjaw*0.4, mouthUpperUpLeft:cfg.vAjaw*0.15, mouthUpperUpRight:cfg.vAjaw*0.15 };
-    case 'vowel_e': return { jawOpen:cfg.vEjaw, mouthLeft:cfg.vEml, mouthRight:cfg.vEml, mouthSmileLeft:cfg.vEml*0.4, mouthSmileRight:cfg.vEml*0.4, mouthFunnel:0, mouthPucker:0, mouthLowerDownLeft:cfg.vEjaw*0.2, mouthLowerDownRight:cfg.vEjaw*0.2 };
-    case 'vowel_i': return { jawOpen:cfg.vIjaw, mouthLeft:cfg.vIml, mouthRight:cfg.vIml, mouthSmileLeft:cfg.vIml*0.5, mouthSmileRight:cfg.vIml*0.5, mouthDimpleLeft:cfg.vIml*0.3, mouthDimpleRight:cfg.vIml*0.3, mouthFunnel:0, mouthPucker:0 };
-    case 'vowel_o': return { jawOpen:cfg.vOjaw, mouthFunnel:cfg.vOfun, mouthPucker:cfg.vOfun*0.5, mouthLeft:0, mouthRight:0, mouthLowerDownLeft:cfg.vOjaw*0.3, mouthLowerDownRight:cfg.vOjaw*0.3 };
-    case 'vowel_oe': return { jawOpen:cfg.vOEjaw, mouthPucker:cfg.vOEpuck, mouthFunnel:cfg.vOEpuck*0.4, mouthLeft:0, mouthRight:0, mouthLowerDownLeft:cfg.vOEjaw*0.25, mouthLowerDownRight:cfg.vOEjaw*0.25 };
-    case 'vowel_u': return { jawOpen:cfg.vUjaw, mouthPucker:cfg.vUpuck, mouthFunnel:cfg.vUpuck*0.6, mouthLeft:0, mouthRight:0, mouthLowerDownLeft:cfg.vUjaw*0.2, mouthLowerDownRight:cfg.vUjaw*0.2 };
-    case 'vowel_ue': return { jawOpen:cfg.vUEjaw, mouthPucker:cfg.vUEpuck, mouthFunnel:cfg.vUEpuck*0.5, mouthLeft:0, mouthRight:0 };
-    case 'cons_mbp': return { jawOpen:cfg.cMBPjaw, mouthClose:0.6, mouthRollLower:0.4, mouthRollUpper:0.4, mouthPressLeft:0.3, mouthPressRight:0.3, mouthFunnel:0, mouthPucker:0, mouthLeft:0, mouthRight:0 };
-    case 'cons_fv': return { jawOpen:cfg.cFVjaw, mouthPucker:cfg.cFVpuck, mouthShrugUpper:0.25, mouthRollLower:0.2, mouthPressLeft:0.1, mouthPressRight:0.1, mouthFunnel:0, mouthLeft:0, mouthRight:0 };
-    case 'cons_sz': return { jawOpen:cfg.cSZjaw, mouthLeft:cfg.cSZml, mouthRight:cfg.cSZml, mouthPressLeft:0.2, mouthPressRight:0.2, mouthStretchLeft:0.1, mouthStretchRight:0.1, mouthFunnel:0, mouthPucker:0 };
-    case 'cons_default': return { jawOpen:cfg.cDefjaw, mouthLeft:cfg.cDefml, mouthRight:cfg.cDefml, mouthLowerDownLeft:cfg.cDefjaw*0.2, mouthLowerDownRight:cfg.cDefjaw*0.2, mouthFunnel:0, mouthPucker:0 };
-    default: return { jawOpen:0, mouthFunnel:0, mouthPucker:0, mouthLeft:0, mouthRight:0, mouthClose:0, mouthLowerDownLeft:0, mouthLowerDownRight:0, mouthUpperUpLeft:0, mouthUpperUpRight:0, mouthSmileLeft:0, mouthSmileRight:0 };
+  switch (type) {
+    case 'vowel_a': return {
+      jawOpen: cfg.vAjaw, mouthFunnel: cfg.vAfun, mouthPucker: 0,
+      mouthLeft: 0, mouthRight: 0,
+      mouthLowerDownLeft: cfg.vAjaw * 0.4, mouthLowerDownRight: cfg.vAjaw * 0.4,
+      mouthUpperUpLeft: cfg.vAjaw * 0.15, mouthUpperUpRight: cfg.vAjaw * 0.15,
+    };
+    case 'vowel_e': return {
+      jawOpen: cfg.vEjaw, mouthLeft: cfg.vEml, mouthRight: cfg.vEml,
+      mouthSmileLeft: cfg.vEml * 0.4, mouthSmileRight: cfg.vEml * 0.4,
+      mouthFunnel: 0, mouthPucker: 0,
+      mouthLowerDownLeft: cfg.vEjaw * 0.2, mouthLowerDownRight: cfg.vEjaw * 0.2,
+    };
+    case 'vowel_i': return {
+      jawOpen: cfg.vIjaw, mouthLeft: cfg.vIml, mouthRight: cfg.vIml,
+      mouthSmileLeft: cfg.vIml * 0.5, mouthSmileRight: cfg.vIml * 0.5,
+      mouthDimpleLeft: cfg.vIml * 0.3, mouthDimpleRight: cfg.vIml * 0.3,
+      mouthFunnel: 0, mouthPucker: 0,
+    };
+    case 'vowel_o': return {
+      jawOpen: cfg.vOjaw, mouthFunnel: cfg.vOfun, mouthPucker: cfg.vOfun * 0.5,
+      mouthLeft: 0, mouthRight: 0,
+      mouthLowerDownLeft: cfg.vOjaw * 0.3, mouthLowerDownRight: cfg.vOjaw * 0.3,
+    };
+    case 'vowel_oe': return {
+      jawOpen: cfg.vOEjaw, mouthPucker: cfg.vOEpuck, mouthFunnel: cfg.vOEpuck * 0.4,
+      mouthLeft: 0, mouthRight: 0,
+      mouthLowerDownLeft: cfg.vOEjaw * 0.25, mouthLowerDownRight: cfg.vOEjaw * 0.25,
+    };
+    case 'vowel_u': return {
+      jawOpen: cfg.vUjaw, mouthPucker: cfg.vUpuck, mouthFunnel: cfg.vUpuck * 0.6,
+      mouthLeft: 0, mouthRight: 0,
+      mouthLowerDownLeft: cfg.vUjaw * 0.2, mouthLowerDownRight: cfg.vUjaw * 0.2,
+    };
+    case 'vowel_ue': return {
+      jawOpen: cfg.vUEjaw, mouthPucker: cfg.vUEpuck, mouthFunnel: cfg.vUEpuck * 0.5,
+      mouthLeft: 0, mouthRight: 0,
+    };
+    case 'cons_mbp': return {
+      jawOpen: cfg.cMBPjaw, mouthClose: 0.6, mouthRollLower: 0.4, mouthRollUpper: 0.4,
+      mouthPressLeft: 0.3, mouthPressRight: 0.3,
+      mouthFunnel: 0, mouthPucker: 0, mouthLeft: 0, mouthRight: 0,
+    };
+    case 'cons_fv': return {
+      jawOpen: cfg.cFVjaw, mouthPucker: cfg.cFVpuck, mouthShrugUpper: 0.25,
+      mouthRollLower: 0.2, mouthPressLeft: 0.1, mouthPressRight: 0.1,
+      mouthFunnel: 0, mouthLeft: 0, mouthRight: 0,
+    };
+    case 'cons_sz': return {
+      jawOpen: cfg.cSZjaw, mouthLeft: cfg.cSZml, mouthRight: cfg.cSZml,
+      mouthPressLeft: 0.2, mouthPressRight: 0.2,
+      mouthStretchLeft: 0.1, mouthStretchRight: 0.1,
+      mouthFunnel: 0, mouthPucker: 0,
+    };
+    case 'cons_default': return {
+      jawOpen: cfg.cDefjaw, mouthLeft: cfg.cDefml, mouthRight: cfg.cDefml,
+      mouthLowerDownLeft: cfg.cDefjaw * 0.2, mouthLowerDownRight: cfg.cDefjaw * 0.2,
+      mouthFunnel: 0, mouthPucker: 0,
+    };
+    case 'silence': default: return {
+      jawOpen: 0, mouthFunnel: 0, mouthPucker: 0,
+      mouthLeft: 0, mouthRight: 0, mouthClose: 0,
+      mouthLowerDownLeft: 0, mouthLowerDownRight: 0,
+      mouthUpperUpLeft: 0, mouthUpperUpRight: 0,
+      mouthSmileLeft: 0, mouthSmileRight: 0,
+    };
   }
 }
+
 
 // ══════════════════════════════════════════════════════════════════
 //  LIP SYNC MOTOR
 // ══════════════════════════════════════════════════════════════════
 class LipSyncMotor {
   constructor() {
-    this._meshNodes = [];
-    this._isAnimating = false;
-    this._phonemeQueue = [];
-    this._phonemeSeq = [];
-    this._startTime = 0;
-    this._totalMs = 0;
+    this._meshNodes     = [];
+    this._isAnimating   = false;
+    this._phonemeQueue  = [];
+    this._phonemeSeq    = [];
+    this._startTime     = 0;
+    this._totalMs       = 0;
     this._lastFrameTime = performance.now();
-    this._endTimer = null;
-    this._current = {};
-    this._blinkTimer = 0;
-    this._blinkNext = 2000;
-    this._blinkPhase = 0;
-    this._blinkT = 0;
-    this._breathT = 0;
-    this._idleWaveT = 0;
-    this._saccadeT = 0;
-    this._saccadeNext = 3000;
-    this._saccadeTimer = 0;
-    this._saccadeCurX = 0;
-    this._saccadeCurY = 0;
-    this._saccadeTgtX = 0;
-    this._saccadeTgtY = 0;
-    this._saccadeDur = 120;
-    this._saccadePhase = 0;
-    this._saccadeFromX = 0;
-    this._saccadeFromY = 0;
-    this._browWaveT = 0;
-    this._toneWaveT = 0;
+    this._endTimer      = null;
+    this._current       = {};
+    this._blinkTimer    = 0;
+    this._blinkNext     = 0;
+    this._blinkPhase    = 0;
+    this._blinkT        = 0;
+    this._idleWaveT     = 0;
+    this._saccadeT      = 0;
+    this._saccadeNext   = 3000;
+    this._saccadeTimer  = 0;
+    this._saccadeCurX   = 0;
+    this._saccadeCurY   = 0;
+    this._saccadeTgtX   = 0;
+    this._saccadeTgtY   = 0;
+    this._saccadeDur    = 120;
+    this._saccadePhase  = 0;
+    this._saccadeFromX  = 0;
+    this._saccadeFromY  = 0;
+    this._browWaveT     = 0;
+    this._headMicroT    = 0;
+    this._toneWaveT     = 0;
+    this._breathT       = 0;
     this._microExpTimer = 0;
-    this._microExpNext = 5000 + Math.random() * 8000;
+    this._microExpNext  = 5000 + Math.random() * 8000;
     this._microExpPhase = 0;
-    this._microExpT = 0;
-    this._microExpType = 0;
-    this._idleNodT = 0;
-    this._idleTiltT = 0;
-    this._idleFaceT = 0;
-    this._idleDryT = 0;
+    this._microExpT     = 0;
+    this._microExpType  = 0;
   }
 
   setModel(model) {
@@ -1808,17 +1886,23 @@ class LipSyncMotor {
     const q = [];
     let t = cfg.pStartDelay * 1000;
     for (const ph of this._phonemeSeq) {
-      const dur = ph.dur * 1000;
+      const dur      = ph.dur * 1000;
       const openEnd  = t + dur * cfg.pOpenRatio;
       const peakEnd  = openEnd + dur * cfg.pPeakRatio;
       const closeEnd = peakEnd + dur * cfg.pCloseRatio;
-      q.push({ startT:t, openEndT:openEnd, peakEndT:peakEnd, closeEndT:closeEnd, endT:closeEnd,
-        phType:ph.type, isVowel:ph.type.startsWith('vowel_'), isSilence:ph.type==='silence' });
+      q.push({
+        startT: t, openEndT: openEnd, peakEndT: peakEnd,
+        closeEndT: closeEnd, endT: closeEnd,
+        phType: ph.type, char: ph.char,
+        isVowel: ph.type.startsWith('vowel_'),
+        isSilence: ph.type === 'silence',
+      });
       t = closeEnd;
     }
-    this._totalMs = t + (cfg.pEndPause || 0.15) * 1000;
+    this._totalMs      = t + (cfg.pEndPause || 0.15) * 1000;
     this._phonemeQueue = q;
   }
+
 
   startAnimation(phonemeSeq) {
     this.stop();
@@ -1826,190 +1910,121 @@ class LipSyncMotor {
     this._phonemeSeq = phonemeSeq;
     this._buildQueue();
     this._isAnimating = true;
-    this._startTime = performance.now();
+    this._startTime   = performance.now();
     if (this._endTimer) clearTimeout(this._endTimer);
-    this._endTimer = setTimeout(() => this.stop(), this._totalMs + 300);
+    const cfg = getConfig();
+    this._endTimer = setTimeout(
+      () => this.stop(),
+      this._totalMs + (cfg.pEndExtra || 0.20) * 1000
+    );
   }
 
   update() {
     const now = performance.now();
-    const dt = now - this._lastFrameTime;
+    const dt  = now - this._lastFrameTime;
     this._lastFrameTime = now;
     if (!this._meshNodes.length) return;
     const cfg = getConfig();
     if (this._isAnimating) this._updateAnimating(now, cfg, dt);
-    else this._updateIdle(dt, cfg);
+    else                   this._updateIdle(dt, cfg);
   }
 
-  // A REASON kódban cseréld le a teljes _updateAnimating metódust erre:
+  _updateAnimating(now, cfg, dt) {
+    const elapsed = now - this._startTime;
 
-_updateAnimating(now, cfg, dt) {
-  const elapsed = now - this._startTime;
+    let activePh = null;
+    for (let i = 0; i < this._phonemeQueue.length; i++) {
+      const ph = this._phonemeQueue[i];
+      if (elapsed >= ph.startT && elapsed <= ph.endT) { activePh = ph; break; }
+      if (elapsed < ph.startT) break;
+    }
 
-  let activePh = null;
-  for (let i = 0; i < this._phonemeQueue.length; i++) {
-    const ph = this._phonemeQueue[i];
-    if (elapsed >= ph.startT && elapsed <= ph.endT) { activePh = ph; break; }
-    if (elapsed < ph.startT) break;
-  }
+    const target = {};
 
-  const target = {};
+    if (activePh && !activePh.isSilence) {
+      const { startT, openEndT, peakEndT, closeEndT } = activePh;
+      let blend = 0;
 
-  if (activePh && !activePh.isSilence) {
-    const { startT, openEndT, peakEndT, closeEndT } = activePh;
-    let blend = 0;
-
-    if (elapsed < openEndT) {
-      blend = openEndT > startT ? (elapsed - startT) / (openEndT - startT) : 1;
-    } else if (elapsed < peakEndT) {
-      blend = 1;
-    } else {
-      const closeLen = closeEndT - peakEndT;
-      const t2 = elapsed - peakEndT;
-      blend = closeLen > 0 ? 1 - t2 / closeLen : 0;
+      if (elapsed < openEndT) {
+        blend = openEndT > startT ? (elapsed - startT) / (openEndT - startT) : 1;
+      } else if (elapsed < peakEndT) {
+        blend = 1;
+      } else {
+        const closeLen = closeEndT - peakEndT;
+        const t2 = elapsed - peakEndT;
+        blend = closeLen > 0 ? 1 - t2 / closeLen : 0;
+        blend = Math.min(1, Math.max(0, blend));
+        blend *= cfg.pCloseFrac + (1 - cfg.pCloseFrac) * blend;
+      }
       blend = Math.min(1, Math.max(0, blend));
-      blend *= cfg.pCloseFrac + (1 - cfg.pCloseFrac) * blend;
+
+      const scale = cfg.m3dMorphScale * (activePh.isVowel ? cfg.mVowelBoost : cfg.mConsDamp);
+
+      const morphTgt = getMorphTarget(activePh.phType, cfg);
+      for (const [k, v] of Object.entries(morphTgt)) {
+        let val = (v || 0) * blend * scale;
+        if (k === 'mouthFunnel') val *= cfg.mFunnelScale;
+        if (k === 'mouthPucker') val *= cfg.mPuckerScale;
+        if (k === 'mouthLeft' || k === 'mouthRight') val *= cfg.mMouthLRScale;
+        if (k === 'jawOpen')     val  = Math.min(val, cfg.mJawMax);
+        target[k] = val;
+      }
+    } else {
+      target.jawOpen = cfg.mJawIdleMin || 0;
     }
-    blend = Math.min(1, Math.max(0, blend));
 
-    // ← FONTOS: vowelBoost + consDamp itt van, a másik rendszerben is így
-    const scale = cfg.m3dMorphScale
-      * (activePh.isVowel ? cfg.mVowelBoost : cfg.mConsDamp);
-
-    const morphTgt = getMorphTarget(activePh.phType, cfg);
-    for (const [k, v] of Object.entries(morphTgt)) {
-      let val = (v || 0) * blend * scale;
-      if (k === 'mouthFunnel') val *= cfg.mFunnelScale;
-      if (k === 'mouthPucker') val *= cfg.mPuckerScale;
-      if (k === 'mouthLeft' || k === 'mouthRight') val *= cfg.mMouthLRScale;
-      if (k === 'jawOpen')     val  = Math.min(val, cfg.mJawMax);
-      target[k] = val;
+    // Légzés
+    this._breathT += (dt * 0.001) * 0.22;
+    const breathVal = Math.sin(this._breathT * Math.PI * 2);
+    if (!activePh || activePh.isSilence) {
+      target.jawOpen = Math.max(target.jawOpen || 0,
+        Math.max(0, (cfg.mJawIdleMin || 0) + 0.008 * breathVal));
     }
-  } else {
-    target.jawOpen = cfg.mJawIdleMin || 0;
-  }
+    target.mouthRollLower = Math.max(target.mouthRollLower || 0,
+      Math.max(0, 0.03 + 0.02 * breathVal));
 
-  // Légzés
-  this._breathT += (dt * 0.001) * 0.22;
-  const breathVal = Math.sin(this._breathT * Math.PI * 2);
-  if (!activePh || activePh.isSilence) {
-    target.jawOpen = Math.max(target.jawOpen || 0,
-      Math.max(0, (cfg.mJawIdleMin || 0) + 0.008 * breathVal));
-  }
-  target.mouthRollLower = Math.max(target.mouthRollLower || 0,
-    Math.max(0, 0.03 + 0.02 * breathVal));
-
-  // Pislogás
-  this._applyBlink(target, dt, cfg);
-
-  // Saccade
-  this._applySaccade(target, dt);
-
-  // Arcizom tónus
-  this._toneWaveT += (dt * 0.001) * 0.05;
-  target.cheekSquintLeft  = Math.max(0, 0.05 + 0.03 * Math.sin(this._toneWaveT * Math.PI * 2));
-  target.cheekSquintRight = target.cheekSquintLeft;
-  if (!activePh || activePh.isSilence) {
-    target.mouthPressLeft  = Math.max(0, 0.02 + 0.015 * Math.sin(this._toneWaveT * Math.PI * 2 + 1.1));
-    target.mouthPressRight = target.mouthPressLeft;
-  }
-
-  // Micro expression
-  this._applyMicroExp(target, dt);
-
-  this._lerpToTarget(target, cfg.m3dLerp);
-  this._writeMorphs(this._current);
-}
-
-  _updateIdle(dt, cfg) {
-    const t = dt * 0.001;
-    this._breathT += t * 0.18;
-    const breathSlow = Math.sin(this._breathT * Math.PI * 2);
-    const breathFast = Math.sin(this._breathT * Math.PI * 4.3);
-    const jawIdle = Math.max(0, (cfg.mJawIdleMin || 0) + 0.018 * breathSlow + 0.006 * breathFast);
-    const lipWave = Math.sin(this._breathT * Math.PI * 3.1 + 0.9);
-    const lipPress = Math.max(0, 0.04 + 0.025 * lipWave);
-    this._idleNodT += t * 0.11;
-    this._idleTiltT += t * 0.07;
-    this._idleFaceT += t * 0.09;
-    const faceWave = Math.sin(this._idleFaceT * Math.PI * 2);
-    const cheekVal = Math.max(0, 0.06 + 0.04 * faceWave);
-    this._browWaveT += t * 0.085;
-    const browL = 0.05 + 0.04 * Math.sin(this._browWaveT * Math.PI * 2);
-    const browR = 0.05 + 0.04 * Math.sin(this._browWaveT * Math.PI * 2 + 1.2);
-    const browInner = Math.max(0, 0.03 + 0.025 * Math.sin(this._browWaveT * Math.PI * 2 + 2.1));
-    this._idleDryT += t;
-    const dryCycle = Math.sin(this._idleDryT * 0.4);
-    const squintBase = Math.max(0, dryCycle * 0.08);
-    const target = {
-      jawOpen: jawIdle,
-      mouthRollLower: Math.max(0, 0.05 + 0.03 * breathSlow),
-      mouthRollUpper: Math.max(0, 0.02 + 0.015 * breathSlow),
-      mouthPressLeft:  lipPress,
-      mouthPressRight: lipPress * 0.85,
-      mouthSmileLeft:  Math.max(0, 0.04 + 0.02 * faceWave),
-      mouthSmileRight: Math.max(0, 0.035 + 0.018 * faceWave),
-      mouthShrugLower: Math.max(0, 0.02 + 0.015 * breathSlow),
-      cheekSquintLeft:  cheekVal,
-      cheekSquintRight: cheekVal * 0.9,
-      browOuterUpLeft:  browL,
-      browOuterUpRight: browR,
-      browInnerUp:      browInner,
-      eyeSquintLeft:  squintBase,
-      eyeSquintRight: squintBase * 0.8,
-      noseSneerLeft:  Math.max(0, 0.01 + 0.008 * breathSlow),
-      noseSneerRight: Math.max(0, 0.01 + 0.008 * breathSlow),
-    };
-    this._applyBlink(target, dt, cfg);
-    this._applySaccade(target, dt);
-    this._applyMicroExp(target, dt);
-    this._lerpToTarget(target, cfg.m3dLerp);
-    this._writeMorphs(this._current);
-  }
-
-  _applyBlink(target, dt, cfg) {
+    // Pislogás
     this._blinkTimer += dt;
     if (this._blinkPhase === 0 && this._blinkTimer >= this._blinkNext) {
-      this._blinkPhase = 1;
-      this._blinkT = 0;
-      this._blinkNext = Math.random() < 0.3 ? 200 : (cfg.m3dBlinkMin * 1000 + Math.random() * (cfg.m3dBlinkMax - cfg.m3dBlinkMin) * 1000);
+      this._blinkPhase = 1; this._blinkT = 0;
+      this._blinkNext  = Math.random() < 0.3 ? 200
+        : cfg.m3dBlinkMin * 1000 + Math.random() * (cfg.m3dBlinkMax - cfg.m3dBlinkMin) * 1000;
       this._blinkTimer = 0;
     }
-    let blink = 0;
+    let blinkVal = 0;
     if (this._blinkPhase > 0) {
       this._blinkT += dt;
       const half = (cfg.m3dBlinkDur * 1000) / 2;
       if (this._blinkPhase === 1) {
-        blink = Math.min(1, this._blinkT / half);
+        blinkVal = Math.min(1, this._blinkT / half);
         if (this._blinkT >= half) { this._blinkPhase = 2; this._blinkT = 0; }
       } else {
-        blink = 1 - Math.min(1, this._blinkT / half);
-        if (this._blinkT >= half) { this._blinkPhase = 0; blink = 0; }
+        blinkVal = 1 - Math.min(1, this._blinkT / half);
+        if (this._blinkT >= half) { this._blinkPhase = 0; blinkVal = 0; }
       }
     }
-    target.eyeBlinkLeft = blink;
-    target.eyeBlinkRight = blink;
-    target.eyeSquintLeft = (target.eyeSquintLeft || 0) + blink * 0.35;
-    target.eyeSquintRight = (target.eyeSquintRight || 0) + blink * 0.35;
-  }
+    target.eyeBlinkLeft  = blinkVal;
+    target.eyeBlinkRight = blinkVal;
+    target.eyeSquintLeft  = blinkVal * 0.35;
+    target.eyeSquintRight = blinkVal * 0.35;
 
-  _applySaccade(target, dt) {
+    // Saccade
     this._saccadeTimer += dt;
     if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
       this._saccadeFromX = this._saccadeCurX;
       this._saccadeFromY = this._saccadeCurY;
-      this._saccadeTgtX = (Math.random() - 0.5) * 0.55;
-      this._saccadeTgtY = (Math.random() - 0.5) * 0.32;
-      this._saccadeDur = 80 + Math.random() * 100;
-      this._saccadeT = 0;
+      this._saccadeTgtX  = (Math.random() - 0.5) * 0.55;
+      this._saccadeTgtY  = (Math.random() - 0.5) * 0.32;
+      this._saccadeDur   = 80 + Math.random() * 100;
+      this._saccadeT     = 0;
       this._saccadePhase = 1;
-      this._saccadeNext = 900 + Math.random() * 2200;
+      this._saccadeNext  = 900 + Math.random() * 2200;
       this._saccadeTimer = 0;
     }
     if (this._saccadePhase === 1) {
       this._saccadeT += dt;
-      const p = Math.min(1, this._saccadeT / this._saccadeDur);
-      const ease = p < 0.5 ? 2 * p * p : -1 + (4 - 2 * p) * p;
+      const p    = Math.min(1, this._saccadeT / this._saccadeDur);
+      const ease = p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
       this._saccadeCurX = lerp(this._saccadeFromX, this._saccadeTgtX, ease);
       this._saccadeCurY = lerp(this._saccadeFromY, this._saccadeTgtY, ease);
       if (p >= 1) { this._saccadeCurX = this._saccadeTgtX; this._saccadeCurY = this._saccadeTgtY; this._saccadePhase = 0; }
@@ -2022,9 +2037,8 @@ _updateAnimating(now, cfg, dt) {
     target.eyeLookUpRight   = Math.max(0, -this._saccadeCurY);
     target.eyeLookDownLeft  = Math.max(0,  this._saccadeCurY);
     target.eyeLookDownRight = Math.max(0,  this._saccadeCurY);
-  }
 
-  _applyTone(target, dt, activePh) {
+    // Arcizom tónus
     this._toneWaveT += (dt * 0.001) * 0.05;
     target.cheekSquintLeft  = Math.max(0, 0.05 + 0.03 * Math.sin(this._toneWaveT * Math.PI * 2));
     target.cheekSquintRight = target.cheekSquintLeft;
@@ -2032,20 +2046,18 @@ _updateAnimating(now, cfg, dt) {
       target.mouthPressLeft  = Math.max(0, 0.02 + 0.015 * Math.sin(this._toneWaveT * Math.PI * 2 + 1.1));
       target.mouthPressRight = target.mouthPressLeft;
     }
-  }
 
-  _applyMicroExp(target, dt) {
+    // Micro expression
     this._microExpTimer += dt;
     if (this._microExpPhase === 0 && this._microExpTimer >= this._microExpNext) {
-      this._microExpPhase = 1;
-      this._microExpT = 0;
-      this._microExpType = Math.floor(Math.random() * 3);
-      this._microExpNext = 6000 + Math.random() * 10000;
+      this._microExpPhase = 1; this._microExpT = 0;
+      this._microExpType  = Math.floor(Math.random() * 3);
+      this._microExpNext  = 6000 + Math.random() * 10000;
       this._microExpTimer = 0;
     }
     if (this._microExpPhase > 0) {
       this._microExpT += dt;
-      const p = Math.min(1, this._microExpT / 900);
+      const p   = Math.min(1, this._microExpT / 900);
       const env = p < 0.4 ? p / 0.4 : 1 - (p - 0.4) / 0.6;
       const amp = Math.max(0, env);
       if (this._microExpType === 0) {
@@ -2063,21 +2075,142 @@ _updateAnimating(now, cfg, dt) {
       }
       if (p >= 1) this._microExpPhase = 0;
     }
+
+    this._lerpToTarget(target, cfg.m3dLerp);
+    this._writeMorphs(this._current);
   }
 
+
+  _updateIdle(dt, cfg) {
+    const t = dt * 0.001;
+    this._breathT   += t * 0.22;
+    this._idleWaveT += t;
+    const breathVal  = Math.sin(this._breathT * Math.PI * 2);
+    const jawIdle    = Math.max(0, cfg.mJawIdleMin + 0.012 * breathVal);
+    const rollLower  = Math.max(0, 0.04 + 0.03 * breathVal);
+
+    this._blinkTimer += dt;
+    if (this._blinkPhase === 0 && this._blinkTimer >= this._blinkNext) {
+      this._blinkPhase = 1; this._blinkT = 0;
+      this._blinkNext  = Math.random() < 0.3 ? 200
+        : cfg.m3dBlinkMin * 1000 + Math.random() * (cfg.m3dBlinkMax - cfg.m3dBlinkMin) * 1000;
+      this._blinkTimer = 0;
+    }
+    let blinkVal = 0;
+    if (this._blinkPhase > 0) {
+      this._blinkT += dt;
+      const half = (cfg.m3dBlinkDur * 1000) / 2;
+      if (this._blinkPhase === 1) {
+        blinkVal = Math.min(1, this._blinkT / half);
+        if (this._blinkT >= half) { this._blinkPhase = 2; this._blinkT = 0; }
+      } else {
+        blinkVal = 1 - Math.min(1, this._blinkT / half);
+        if (this._blinkT >= half) { this._blinkPhase = 0; blinkVal = 0; }
+      }
+    }
+    const blinkSquint = blinkVal * 0.35;
+
+    this._saccadeTimer += dt;
+    if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
+      this._saccadeTgtX  = (Math.random() - 0.5) * 0.55;
+      this._saccadeTgtY  = (Math.random() - 0.5) * 0.32;
+      this._saccadeDur   = 80 + Math.random() * 100;
+      this._saccadeT     = 0; this._saccadePhase = 1;
+      this._saccadeNext  = 900 + Math.random() * 2200;
+      this._saccadeTimer = 0;
+    }
+    if (this._saccadePhase === 1) {
+      this._saccadeT += dt;
+      const p    = Math.min(1, this._saccadeT / this._saccadeDur);
+      const ease = p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
+      this._saccadeCurX = lerp(this._saccadeCurX, this._saccadeTgtX, ease);
+      this._saccadeCurY = lerp(this._saccadeCurY, this._saccadeTgtY, ease);
+      if (p >= 1) this._saccadePhase = 0;
+    }
+
+    this._browWaveT += t * 0.07;
+    const browL     = 0.04 + 0.03 * Math.sin(this._browWaveT * Math.PI * 2);
+    const browR     = 0.04 + 0.03 * Math.sin(this._browWaveT * Math.PI * 2 + 0.8);
+    const browInner = Math.max(0, 0.02 + 0.02 * Math.sin(this._browWaveT * Math.PI * 2 + 1.4));
+
+    this._toneWaveT += t * 0.05;
+    const cheekSq   = Math.max(0, 0.06 + 0.04 * Math.sin(this._toneWaveT * Math.PI * 2));
+    const mouthPr   = Math.max(0, 0.03 + 0.02 * Math.sin(this._toneWaveT * Math.PI * 2 + 1.1));
+
+    this._headMicroT += t * 0.09;
+    const jawMicroL  = Math.max(0, 0.015 * Math.sin(this._headMicroT * Math.PI * 2));
+    const jawMicroR  = Math.max(0, 0.015 * Math.sin(this._headMicroT * Math.PI * 2 + Math.PI));
+    const jawFwd     = Math.max(0, 0.01 + 0.008 * Math.sin(this._headMicroT * Math.PI * 2 * 0.7));
+
+    this._microExpTimer += dt;
+    if (this._microExpPhase === 0 && this._microExpTimer >= this._microExpNext) {
+      this._microExpPhase = 1; this._microExpT = 0;
+      this._microExpType  = Math.floor(Math.random() * 3);
+      this._microExpNext  = 6000 + Math.random() * 10000;
+      this._microExpTimer = 0;
+    }
+    let microSmileL = 0, microSmileR = 0;
+    let microBrowDnL = 0, microBrowDnR = 0, microBrowIn = 0;
+    let microSquintL = 0, microSquintR = 0;
+    if (this._microExpPhase > 0) {
+      this._microExpT += dt;
+      const p   = Math.min(1, this._microExpT / 900);
+      const env = p < 0.4 ? p / 0.4 : 1 - (p - 0.4) / 0.6;
+      const amp = Math.max(0, env);
+      if (this._microExpType === 0) {
+        microSmileL = amp * 0.22; microSmileR = amp * 0.20;
+        microSquintL = amp * 0.10; microSquintR = amp * 0.10;
+      } else if (this._microExpType === 1) {
+        microBrowDnL = amp * 0.18; microBrowDnR = amp * 0.16; microBrowIn = amp * 0.22;
+      } else {
+        microSquintL = amp * 0.20; microSquintR = amp * 0.18;
+      }
+      if (p >= 1) this._microExpPhase = 0;
+    }
+
+    const target = {
+      jawOpen: jawIdle, jawForward: jawFwd, jawLeft: jawMicroL, jawRight: jawMicroR,
+      mouthRollLower: rollLower, mouthPressLeft: mouthPr, mouthPressRight: mouthPr,
+      eyeBlinkLeft: blinkVal, eyeBlinkRight: blinkVal,
+      eyeSquintLeft: blinkSquint + microSquintL, eyeSquintRight: blinkSquint + microSquintR,
+      eyeLookInLeft:    Math.max(0,  this._saccadeCurX),
+      eyeLookInRight:   Math.max(0, -this._saccadeCurX),
+      eyeLookOutLeft:   Math.max(0, -this._saccadeCurX),
+      eyeLookOutRight:  Math.max(0,  this._saccadeCurX),
+      eyeLookUpLeft:    Math.max(0, -this._saccadeCurY),
+      eyeLookUpRight:   Math.max(0, -this._saccadeCurY),
+      eyeLookDownLeft:  Math.max(0,  this._saccadeCurY),
+      eyeLookDownRight: Math.max(0,  this._saccadeCurY),
+      browOuterUpLeft: browL, browOuterUpRight: browR,
+      browInnerUp: browInner + microBrowIn,
+      browDownLeft: microBrowDnL, browDownRight: microBrowDnR,
+      cheekSquintLeft: cheekSq, cheekSquintRight: cheekSq,
+      mouthSmileLeft: microSmileL, mouthSmileRight: microSmileR,
+    };
+
+    this._lerpToTarget(target, cfg.m3dLerp);
+    this._writeMorphs(this._current);
+  }
+
+
   _lerpToTarget(target, lerpSpeed) {
-    const MOUTH = ['jawOpen','jawForward','jawLeft','jawRight','mouthClose','mouthFunnel',
-      'mouthPucker','mouthLeft','mouthRight','mouthSmileLeft','mouthSmileRight',
-      'mouthFrownLeft','mouthFrownRight','mouthRollLower','mouthRollUpper',
-      'mouthShrugLower','mouthShrugUpper','mouthLowerDownLeft','mouthLowerDownRight',
-      'mouthUpperUpLeft','mouthUpperUpRight','mouthDimpleLeft','mouthDimpleRight',
-      'mouthStretchLeft','mouthStretchRight','mouthPressLeft','mouthPressRight'];
+    const MOUTH = [
+      'jawOpen','jawForward','jawLeft','jawRight',
+      'mouthClose','mouthFunnel','mouthPucker','mouthLeft','mouthRight',
+      'mouthSmileLeft','mouthSmileRight','mouthFrownLeft','mouthFrownRight',
+      'mouthRollLower','mouthRollUpper','mouthShrugLower','mouthShrugUpper',
+      'mouthLowerDownLeft','mouthLowerDownRight','mouthUpperUpLeft','mouthUpperUpRight',
+      'mouthDimpleLeft','mouthDimpleRight','mouthStretchLeft','mouthStretchRight',
+      'mouthPressLeft','mouthPressRight',
+    ];
     const BLINK = ['eyeBlinkLeft','eyeBlinkRight'];
-    const GAZE  = ['eyeLookInLeft','eyeLookInRight','eyeLookOutLeft','eyeLookOutRight',
+    const GAZE  = [
+      'eyeLookInLeft','eyeLookInRight','eyeLookOutLeft','eyeLookOutRight',
       'eyeLookUpLeft','eyeLookUpRight','eyeLookDownLeft','eyeLookDownRight',
-      'eyeSquintLeft','eyeSquintRight','browOuterUpLeft','browOuterUpRight',
-      'browInnerUp','browDownLeft','browDownRight','cheekSquintLeft','cheekSquintRight',
-      'noseSneerLeft','noseSneerRight'];
+      'eyeSquintLeft','eyeSquintRight',
+      'browOuterUpLeft','browOuterUpRight','browInnerUp','browDownLeft','browDownRight',
+      'cheekSquintLeft','cheekSquintRight',
+    ];
     for (const k of MOUTH) {
       const tgt = target[k] !== undefined ? target[k] : 0;
       const cur = this._current[k] || 0;
@@ -2104,15 +2237,17 @@ _updateAnimating(now, cfg, dt) {
   }
 
   stop() {
-    this._isAnimating = false;
+    this._isAnimating  = false;
     this._phonemeQueue = [];
     if (this._endTimer) { clearTimeout(this._endTimer); this._endTimer = null; }
-    const MOUTH = ['jawOpen','jawForward','jawLeft','jawRight','mouthClose','mouthFunnel',
+    const MOUTH = [
+      'jawOpen','jawForward','jawLeft','jawRight','mouthClose','mouthFunnel',
       'mouthPucker','mouthLeft','mouthRight','mouthSmileLeft','mouthSmileRight',
       'mouthFrownLeft','mouthFrownRight','mouthRollLower','mouthRollUpper',
       'mouthShrugLower','mouthShrugUpper','mouthLowerDownLeft','mouthLowerDownRight',
       'mouthUpperUpLeft','mouthUpperUpRight','mouthDimpleLeft','mouthDimpleRight',
-      'mouthStretchLeft','mouthStretchRight','mouthPressLeft','mouthPressRight'];
+      'mouthStretchLeft','mouthStretchRight','mouthPressLeft','mouthPressRight',
+    ];
     for (const k of MOUTH) this._current[k] = 0;
     this._writeMorphs(this._current);
   }
