@@ -787,15 +787,12 @@ async function sbFetch(path, opts = {}) {
 // ══════════════════════════════════════════════════════════════════
 async function fetchArticles() {
   try {
-    const data = await sbFetch('/rest/v1/articles?select=*&order=created_at.desc&limit=300');
+    const data = await sbFetch(
+      '/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium&order=created_at.desc&limit=50'
+    );
     if (!Array.isArray(data)) throw new Error();
-    const prev = lastCount;
     lastCount = data.length;
     allArticles = data;
-    if (prev >= 0 && data.length > prev) showToast(`🆕 ${data.length - prev} új cikk érkezett!`, 'success');
-    if (prev >= 0 && data.length > prev) {
-      fetch('/api/indexnow', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: 'https://reason-five.vercel.app' }) }).catch(() => {});
-    }
     if (data.length) updateTicker(data);
     applyFilters();
     updateStats();
@@ -803,9 +800,28 @@ async function fetchArticles() {
     updateNavCounts();
     setStatus('Utoljára frissítve: ' + new Date().toLocaleTimeString('hu-HU'));
     ttsRefreshQueueUI();
-  } catch { setStatus('Kapcsolódás sikertelen...'); renderArticles(); }
-  finally { document.getElementById('refreshBtn').textContent = '↻ Frissítés'; }
+  } catch {
+    setStatus('Kapcsolódás sikertelen...');
+    renderArticles();
+  } finally {
+    document.getElementById('refreshBtn').textContent = '↻ Frissítés';
+  }
 }
+
+async function fetchArticleBody(id) {
+  try {
+    const rows = await sbFetch(
+      `/rest/v1/articles?id=eq.${id}&select=body&limit=1`
+    );
+    return rows?.[0]?.body || '';
+  } catch {
+    return '';
+  }
+}
+
+
+
+  
 function manualRefresh() { document.getElementById('refreshBtn').textContent = '...'; fetchArticles(); }
 window.manualRefresh = manualRefresh;
 function setStatus(msg) { document.getElementById('statusText').textContent = msg; }
@@ -1013,10 +1029,11 @@ document.getElementById('ttsPitch').addEventListener('input', function () {
   document.getElementById('ttsPitchVal').textContent = parseFloat(this.value).toFixed(2);
 });
 
-function ttsCardToggle(id, checked) {
+async function ttsCardToggle(id, checked) {
   const art = allArticles.find(a => String(a.id) === String(id));
   if (!art) return;
   if (checked) {
+    if (!art.body) art.body = await fetchArticleBody(id);
     const rawText = (art.body || art.excerpt || art.title || '');
     const plainText = rawText.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
     ttsSelectedIds.set(String(id), { title: art.title || 'Cikk', text: plainText });
@@ -1028,7 +1045,6 @@ function ttsCardToggle(id, checked) {
   ttsRefreshQueueUI();
   renderArticles();
 }
-window.ttsCardToggle = ttsCardToggle;
 
 function ttsRefreshQueueUI() {
   const list = document.getElementById('ttsQueueList');
@@ -1157,7 +1173,7 @@ window.ttsStop = ttsStop;
 // ══════════════════════════════════════════════════════════════════
 //  MODAL
 // ══════════════════════════════════════════════════════════════════
-function openModal(art) {
+async function openModal(art) {
   const c = art.category || 'Egyéb', col = CAT_COLOR[c] || '#888';
   const tl = art.article_type || '';
   _currentModalArticleId = String(art.id);
@@ -1185,6 +1201,11 @@ function openModal(art) {
     loadModalViewCount(art.id);
   }
 
+  // Modal megnyitása és töltő szöveg azonnal
+  document.getElementById('articleModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('articleModalBox').scrollTop = 0;
+
   if (art.is_premium && !currentUser) {
     document.getElementById('modalBody').innerHTML = `
       <div style="text-align:center;padding:60px 20px">
@@ -1193,9 +1214,18 @@ function openModal(art) {
         <div style="font-size:14px;color:var(--text3);line-height:1.7;margin-bottom:24px;max-width:340px;margin-left:auto;margin-right:auto">Ez a cikk csak bejelentkezett olvasóknak érhető el.</div>
         <button onclick="closeModal();openAuth();" style="padding:12px 28px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-s)">Bejelentkezés</button>
       </div>`;
-    document.getElementById('articleModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
     return;
+  }
+
+  // Body betöltés – ha még nincs cache-elve
+  if (!art.body) {
+    document.getElementById('modalBody').innerHTML = `
+      <div style="text-align:center;padding:60px 20px;color:var(--text4)">
+        <div style="font-size:32px;margin-bottom:12px">⏳</div>
+        <div>Cikk betöltése...</div>
+      </div>`;
+
+    art.body = await fetchArticleBody(art.id);
   }
 
   const body  = art.body || art.excerpt || '';
@@ -1228,11 +1258,8 @@ function openModal(art) {
   document.getElementById('themeBtnLight').classList.toggle('active', curTheme === 'light');
   document.getElementById('themeBtnDark').classList.toggle('active', curTheme === 'dark');
   applyModalFont();
-
-  document.getElementById('articleModal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  document.getElementById('articleModalBox').scrollTop = 0;
 }
+
 
 
 document.getElementById('modalClose').onclick = closeModal;
@@ -1679,7 +1706,10 @@ function fmtTimeFull(iso) {
 
 // openModal wrappelés view tracking miatt
 const _origOpen = openModal;
-window.openModal = function (art) { _origOpen(art); if (art?.id) trackArticleView(art.id); };
+window.openModal = async function (art) { 
+  await _origOpen(art); 
+  if (art?.id) trackArticleView(art.id); 
+};
 
 function renderSupportBanner() {
   const mc = document.getElementById('mainCol');
@@ -2502,7 +2532,43 @@ if (speechSynthesis.onvoiceschanged !== undefined) { speechSynthesis.onvoicescha
 initWeather();
 setInterval(initWeather, 10 * 60 * 1000);
 fetchArticles();
-setInterval(fetchArticles, 10 * 1000);
+let _lastKnownCreatedAt = null;
+async function pollForNewArticles() {
+  try {
+    const newest = await sbFetch(
+      '/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium&order=created_at.desc&limit=1'
+    );
+    if (!newest?.length) return;
+
+    // Első futáskor csak eltároljuk az időbélyeget
+    if (!_lastKnownCreatedAt) {
+      _lastKnownCreatedAt = newest[0].created_at;
+      return;
+    }
+
+    // Ha az újabb mint amit ismerünk, letöltjük az összes újat
+    if (newest[0].created_at > _lastKnownCreatedAt) {
+      const newData = await sbFetch(
+        `/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium&order=created_at.desc&created_at=gt.${encodeURIComponent(_lastKnownCreatedAt)}&limit=50`
+      );
+      if (newData.length) {
+        _lastKnownCreatedAt = newData[0].created_at;
+        allArticles = [...newData, ...allArticles];
+        lastCount = allArticles.length;
+        showToast(`🆕 ${newData.length} új cikk érkezett!`, 'success');
+        applyFilters();
+        updateStats();
+        updateCatSidebar();
+        updateNavCounts();
+        updateTicker(allArticles);
+        setStatus('Utoljára frissítve: ' + new Date().toLocaleTimeString('hu-HU'));
+      }
+    }
+  } catch {}
+}
+
+setInterval(pollForNewArticles, 30 * 1000);
+
 renderArticles();
 pingVisitor();
 setInterval(pingVisitor, 60 * 1000);
