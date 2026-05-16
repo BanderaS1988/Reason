@@ -3,58 +3,27 @@
     {
       "source": "/(.*)",
       "headers": [
-        {
-          "key": "x-robots-tag",
-          "value": "index, follow"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "SAMEORIGIN"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate"
-        }
+        { "key": "x-robots-tag", "value": "index, follow" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
       ]
     },
     {
       "source": "/api/(.*)",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "s-maxage=60, stale-while-revalidate=30"
-        }
+        { "key": "Cache-Control", "value": "s-maxage=60, stale-while-revalidate=30" }
       ]
     }
   ],
   "rewrites": [
-    {
-      "source": "/sitemap.xml",
-      "destination": "/api/sitemap.xml"
-    },
-    {
-      "source": "/rss.xml",
-      "destination": "/api/rss.xml"
-    },
-    {
-      "source": "/robots.txt",
-      "destination": "/api/robots.txt"
-    },
-    {
-      "source": "/news-sitemap.xml",
-      "destination": "/api/news-sitemap.xml"
-    },
-    {
-      "source": "/llms.txt",
-      "destination": "/api/llms.txt"
-    },
-    {
-      "source": "/cikk/:id",
-      "destination": "/cikk.html"
-    }
+    { "source": "/sitemap.xml",      "destination": "/api/sitemap.xml" },
+    { "source": "/rss.xml",          "destination": "/api/rss.xml" },
+    { "source": "/robots.txt",       "destination": "/api/robots.txt" },
+    { "source": "/news-sitemap.xml", "destination": "/api/news-sitemap.xml" },
+    { "source": "/llms.txt",         "destination": "/api/llms.txt" },
+    { "source": "/cikk/:id",         "destination": "/cikk.html" },
+    { "source": "/api/like",         "destination": "/pages/api/like.js" },
+    { "source": "/api/indexnow",     "destination": "/pages/api/indexnow.js" }
   ]
 }
