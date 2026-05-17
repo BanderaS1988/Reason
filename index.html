@@ -268,6 +268,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 .toast.info{background:var(--cyan)}
 @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .comment-count-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--text3);font-family:var(--font-m);background:var(--tag-bg);padding:2px 8px;border-radius:10px;margin-left:6px}
+  @keyframes btn-flash {
+  0%,100% { background:transparent; color:var(--cyan); border-color:var(--cyan); }
+  50% { background:var(--accent); color:#fff; border-color:var(--accent); }
+}
+.refresh-btn.flashing {
+  animation: btn-flash 0.5s ease-in-out 6;
+}
 @media(max-width:700px){
   .header-top{padding:12px 16px}
   .page-wrap{padding:16px 16px 60px}
@@ -2582,17 +2589,9 @@ async function pollForNewArticles() {
         allArticles = [...newData, ...allArticles];
         lastCount = allArticles.length;
         showToast(`🆕 ${newData.length} új cikk érkezett!`, 'success');
-        const btn = document.getElementById('refreshBtn');
-btn.style.animation = 'pulse-dot 0.6s ease-in-out 6';
-btn.style.background = 'var(--accent)';
-btn.style.color = '#fff';
-btn.style.borderColor = 'var(--accent)';
-setTimeout(() => {
-  btn.style.animation = '';
-  btn.style.background = '';
-  btn.style.color = '';
-  btn.style.borderColor = '';
-}, 3600);
+const btn = document.getElementById('refreshBtn');
+btn.classList.add('flashing');
+btn.addEventListener('animationend', () => btn.classList.remove('flashing'), { once: true });
         applyFilters();
         updateStats();
         updateCatSidebar();
