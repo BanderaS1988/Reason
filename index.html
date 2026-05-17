@@ -2583,7 +2583,7 @@ async function pollForNewArticles() {
     // Ha az újabb mint amit ismerünk, letöltjük az összes újat
     if (newest[0].created_at > _lastKnownCreatedAt) {
       const newData = await sbFetch(
-`/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium&order=created_at.desc&created_at=gt.${_lastKnownCreatedAt}&limit=200`      );
+`/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium&order=created_at.desc&created_at=gt.${encodeURIComponent(_lastKnownCreatedAt)}&limit=200`
       if (newData.length) {
         _lastKnownCreatedAt = newData[0].created_at;
         allArticles = [...newData, ...allArticles];
