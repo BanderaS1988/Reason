@@ -609,7 +609,9 @@ const SB_URL  = 'https://kqugolmndqonbnjetdyi.supabase.co';
 const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxdWdvbG1uZHFvbmJuamV0ZHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2OTM3NjMsImV4cCI6MjA4ODI2OTc2M30.wGEBEJDPUKsUPu9W5vxvH7Do0wX9U3FdgKzEzny_zBg';
 const OWM_KEY = 'f5fd940d4f21028b4e87084b50e00dfb';
 const PAGE_SIZE = 12;
-
+const FETCH_LIMIT = 200;
+let fetchOffset = 0, fetchHasMore = true;
+  
 const SB_HDR = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' };
 
 const CAT_COLOR = {
@@ -787,15 +789,17 @@ async function sbFetch(path, opts = {}) {
 // ══════════════════════════════════════════════════════════════════
 //  CIKKEK BETÖLTÉSE
 // ══════════════════════════════════════════════════════════════════
-async function fetchArticles() {
+async function fetchArticles(offset = 0) {
   try {
     const data = await sbFetch(
-      '/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium&order=created_at.desc&limit=50'
+      `/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium&order=created_at.desc&limit=${FETCH_LIMIT}&offset=${offset}`
     );
     if (!Array.isArray(data)) throw new Error();
-    lastCount = data.length;
-    allArticles = data;
-    if (data.length) updateTicker(data);
+    if (offset === 0) allArticles = data;
+    else allArticles = [...allArticles, ...data];
+    fetchHasMore = data.length === FETCH_LIMIT;
+    fetchOffset = offset;
+    if (allArticles.length) updateTicker(allArticles);
     applyFilters();
     updateStats();
     updateCatSidebar();
@@ -824,7 +828,13 @@ async function fetchArticleBody(id) {
 
 
   
-function manualRefresh() { document.getElementById('refreshBtn').textContent = '...'; fetchArticles(); }
+function manualRefresh() {
+  fetchOffset = 0; fetchHasMore = true; allArticles = [];
+  document.getElementById('refreshBtn').textContent = '...';
+  fetchArticles(0);
+}
+
+  
 window.manualRefresh = manualRefresh;
 function setStatus(msg) { document.getElementById('statusText').textContent = msg; }
 
@@ -920,7 +930,7 @@ function renderArticles() {
     startIdx = 1;
   } else feat.style.display = 'none';
   grid.innerHTML = filteredArticles.slice(startIdx, page * PAGE_SIZE).map(a => renderCard(a)).join('');
-  lmw.style.display = filteredArticles.length > page * PAGE_SIZE ? '' : 'none';
+  lmw.style.display = (filteredArticles.length > page * PAGE_SIZE || fetchHasMore) ? '' : 'none';
 }
 
 function renderFeatured(art) {
@@ -1006,8 +1016,19 @@ function loadMore() {
   const prevEnd = page * PAGE_SIZE;
   page++;
   const newCards = filteredArticles.slice(Math.max(prevEnd, startIdx), page * PAGE_SIZE);
-  document.getElementById('articlesGrid').insertAdjacentHTML('beforeend', newCards.map(renderCard).join(''));
-  document.getElementById('lmWrap').style.display = filteredArticles.length > page * PAGE_SIZE ? '' : 'none';
+  if (newCards.length) {
+    document.getElementById('articlesGrid').insertAdjacentHTML('beforeend', newCards.map(renderCard).join(''));
+  }
+  if (filteredArticles.length <= page * PAGE_SIZE && fetchHasMore) {
+    const btn = document.querySelector('.load-more-btn');
+    if (btn) { btn.textContent = 'Betöltés...'; btn.disabled = true; }
+    fetchArticles(fetchOffset + FETCH_LIMIT).then(() => {
+      if (btn) { btn.textContent = 'Tovább olvasok →'; btn.disabled = false; }
+    });
+    return;
+  }
+  document.getElementById('lmWrap').style.display =
+    (filteredArticles.length > page * PAGE_SIZE || fetchHasMore) ? '' : 'none';
   window.scrollBy({ top: 300, behavior: 'smooth' });
 }
 window.loadMore = loadMore;
@@ -2555,7 +2576,7 @@ async function pollForNewArticles() {
     // Ha az újabb mint amit ismerünk, letöltjük az összes újat
     if (newest[0].created_at > _lastKnownCreatedAt) {
       const newData = await sbFetch(
-`/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium&order=created_at.desc&created_at=gt.${_lastKnownCreatedAt}&limit=50`      );
+`/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium&order=created_at.desc&created_at=gt.${_lastKnownCreatedAt}&limit=200`      );
       if (newData.length) {
         _lastKnownCreatedAt = newData[0].created_at;
         allArticles = [...newData, ...allArticles];
