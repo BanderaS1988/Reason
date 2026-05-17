@@ -787,7 +787,11 @@ function renderWeather(cj, fj) {
 //  SUPABASE HELPER
 // ══════════════════════════════════════════════════════════════════
 async function sbFetch(path, opts = {}) {
-  const r = await fetch(SB_URL + path, { headers: SB_HDR, ...opts });
+  const { headers: extraHeaders, ...restOpts } = opts;
+  const r = await fetch(SB_URL + path, {
+    headers: { ...SB_HDR, ...(extraHeaders || {}) },
+    ...restOpts
+  });
   if (!r.ok) { const e = await r.json().catch(() => ({})); throw new Error(e.message || 'HTTP ' + r.status); }
   const t = await r.text();
   return t ? JSON.parse(t) : [];
