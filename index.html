@@ -2568,42 +2568,40 @@ let _lastKnownCreatedAt = null;
 async function pollForNewArticles() {
   try {
     const newest = await sbFetch(
-     '/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium&order=created_at.desc&limit=1'
-
-
+      '/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium&order=created_at.desc&limit=1'
     );
     if (!newest?.length) return;
 
-    // Első futáskor csak eltároljuk az időbélyeget
     if (!_lastKnownCreatedAt) {
       _lastKnownCreatedAt = newest[0].created_at;
       return;
     }
 
-    // Ha az újabb mint amit ismerünk, letöltjük az összes újat
-   if (newest[0].created_at > _lastKnownCreatedAt) {
-  const newData = await sbFetch(
-    `/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium&order=created_at.desc&created_at=gt.${encodeURIComponent(_lastKnownCreatedAt)}&limit=200`
-  );
-  if (newData.length) {
-    _lastKnownCreatedAt = newData[0].created_at;
-    allArticles = [...newData, ...allArticles];
-    lastCount = allArticles.length;
-    showToast(`🆕 ${newData.length} új cikk érkezett!`, 'success');
-    const btn = document.getElementById('refreshBtn');
-    btn.classList.add('flashing');
-    btn.addEventListener('animationend', () => btn.classList.remove('flashing'), { once: true });
-    applyFilters();
-    updateStats();
-    updateCatSidebar();
-    updateNavCounts();
-    updateTicker(allArticles);
-   setStatus('Utoljára frissítve: ' + new Date().toLocaleTimeString('hu-HU'));
+    if (newest[0].created_at > _lastKnownCreatedAt) {
+      const newData = await sbFetch(
+        `/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium&order=created_at.desc&created_at=gt.${encodeURIComponent(_lastKnownCreatedAt)}&limit=200`,
+        { headers: { 'Range-Unit': 'items' } }
+      );
+      if (newData?.length) {
+        _lastKnownCreatedAt = newData[0].created_at;
+        allArticles = [...newData, ...allArticles];
+        lastCount = allArticles.length;
+        showToast(`🆕 ${newData.length} új cikk érkezett!`, 'success');
+        const btn = document.getElementById('refreshBtn');
+        btn.classList.add('flashing');
+        btn.addEventListener('animationend', () => btn.classList.remove('flashing'), { once: true });
+        applyFilters();
+        updateStats();
+        updateCatSidebar();
+        updateNavCounts();
+        updateTicker(allArticles);
+        setStatus('Utoljára frissítve: ' + new Date().toLocaleTimeString('hu-HU'));
+      }
+    }
+  } catch (e) {
+    console.error('pollForNewArticles hiba:', e);
   }
 }
-  } catch {}
-}
-
 setInterval(pollForNewArticles, 30 * 1000);
 
 renderArticles();
