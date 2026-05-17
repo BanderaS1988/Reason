@@ -2583,8 +2583,7 @@ async function pollForNewArticles() {
 
     if (newest[0].created_at > _lastKnownCreatedAt) {
       const newData = await sbFetch(
-        `/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium&order=created_at.desc&created_at=gt.${encodeURIComponent(_lastKnownCreatedAt)}&limit=200`,
-        { headers: { 'Range-Unit': 'items' } }
+`/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium&order=created_at.desc&created_at=gt.${encodeURIComponent(_lastKnownCreatedAt)}&limit=200`,        { headers: { 'Range-Unit': 'items' } }
       );
       if (newData?.length) {
         _lastKnownCreatedAt = newData[0].created_at;
