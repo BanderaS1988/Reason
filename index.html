@@ -803,7 +803,7 @@ async function sbFetch(path, opts = {}) {
 async function fetchArticles(offset = 0) {
   try {
     const data = await sbFetch(
-      `/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium&order=created_at.desc&limit=${FETCH_LIMIT}&offset=${offset}`
+      `/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium,image_url&order=created_at.desc&limit=${FETCH_LIMIT}&offset=${offset}`
     );
     if (!Array.isArray(data)) throw new Error();
     if (offset === 0) allArticles = data;
@@ -972,8 +972,8 @@ function renderCard(art) {
   const views    = (art.view_count    ?? 0).toLocaleString('hu');
   const comments = (art.comment_count ?? 0).toLocaleString('hu');
   return `<div class="article-card" onclick="openArticleById('${art.id}')" style="cursor:pointer;${isSelected ? 'border-color:var(--accent);box-shadow:0 0 0 2px rgba(200,16,46,.2)' : ''}">
-    <div class="card-img" style="background:linear-gradient(135deg,${col}16,${col}08)">
-      <div class="card-img-emoji">${ico}</div>
+    .card-img" style="background:linear-gradient(135deg,${col}16,${col}08);${art.image_url ? `background-image:url(${art.image_url});background-size:cover;background-position:center;` : ''}">
+      ${!art.image_url ? `<div class="card-img-emoji">${ico}</div>` : ''}
       <div class="card-img-badge">${c}</div>
       ${art.is_premium ? '<div class="card-premium-ribbon">⭐ PRÉMIUM</div>' : ''}
       ${isSelected ? '<div style="position:absolute;top:8px;left:8px;background:var(--accent);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;">🔊 Kijelölve</div>' : ''}
@@ -1264,6 +1264,15 @@ async function openModal(art) {
 
   const body  = art.body || art.excerpt || '';
   const paras = body.split(/\n\n+|\n/).filter(p => p.trim().length > 4);
+
+  // Kép eltávolítása ha volt előző
+const oldImg = document.getElementById('modalHeroImg')
+if (oldImg) oldImg.remove()
+// Új kép hozzáadása
+if (art.image_url) {
+  document.getElementById('modalBody').insertAdjacentHTML('beforebegin',
+    `<img id="modalHeroImg" src="${art.image_url}" style="width:100%;max-height:340px;object-fit:cover;" alt="${esc(art.title)}">`)
+}
   document.getElementById('modalBody').innerHTML = paras.length
     ? paras.map(p => `<p>${esc(p.trim())}</p>`).join('')
     : `<p>${esc(body)}</p>`;
