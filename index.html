@@ -203,7 +203,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
 #space3dExpandBtn{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;backdrop-filter:blur(4px);z-index:5}
 #space3dExpandBtn:hover{background:rgba(255,255,255,.25)}
 #space3dOverlay{position:fixed;inset:0;z-index:699;opacity:0;pointer-events:none;transition:opacity .4s}
-#space3dOverlay.visible{opacity:1;pointer-events:auto}
+#space3dOverlay.visible{opacity:1;pointer-events:none}
 #ttsReaderPanel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 #ttsReaderPanel .tts-title{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text4);padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 #ttsReaderPanel .tts-queue{font-size:11px;color:var(--text3);min-height:20px;max-height:80px;overflow-y:auto;line-height:1.6}
@@ -2774,13 +2774,13 @@ animate();
   } else collapse3D();
 };
   window.collapse3D = function () {
-    expanded = false;
-    widget.classList.remove('expanded');
-    overlay.classList.remove('visible');
-    expandBtn.textContent = '⛶';
-    expandBtn.title = 'Nagyítás';
-    setTimeout(resize, 60);
-  };
+  expanded = false;
+  widget.classList.remove('expanded');
+  overlay.classList.remove('visible');
+  expandBtn.textContent = '⛶';
+  expandBtn.title = 'Nagyítás';
+  setTimeout(resize, 60);
+};
 })();
 
 // ══════════════════════════════════════════════════════════════════
