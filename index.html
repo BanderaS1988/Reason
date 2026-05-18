@@ -2567,11 +2567,11 @@ if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
     let microBrowDnL = 0, microBrowDnR = 0, microBrowIn = 0;
     let microSquintL = 0, microSquintR = 0;
     if (this._microExpPhase > 0) {
-      this._microExpT += dt;
-      const p   = Math.min(1, this._microExpT / 900);
-      const env = p < 0.4 ? p / 0.4 : 1 - (p - 0.4) / 0.6;
-      const amp = Math.max(0, env);
-      if (this._microExpType === 0) {
+  this._microExpT += dt;
+  const p   = Math.min(1, this._microExpT / 900);   // ← EZT
+  const env = p < 0.4 ? p / 0.4 : 1 - (p - 0.4) / 0.6;  // ← ÉS EZT
+  const amp = Math.max(0, env);                      // ← ÉS EZT add hozzá
+  if (this._microExpType === 0) {
         microSmileL = amp * 0.22; microSmileR = amp * 0.20;
         microSquintL = amp * 0.10; microSquintR = amp * 0.10;
       } else if (this._microExpType === 1) {
