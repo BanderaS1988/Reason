@@ -2698,6 +2698,174 @@ if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
   starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.18, sizeAttenuation: true })));
 
+
+
+
+
+  
+// ── HÁTTÉR ────────────────────────────────────────────────────
+
+// Gradiens háttér
+const bgCanvas = document.createElement('canvas');
+bgCanvas.width = 512; bgCanvas.height = 512;
+const bgCtx = bgCanvas.getContext('2d');
+const bgGrad = bgCtx.createRadialGradient(256,256,0, 256,256,360);
+bgGrad.addColorStop(0,   '#0a1628');
+bgGrad.addColorStop(0.5, '#060d1a');
+bgGrad.addColorStop(1,   '#020508');
+bgCtx.fillStyle = bgGrad;
+bgCtx.fillRect(0, 0, 512, 512);
+const bgTex = new THREE.CanvasTexture(bgCanvas);
+scene.background = bgTex;
+
+// Newsroom padló / asztal sziluett
+const floorGeo = new THREE.PlaneGeometry(20, 8);
+const floorMat = new THREE.MeshBasicMaterial({ color: 0x050d1e, transparent: true, opacity: 0.85 });
+const floorMesh = new THREE.Mesh(floorGeo, floorMat);
+floorMesh.rotation.x = -Math.PI / 2;
+floorMesh.position.set(0, -1.4, 0);
+scene.add(floorMesh);
+
+// Newsroom monitorok sziluettje
+const monitorData = [
+  { x: -2.2, y: -0.3, w: 0.9, h: 0.55 },
+  { x: -1.1, y: -0.25, w: 1.1, h: 0.65 },
+  { x:  1.2, y: -0.28, w: 1.0, h: 0.60 },
+  { x:  2.3, y: -0.32, w: 0.85, h: 0.50 },
+];
+monitorData.forEach(m => {
+  const mg = new THREE.PlaneGeometry(m.w, m.h);
+  const mc = document.createElement('canvas');
+  mc.width = 256; mc.height = 160;
+  const mx = mc.getContext('2d');
+  mx.fillStyle = '#0a1628';
+  mx.fillRect(0, 0, 256, 160);
+  mx.strokeStyle = 'rgba(0,120,255,0.4)';
+  mx.lineWidth = 2;
+  mx.strokeRect(2, 2, 252, 156);
+  mx.fillStyle = 'rgba(0,80,180,0.15)';
+  mx.fillRect(4, 4, 248, 152);
+  // Fake chart vonalak
+  mx.strokeStyle = 'rgba(0,180,255,0.3)';
+  mx.lineWidth = 1;
+  mx.beginPath();
+  for (let xi = 0; xi < 8; xi++) {
+    mx.moveTo(20 + xi * 30, 80 + Math.sin(xi * 0.8) * 30);
+    mx.lineTo(50 + xi * 30, 80 + Math.sin((xi+1) * 0.8) * 30);
+  }
+  mx.stroke();
+  const mt = new THREE.CanvasTexture(mc);
+  const mm = new THREE.MeshBasicMaterial({ map: mt, transparent: true, opacity: 0.6 });
+  const mesh = new THREE.Mesh(mg, mm);
+  mesh.position.set(m.x, m.y, -2.5);
+  scene.add(mesh);
+  // Monitor talp
+  const legG = new THREE.PlaneGeometry(0.05, 0.2);
+  const legM = new THREE.MeshBasicMaterial({ color: 0x0a1628, transparent: true, opacity: 0.5 });
+  const legMesh = new THREE.Mesh(legG, legM);
+  legMesh.position.set(m.x, m.y - m.h / 2 - 0.1, -2.5);
+  scene.add(legMesh);
+});
+
+// Asztal lap sziluett
+const deskG = new THREE.PlaneGeometry(10, 0.08);
+const deskM = new THREE.MeshBasicMaterial({ color: 0x0d1e35, transparent: true, opacity: 0.7 });
+const deskMesh = new THREE.Mesh(deskG, deskM);
+deskMesh.position.set(0, -0.62, -2.4);
+scene.add(deskMesh);
+
+// Holografikus REASON logó
+const logoCanvas = document.createElement('canvas');
+logoCanvas.width = 512; logoCanvas.height = 128;
+const logoCtx = logoCanvas.getContext('2d');
+const logoTex = new THREE.CanvasTexture(logoCanvas);
+const logoGeo = new THREE.PlaneGeometry(1.8, 0.45);
+const logoMat = new THREE.MeshBasicMaterial({ map: logoTex, transparent: true, opacity: 0.0, depthWrite: false });
+const logoMesh = new THREE.Mesh(logoGeo, logoMat);
+logoMesh.position.set(0.4, 0.55, -1.8);
+scene.add(logoMesh);
+
+let _logoT = 0;
+function _logoUpdate(delta) {
+  _logoT += delta;
+  logoMesh.rotation.y = Math.sin(_logoT * 0.4) * 0.18;
+  logoMesh.position.y = 0.55 + Math.sin(_logoT * 0.6) * 0.015;
+  const pulse = 0.38 + Math.sin(_logoT * 1.2) * 0.12;
+  logoMat.opacity = pulse;
+
+  const w = logoCanvas.width, h = logoCanvas.height;
+  logoCtx.clearRect(0, 0, w, h);
+  const alpha = 0.6 + Math.sin(_logoT * 1.5) * 0.3;
+  logoCtx.font = 'bold 72px Arial, sans-serif';
+  logoCtx.letterSpacing = '12px';
+  logoCtx.textAlign = 'center';
+  logoCtx.fillStyle = `rgba(0,200,255,${alpha})`;
+  logoCtx.shadowColor = 'rgba(0,150,255,0.9)';
+  logoCtx.shadowBlur = 18;
+  logoCtx.fillText('REASON', w / 2, 90);
+  logoCtx.shadowBlur = 0;
+  // Alá vékony vonal
+  logoCtx.strokeStyle = `rgba(0,180,255,${alpha * 0.5})`;
+  logoCtx.lineWidth = 1;
+  logoCtx.beginPath();
+  logoCtx.moveTo(60, 105); logoCtx.lineTo(w - 60, 105);
+  logoCtx.stroke();
+  logoTex.needsUpdate = true;
+}
+
+// Lebegő hírcímek
+const headlineTexts = [
+  'BREAKING NEWS', 'TECH & AI', 'LIVE', 'REASON – GYORS · FÜGGETLEN · VALÓDI',
+  'FRISS HÍREK', 'ÉLŐBEN', 'TOP STORY'
+];
+const headlines = [];
+for (let i = 0; i < 5; i++) {
+  const hc = document.createElement('canvas');
+  hc.width = 384; hc.height = 64;
+  const hx = hc.getContext('2d');
+  const ht = new THREE.CanvasTexture(hc);
+  const hg = new THREE.PlaneGeometry(1.4, 0.22);
+  const hm = new THREE.MeshBasicMaterial({ map: ht, transparent: true, opacity: 0, depthWrite: false });
+  const hmesh = new THREE.Mesh(hg, hm);
+  const side = i % 2 === 0 ? -1 : 1;
+  hmesh.position.set(side * (2.2 + Math.random() * 0.8), -0.3 + i * 0.28, -2.0 + Math.random() * 0.4);
+  scene.add(hmesh);
+  headlines.push({
+    mesh: hmesh, mat: hm, ctx: hx, tex: ht, canvas: hc,
+    text: headlineTexts[i % headlineTexts.length],
+    t: Math.random() * Math.PI * 2,
+    speed: 0.3 + Math.random() * 0.2,
+  });
+}
+
+let _hlT = 0;
+function _headlinesUpdate(delta) {
+  _hlT += delta;
+  headlines.forEach(h => {
+    h.t += delta * h.speed;
+    const alpha = Math.max(0, 0.12 + Math.sin(h.t) * 0.10);
+    h.mat.opacity = alpha;
+    h.mesh.position.x += Math.sin(h.t * 0.3) * 0.0003;
+
+    const w = h.canvas.width, ht2 = h.canvas.height;
+    h.ctx.clearRect(0, 0, w, ht2);
+    h.ctx.fillStyle = `rgba(0,180,255,${alpha * 0.8})`;
+    h.ctx.font = 'bold 22px Arial, sans-serif';
+    h.ctx.letterSpacing = '3px';
+    h.ctx.textAlign = 'left';
+    h.ctx.fillText(h.text, 10, 38);
+    h.tex.needsUpdate = true;
+  });
+}
+
+// ── HÁTTÉR VÉGE ───────────────────────────────────────────────
+
+
+
+
+
+
+  
   scene.add(new THREE.AmbientLight(0xffffff, 0.6));
   const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
   dirLight.position.set(3, 5, 3);
@@ -2919,6 +3087,8 @@ function animate() {
   controls.update();
   if (window.lipSync) window.lipSync.update();
   _promptUpdate(delta);
+  _logoUpdate(delta);
+_headlinesUpdate(delta);
   renderer.render(scene, camera);
 }
 animate();
