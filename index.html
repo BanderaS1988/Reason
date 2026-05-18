@@ -283,17 +283,121 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
   border-color:#1a7a3c;
   color:#1a7a3c;
 }
+/* ═══════════════════════════════════════════
+   MOBIL – fő breakpointok
+═══════════════════════════════════════════ */
+
+/* ── Tablet (max 1000px) ── */
+@media(max-width:1000px){
+  .main-layout{ grid-template-columns:1fr }
+  .sidebar{ position:static; top:auto }
+}
+
+/* ── Mobil (max 700px) ── */
 @media(max-width:700px){
-  .header-top{padding:12px 16px}
-  .page-wrap{padding:16px 16px 60px}
-  .featured-card{grid-template-columns:1fr}
-  .modal-title{font-size:22px}
-  .modal-header{padding:20px 20px 16px}
-  .modal-body{padding:20px 20px 20px;font-size:16px}
-  .modal-toolbar{padding:10px 20px}
-  #modalActionBar{padding:0 20px 20px!important}
-  #modalCommentsSection{padding:0 20px 36px!important}
-  .articles-grid{grid-template-columns:1fr}
+
+  /* HEADER */
+  .header-top{
+    padding:10px 12px;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .logo{ font-size:26px }
+  .logo-tagline{ display:none }          /* helytakarékos */
+  .header-right{
+    gap:8px;
+    flex-wrap:nowrap;
+    width:100%;
+    justify-content:space-between;
+  }
+  #authBtnWrap button{ padding:6px 10px; font-size:11px }
+  .weather-widget{ padding:5px 8px; gap:6px }
+  .weather-widget #hWeatherTemp{ font-size:16px }
+  .weather-widget #hWeatherDesc{ display:none }  /* kevés hely */
+  #clock-display{ font-size:13px }
+  #date-display{ font-size:9px }
+
+  /* NAV */
+  .nav-inner{ padding:0 8px; gap:0 }
+  .nav-item{ padding:8px 10px; font-size:10px }
+
+  /* PAGE */
+  .page-wrap{ padding:12px 10px 70px }
+
+  /* FEATURED CARD */
+  .featured-card{
+    grid-template-columns:1fr;
+    border-radius:10px;
+  }
+  .featured-img{ min-height:120px; font-size:40px }
+  .featured-content{ padding:14px 16px }
+  .featured-title{ font-size:18px }
+
+  /* CIKK GRID */
+  .articles-grid{ grid-template-columns:1fr; gap:14px }
+  .articles-grid.list-view .article-card{ flex-direction:column }
+  .articles-grid.list-view .card-img{
+    width:100%; height:140px; min-height:unset
+  }
+  .card-img{ height:160px }
+  .card-title{ font-size:15px }
+  .card-body{ padding:12px 13px }
+
+  /* STATUS BAR */
+  .status-bar{ flex-wrap:wrap; gap:6px }
+  .strip-title{ font-size:20px }
+
+  /* TOP STRIP */
+  .top-strip{ flex-wrap:wrap; gap:8px }
+  .controls{ gap:6px }
+
+  /* MODAL */
+  .modal-overlay{ padding:0; align-items:flex-end }
+  .article-modal{
+    border-radius:18px 18px 0 0;
+    max-height:95vh;
+    width:100%;
+  }
+  .modal-header{ padding:18px 16px 14px }
+  .modal-title{ font-size:20px; line-height:1.25 }
+  .modal-toolbar{ padding:8px 16px; gap:6px; flex-wrap:wrap }
+  .modal-body{ padding:16px 16px 20px; font-size:15px !important }
+  .modal-body p:first-child::first-letter{ font-size:2.8em }
+  #modalActionBar{ padding:0 16px 20px !important }
+  #modalCommentsSection{ padding:0 16px 36px !important }
+  .modal-close{ top:12px; right:12px; width:34px; height:34px }
+
+  /* SIDEBAR WIDGETEK mobilon */
+  #space3dWidget{ height:200px }
+  .s-widget{ border-radius:10px }
+  .forecast-grid{ gap:3px }
+  .fc-day{ padding:6px 2px }
+
+  /* TTS PANEL */
+  #ttsReaderPanel .tts-srow label{ width:65px; font-size:10px }
+
+  /* TICKER */
+  .ticker-label{ display:none }   /* felirat mobilon helyet foglal */
+  .ticker-item{ font-size:11px; padding:0 16px }
+
+  /* TOAST */
+  .toast-wrap{ bottom:16px; right:12px; left:12px }
+  .toast{ max-width:100% }
+
+  /* GDPR banner */
+  .gdpr-banner{ padding:10px 14px; font-size:11px }
+
+  /* FOOTER */
+  footer{ font-size:10px }
+}
+
+/* ── Kis mobil (max 400px) ── */
+@media(max-width:400px){
+  .logo{ font-size:22px }
+  .weather-widget{ display:none }   /* nagyon kis képernyőn elrejtjük */
+  .header-right{ justify-content:flex-end }
+  .modal-title{ font-size:18px }
+  .card-title{ font-size:14px }
 }
 
 
