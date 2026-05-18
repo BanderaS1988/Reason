@@ -2762,7 +2762,7 @@ promptCanvas.height = 256;
 const promptCtx = promptCanvas.getContext('2d');
 const promptTex = new THREE.CanvasTexture(promptCanvas);
 
-const promptGeo = new THREE.PlaneGeometry(0.72, 0.34);
+const promptGeo = new THREE.PlaneGeometry(0.52, 0.72);
 const promptMat = new THREE.MeshBasicMaterial({
   map: promptTex, transparent: true, opacity: 0.18,
   depthWrite: false, side: THREE.DoubleSide
