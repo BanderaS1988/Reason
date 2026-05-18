@@ -2451,7 +2451,7 @@ if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
       target.mouthPressRight = target.mouthPressLeft;
     }
 
-    // Micro expression
+   // Micro expression
     this._microExpTimer += dt;
     if (this._microExpPhase === 0 && this._microExpTimer >= this._microExpNext) {
       this._microExpPhase = 1; this._microExpT = 0;
@@ -2460,33 +2460,37 @@ if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
       this._microExpTimer = 0;
     }
     if (this._microExpPhase > 0) {
-      this._microExpT += dt;if (this._microExpType === 0) {
-  target.mouthSmileLeft  = (target.mouthSmileLeft  || 0) + amp * 0.18;
-  target.mouthSmileRight = (target.mouthSmileRight || 0) + amp * 0.16;
-  target.eyeSquintLeft   = (target.eyeSquintLeft   || 0) + amp * 0.08;
-  target.eyeSquintRight  = (target.eyeSquintRight  || 0) + amp * 0.08;
-} else if (this._microExpType === 1) {
-  target.browDownLeft  = amp * 0.16;
-  target.browDownRight = amp * 0.14;
-  target.browInnerUp   = (target.browInnerUp || 0) + amp * 0.18;
-} else if (this._microExpType === 2) {
-  target.eyeSquintLeft  = (target.eyeSquintLeft  || 0) + amp * 0.18;
-  target.eyeSquintRight = (target.eyeSquintRight || 0) + amp * 0.16;
-} else {
-  const sub = Math.floor((performance.now() / 1000) * 0.3) % 3;
-  if (sub === 0) {
-    target.browOuterUpLeft  = (target.browOuterUpLeft  || 0) + amp * 0.38;
-    target.browOuterUpRight = (target.browOuterUpRight || 0) + amp * 0.36;
-    target.browInnerUp      = (target.browInnerUp      || 0) + amp * 0.30;
-  } else if (sub === 1) {
-    target.browInnerUp   = (target.browInnerUp   || 0) + amp * 0.45;
-    target.browDownLeft  = (target.browDownLeft  || 0) + amp * 0.10;
-    target.browDownRight = (target.browDownRight || 0) + amp * 0.10;
-  } else {
-    target.browOuterUpLeft = (target.browOuterUpLeft || 0) + amp * 0.42;
-    target.browDownRight   = (target.browDownRight   || 0) + amp * 0.18;
-  }
-}
+      this._microExpT += dt;
+      const p   = Math.min(1, this._microExpT / 900);
+      const env = p < 0.4 ? p / 0.4 : 1 - (p - 0.4) / 0.6;
+      const amp = Math.max(0, env);
+      if (this._microExpType === 0) {
+        target.mouthSmileLeft  = (target.mouthSmileLeft  || 0) + amp * 0.18;
+        target.mouthSmileRight = (target.mouthSmileRight || 0) + amp * 0.16;
+        target.eyeSquintLeft   = (target.eyeSquintLeft   || 0) + amp * 0.08;
+        target.eyeSquintRight  = (target.eyeSquintRight  || 0) + amp * 0.08;
+      } else if (this._microExpType === 1) {
+        target.browDownLeft  = amp * 0.16;
+        target.browDownRight = amp * 0.14;
+        target.browInnerUp   = (target.browInnerUp || 0) + amp * 0.18;
+      } else if (this._microExpType === 2) {
+        target.eyeSquintLeft  = (target.eyeSquintLeft  || 0) + amp * 0.18;
+        target.eyeSquintRight = (target.eyeSquintRight || 0) + amp * 0.16;
+      } else {
+        const sub = Math.floor((performance.now() / 1000) * 0.3) % 3;
+        if (sub === 0) {
+          target.browOuterUpLeft  = (target.browOuterUpLeft  || 0) + amp * 0.38;
+          target.browOuterUpRight = (target.browOuterUpRight || 0) + amp * 0.36;
+          target.browInnerUp      = (target.browInnerUp      || 0) + amp * 0.30;
+        } else if (sub === 1) {
+          target.browInnerUp   = (target.browInnerUp   || 0) + amp * 0.45;
+          target.browDownLeft  = (target.browDownLeft  || 0) + amp * 0.10;
+          target.browDownRight = (target.browDownRight || 0) + amp * 0.10;
+        } else {
+          target.browOuterUpLeft = (target.browOuterUpLeft || 0) + amp * 0.42;
+          target.browDownRight   = (target.browDownRight   || 0) + amp * 0.18;
+        }
+      }
       if (p >= 1) this._microExpPhase = 0;
     }
 
