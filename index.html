@@ -1216,6 +1216,7 @@ function ttsStartReading() {
 window.ttsStartReading = ttsStartReading;
 
 function ttsReadNext() {
+  if (!ttsIsSpeaking) return;
   if (ttsQueueIndex >= ttsQueue.length) { ttsFinished(); return; }
   const item = ttsQueue[ttsQueueIndex];
   ttsRefreshQueueUI();
@@ -1234,12 +1235,10 @@ function ttsReadNext() {
   utt.volume = 1;
   utt.lang = 'hu-HU';
   if (huVoice) utt.voice = huVoice;
-
   utt.onstart = () => {
     if (window._tts3dLipStart) window._tts3dLipStart(fullText, utt.rate);
   };
-
- utt.onboundary = (e) => {
+  utt.onboundary = (e) => {
     if (e.name !== 'word') return;
     if (window.lipSync && window.lipSync._isAnimating && window.lipSync._charIndexMap) {
       const map = window.lipSync._charIndexMap;
@@ -1254,15 +1253,16 @@ function ttsReadNext() {
         window.lipSync._startTime = performance.now() - ph.startT;
       }
     }
-  };  
-
+  };
   utt.onend = () => {
+    if (!ttsIsSpeaking) return;
     if (window._tts3dLipStop) window._tts3dLipStop();
     ttsQueueIndex++;
     setTimeout(ttsReadNext, 400);
   };
   utt.onerror = (e) => {
     if (e.error === 'interrupted') return;
+    if (!ttsIsSpeaking) return;
     if (window._tts3dLipStop) window._tts3dLipStop();
     ttsQueueIndex++;
     setTimeout(ttsReadNext, 400);
@@ -1273,6 +1273,7 @@ function ttsReadNext() {
 }
 
 function ttsFinished() {
+  ttsIsSpeaking = false;
   ttsProgressStop();
   if (window._promptStop) window._promptStop();
   ttsIsSpeaking = false;
