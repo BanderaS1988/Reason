@@ -972,8 +972,7 @@ function renderCard(art) {
   const views    = (art.view_count    ?? 0).toLocaleString('hu');
   const comments = (art.comment_count ?? 0).toLocaleString('hu');
   return `<div class="article-card" onclick="openArticleById('${art.id}')" style="cursor:pointer;${isSelected ? 'border-color:var(--accent);box-shadow:0 0 0 2px rgba(200,16,46,.2)' : ''}">
-    .card-img" style="background:linear-gradient(135deg,${col}16,${col}08);${art.image_url ? `background-image:url(${art.image_url});background-size:cover;background-position:center;` : ''}">
-      ${!art.image_url ? `<div class="card-img-emoji">${ico}</div>` : ''}
+<div class="card-img" style="background:linear-gradient(135deg,${col}16,${col}08);${art.image_url ? `background-image:url(${art.image_url});background-size:cover;background-position:center;` : ''}">      ${!art.image_url ? `<div class="card-img-emoji">${ico}</div>` : ''}
       <div class="card-img-badge">${c}</div>
       ${art.is_premium ? '<div class="card-premium-ribbon">⭐ PRÉMIUM</div>' : ''}
       ${isSelected ? '<div style="position:absolute;top:8px;left:8px;background:var(--accent);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;">🔊 Kijelölve</div>' : ''}
