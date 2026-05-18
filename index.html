@@ -289,6 +289,73 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
   #modalCommentsSection{padding:0 20px 36px!important}
   .articles-grid{grid-template-columns:1fr}
 }
+
+
+#ttsProgressBar{
+  display:none;
+  flex-direction:column;
+  gap:6px;
+  padding:10px 16px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:10px;
+  margin-top:8px;
+}
+#ttsProgressBar.visible{display:flex}
+#ttsProgressTrack{
+  position:relative;
+  height:6px;
+  background:var(--border2);
+  border-radius:3px;
+  cursor:pointer;
+}
+#ttsProgressFill{
+  height:100%;
+  background:var(--accent);
+  border-radius:3px;
+  width:0%;
+  pointer-events:none;
+  transition:width .1s linear;
+}
+#ttsProgressHandle{
+  position:absolute;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:14px;height:14px;
+  background:#fff;
+  border:2px solid var(--accent);
+  border-radius:50%;
+  left:0%;
+  cursor:grab;
+  transition:left .1s linear;
+}
+#ttsProgressHandle:active{cursor:grabbing}
+#ttsProgressMeta{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:10px;
+  color:var(--text4);
+  font-family:var(--font-m);
+}
+#ttsProgressSkip{
+  display:flex;
+  gap:6px;
+}
+#ttsProgressSkip button{
+  padding:3px 10px;
+  border:1px solid var(--border);
+  border-radius:5px;
+  background:var(--surface);
+  color:var(--text2);
+  font-size:11px;
+  cursor:pointer;
+  font-family:var(--font-s);
+  transition:.15s;
+}
+#ttsProgressSkip button:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+  
 </style>
 </head>
 <body>
@@ -561,6 +628,20 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
           <button class="tts-btn-play" id="ttsPlayBtn" onclick="ttsStartReading()" disabled>▶ Felolvas</button>
           <button class="tts-btn-stop" onclick="ttsStop()">■ Stop</button>
         </div>
+
+        <div id="ttsProgressBar">
+  <div id="ttsProgressTrack">
+    <div id="ttsProgressFill"></div>
+    <div id="ttsProgressHandle"></div>
+  </div>
+  <div id="ttsProgressMeta">
+    <span id="ttsProgressTime">0:00 / 0:00</span>
+    <div id="ttsProgressSkip">
+      <button onclick="ttsSeekBack()">⏪ −10s</button>
+      <button onclick="ttsSeekForward()">+10s ⏩</button>
+    </div>
+  </div>
+</div>
         <div class="tts-status" id="ttsStatus">–</div>
       </div>
 
@@ -1122,6 +1203,8 @@ function ttsStartReading() {
   ttsQueueIndex = 0;
   ttsIsSpeaking = true;
   document.getElementById('ttsPlayBtn').disabled = true;
+  const totalMs = _ttsEstimateMs();
+  ttsProgressStart(totalMs);
   ttsReadNext();
 }
 window.ttsStartReading = ttsStartReading;
@@ -1184,6 +1267,7 @@ function ttsReadNext() {
 }
 
 function ttsFinished() {
+  ttsProgressStop();
   ttsIsSpeaking = false;
   ttsQueue = [];
   ttsQueueIndex = 0;
@@ -1195,6 +1279,7 @@ function ttsFinished() {
 }
 
 function ttsStop() {
+  ttsProgressStop();
   speechSynthesis.cancel();
   if (window._tts3dLipStop) window._tts3dLipStop();
   ttsIsSpeaking = false;
@@ -1206,6 +1291,115 @@ function ttsStop() {
   ttsRefreshQueueUI();
 }
 window.ttsStop = ttsStop;
+
+
+  // ── TTS PROGRESS BAR ──────────────────────────────────────────
+let _ttsProgressRAF   = null;
+let _ttsProgressStart = 0;
+let _ttsProgressTotal = 0;
+let _ttsProgressPause = 0;   // eltelt ms a seek előtt
+
+function ttsProgressStart(totalMs) {
+  _ttsProgressTotal = totalMs;
+  _ttsProgressStart = performance.now();
+  _ttsProgressPause = 0;
+  document.getElementById('ttsProgressBar').classList.add('visible');
+  _ttsProgressTick();
+}
+
+function _ttsProgressTick() {
+  const elapsed = _ttsProgressPause + (performance.now() - _ttsProgressStart);
+  const pct     = _ttsProgressTotal > 0 ? Math.min(100, elapsed / _ttsProgressTotal * 100) : 0;
+  document.getElementById('ttsProgressFill').style.width  = pct + '%';
+  document.getElementById('ttsProgressHandle').style.left = pct + '%';
+  const elSec   = Math.floor(elapsed / 1000);
+  const totSec  = Math.floor(_ttsProgressTotal / 1000);
+  document.getElementById('ttsProgressTime').textContent  =
+    fmtSec(elSec) + ' / ' + fmtSec(totSec);
+  if (elapsed < _ttsProgressTotal) {
+    _ttsProgressRAF = requestAnimationFrame(_ttsProgressTick);
+  }
+}
+
+function ttsProgressStop() {
+  if (_ttsProgressRAF) { cancelAnimationFrame(_ttsProgressRAF); _ttsProgressRAF = null; }
+  document.getElementById('ttsProgressBar').classList.remove('visible');
+  document.getElementById('ttsProgressFill').style.width  = '0%';
+  document.getElementById('ttsProgressHandle').style.left = '0%';
+  document.getElementById('ttsProgressTime').textContent  = '0:00 / 0:00';
+}
+
+function fmtSec(s) {
+  const m = Math.floor(s / 60), sec = s % 60;
+  return m + ':' + String(sec).padStart(2,'0');
+}
+
+function _ttsEstimateMs() {
+  const cfg = getConfig();
+  let ms = cfg.pStartDelay * 1000;
+  for (const item of ttsQueue) {
+    const phonemes = textToPhonemes(item.title + '. ' + item.text, cfg);
+    for (const ph of phonemes) {
+      const dur = ph.dur * 1000;
+      ms += dur * (cfg.pOpenRatio + cfg.pPeakRatio + cfg.pCloseRatio);
+    }
+    ms += (cfg.pEndPause + cfg.pEndExtra) * 1000 + 400;
+  }
+  const rate = getTtsRate();
+  return ms / (rate > 0 ? rate : 1);
+}
+
+function ttsSeekBack()    { _ttsSeek(-10000); }
+function ttsSeekForward() { _ttsSeek(+10000); }
+window.ttsSeekBack    = ttsSeekBack;
+window.ttsSeekForward = ttsSeekForward;
+
+function _ttsSeek(deltaMs) {
+  if (!ttsIsSpeaking) return;
+  const elapsed  = _ttsProgressPause + (performance.now() - _ttsProgressStart);
+  const newMs    = Math.max(0, Math.min(_ttsProgressTotal, elapsed + deltaMs));
+  const fraction = newMs / _ttsProgressTotal;
+
+  // Megkeressük melyik cikknek melyik fonemájánál vagyunk
+  const cfg = getConfig();
+  let acc = cfg.pStartDelay * 1000;
+  let targetQueueIdx = 0;
+  outer: for (let qi = 0; qi < ttsQueue.length; qi++) {
+    const phonemes = textToPhonemes(ttsQueue[qi].title + '. ' + ttsQueue[qi].text, cfg);
+    for (const ph of phonemes) {
+      const dur = ph.dur * 1000 * (cfg.pOpenRatio + cfg.pPeakRatio + cfg.pCloseRatio);
+      if (acc + dur >= newMs * (getTtsRate() > 0 ? getTtsRate() : 1)) {
+        targetQueueIdx = qi;
+        break outer;
+      }
+      acc += dur;
+    }
+    acc += (cfg.pEndPause + cfg.pEndExtra) * 1000 + 400;
+    targetQueueIdx = Math.min(qi + 1, ttsQueue.length - 1);
+  }
+
+  speechSynthesis.cancel();
+  if (window._tts3dLipStop) window._tts3dLipStop();
+  ttsQueueIndex = targetQueueIdx;
+
+  // Progress újraindítása az új pozícióból
+  if (_ttsProgressRAF) cancelAnimationFrame(_ttsProgressRAF);
+  _ttsProgressPause = newMs;
+  _ttsProgressStart = performance.now();
+  _ttsProgressTick();
+
+  setTimeout(ttsReadNext, 80);
+}
+
+// Drag a csíkon
+document.getElementById('ttsProgressTrack').addEventListener('click', function(e) {
+  if (!ttsIsSpeaking && _ttsProgressTotal === 0) return;
+  const rect = this.getBoundingClientRect();
+  const frac = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  _ttsSeek(frac * _ttsProgressTotal - (_ttsProgressPause + (performance.now() - _ttsProgressStart)));
+});
+
+  
 
 // ══════════════════════════════════════════════════════════════════
 //  MODAL
