@@ -2670,6 +2670,8 @@ if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
   controls.maxDistance    = 12;
   controls.enablePan      = true;
   controls.autoRotate     = false;
+  window._reasonControls = controls;
+  
 
   // Csillagok
   const starGeo = new THREE.BufferGeometry();
