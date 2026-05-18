@@ -1234,7 +1234,7 @@ function ttsReadNext() {
     if (window._tts3dLipStart) window._tts3dLipStart(fullText, utt.rate);
   };
 
-  utt.onboundary = (e) => {
+ utt.onboundary = (e) => {
     if (e.name !== 'word') return;
     if (window.lipSync && window.lipSync._isAnimating && window.lipSync._charIndexMap) {
       const map = window.lipSync._charIndexMap;
@@ -1249,7 +1249,7 @@ function ttsReadNext() {
         window.lipSync._startTime = performance.now() - ph.startT;
       }
     }
-  };  // ← ez a zárójel hiányzott
+  };  
 
   utt.onend = () => {
     if (window._tts3dLipStop) window._tts3dLipStop();
@@ -2398,30 +2398,33 @@ _updateAnimating(now, cfg, dt) {
     target.eyeSquintLeft  = blinkVal * 0.35;
     target.eyeSquintRight = blinkVal * 0.35;
 
-    // Saccade
-    this._saccadeTimer += dt;
-    if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
-      this._saccadeFromX = this._saccadeCurX;
-      this._saccadeFromY = this._saccadeCurY;
-      if (!this._readSaccadeStep) this._readSaccadeStep = 0;
-      this._readSaccadeStep++;
-      if (this._readSaccadeStep > 4) {
-        this._saccadeTgtX  = -0.22;
-        this._saccadeTgtY  = (this._saccadeCurY || 0) + 0.06;
-        if (this._saccadeTgtY > 0.18) this._saccadeTgtY = -0.10;
-        this._readSaccadeStep = 0;
-        this._saccadeDur  = 120;
-        this._saccadeNext = 180;
-      } else {
-        this._saccadeTgtX  = -0.22 + this._readSaccadeStep * 0.11;
-        this._saccadeTgtY  = (this._saccadeCurY || 0) + (Math.random() - 0.5) * 0.03;
-        this._saccadeDur   = 60 + Math.random() * 60;
-        this._saccadeNext  = 280 + Math.random() * 320;
-      }
-      this._saccadeT     = 0;
-      this._saccadePhase = 1;
-      this._saccadeTimer = 0;
-    }
+// Saccade
+this._saccadeTimer += dt;
+if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
+  this._saccadeFromX = this._saccadeCurX;
+  this._saccadeFromY = this._saccadeCurY;
+  // Olvasási minta: balról jobbra pásztáz, néha visszaugrik balra
+  if (!this._readSaccadeStep) this._readSaccadeStep = 0;
+  this._readSaccadeStep++;
+  if (this._readSaccadeStep > 4) {
+    // Sor vége: visszaugrik balra és kicsit lejjebb
+    this._saccadeTgtX  = -0.22;
+    this._saccadeTgtY  = (this._saccadeCurY || 0) + 0.06;
+    if (this._saccadeTgtY > 0.18) this._saccadeTgtY = -0.10;
+    this._readSaccadeStep = 0;
+    this._saccadeDur  = 120;
+    this._saccadeNext = 180;
+  } else {
+    // Sor mentén jobbra lép kis ugrásokkal
+    this._saccadeTgtX  = -0.22 + this._readSaccadeStep * 0.11;
+    this._saccadeTgtY  = (this._saccadeCurY || 0) + (Math.random() - 0.5) * 0.03;
+    this._saccadeDur   = 60 + Math.random() * 60;
+    this._saccadeNext  = 280 + Math.random() * 320;
+  }
+  this._saccadeT     = 0;
+  this._saccadePhase = 1;
+  this._saccadeTimer = 0;
+}
     if (this._saccadePhase === 1) {
       this._saccadeT += dt;
       const p    = Math.min(1, this._saccadeT / this._saccadeDur);
@@ -2452,42 +2455,38 @@ _updateAnimating(now, cfg, dt) {
     this._microExpTimer += dt;
     if (this._microExpPhase === 0 && this._microExpTimer >= this._microExpNext) {
       this._microExpPhase = 1; this._microExpT = 0;
-      this._microExpType  = Math.floor(Math.random() * 4);
+      this._microExpType = Math.floor(Math.random() * 4);
       this._microExpNext  = 6000 + Math.random() * 10000;
       this._microExpTimer = 0;
     }
     if (this._microExpPhase > 0) {
-      this._microExpT += dt;
-      const p   = Math.min(1, this._microExpT / 900);
-      const env = p < 0.4 ? p / 0.4 : 1 - (p - 0.4) / 0.6;
-      const amp = Math.max(0, env);
-      if (this._microExpType === 0) {
-        target.mouthSmileLeft  = (target.mouthSmileLeft  || 0) + amp * 0.18;
-        target.mouthSmileRight = (target.mouthSmileRight || 0) + amp * 0.16;
-        target.eyeSquintLeft   = (target.eyeSquintLeft   || 0) + amp * 0.08;
-        target.eyeSquintRight  = (target.eyeSquintRight  || 0) + amp * 0.08;
-      } else if (this._microExpType === 1) {
-        target.browDownLeft  = amp * 0.16;
-        target.browDownRight = amp * 0.14;
-        target.browInnerUp   = (target.browInnerUp || 0) + amp * 0.18;
-      } else if (this._microExpType === 2) {
-        target.eyeSquintLeft  = (target.eyeSquintLeft  || 0) + amp * 0.18;
-        target.eyeSquintRight = (target.eyeSquintRight || 0) + amp * 0.16;
-      } else {
-        const sub = Math.floor((performance.now() / 1000) * 0.3) % 3;
-        if (sub === 0) {
-          target.browOuterUpLeft  = (target.browOuterUpLeft  || 0) + amp * 0.38;
-          target.browOuterUpRight = (target.browOuterUpRight || 0) + amp * 0.36;
-          target.browInnerUp      = (target.browInnerUp      || 0) + amp * 0.30;
-        } else if (sub === 1) {
-          target.browInnerUp   = (target.browInnerUp   || 0) + amp * 0.45;
-          target.browDownLeft  = (target.browDownLeft  || 0) + amp * 0.10;
-          target.browDownRight = (target.browDownRight || 0) + amp * 0.10;
-        } else {
-          target.browOuterUpLeft = (target.browOuterUpLeft || 0) + amp * 0.42;
-          target.browDownRight   = (target.browDownRight   || 0) + amp * 0.18;
-        }
-      }
+      this._microExpT += dt;if (this._microExpType === 0) {
+  target.mouthSmileLeft  = (target.mouthSmileLeft  || 0) + amp * 0.18;
+  target.mouthSmileRight = (target.mouthSmileRight || 0) + amp * 0.16;
+  target.eyeSquintLeft   = (target.eyeSquintLeft   || 0) + amp * 0.08;
+  target.eyeSquintRight  = (target.eyeSquintRight  || 0) + amp * 0.08;
+} else if (this._microExpType === 1) {
+  target.browDownLeft  = amp * 0.16;
+  target.browDownRight = amp * 0.14;
+  target.browInnerUp   = (target.browInnerUp || 0) + amp * 0.18;
+} else if (this._microExpType === 2) {
+  target.eyeSquintLeft  = (target.eyeSquintLeft  || 0) + amp * 0.18;
+  target.eyeSquintRight = (target.eyeSquintRight || 0) + amp * 0.16;
+} else {
+  const sub = Math.floor((performance.now() / 1000) * 0.3) % 3;
+  if (sub === 0) {
+    target.browOuterUpLeft  = (target.browOuterUpLeft  || 0) + amp * 0.38;
+    target.browOuterUpRight = (target.browOuterUpRight || 0) + amp * 0.36;
+    target.browInnerUp      = (target.browInnerUp      || 0) + amp * 0.30;
+  } else if (sub === 1) {
+    target.browInnerUp   = (target.browInnerUp   || 0) + amp * 0.45;
+    target.browDownLeft  = (target.browDownLeft  || 0) + amp * 0.10;
+    target.browDownRight = (target.browDownRight || 0) + amp * 0.10;
+  } else {
+    target.browOuterUpLeft = (target.browOuterUpLeft || 0) + amp * 0.42;
+    target.browDownRight   = (target.browDownRight   || 0) + amp * 0.18;
+  }
+}
       if (p >= 1) this._microExpPhase = 0;
     }
 
@@ -2560,39 +2559,25 @@ _updateAnimating(now, cfg, dt) {
     this._microExpTimer += dt;
     if (this._microExpPhase === 0 && this._microExpTimer >= this._microExpNext) {
       this._microExpPhase = 1; this._microExpT = 0;
-      this._microExpType  = Math.floor(Math.random() * 4);
+     this._microExpType = Math.floor(Math.random() * 4);
       this._microExpNext  = 6000 + Math.random() * 10000;
       this._microExpTimer = 0;
     }
     let microSmileL = 0, microSmileR = 0;
     let microBrowDnL = 0, microBrowDnR = 0, microBrowIn = 0;
     let microSquintL = 0, microSquintR = 0;
-    let microBrowUpL = 0, microBrowUpR = 0;
     if (this._microExpPhase > 0) {
       this._microExpT += dt;
       const p   = Math.min(1, this._microExpT / 900);
       const env = p < 0.4 ? p / 0.4 : 1 - (p - 0.4) / 0.6;
       const amp = Math.max(0, env);
       if (this._microExpType === 0) {
-        microSmileL  = amp * 0.22; microSmileR  = amp * 0.20;
+        microSmileL = amp * 0.22; microSmileR = amp * 0.20;
         microSquintL = amp * 0.10; microSquintR = amp * 0.10;
       } else if (this._microExpType === 1) {
-        microBrowDnL = amp * 0.18; microBrowDnR = amp * 0.16;
-        microBrowIn  = amp * 0.22;
-      } else if (this._microExpType === 2) {
-        microSquintL = amp * 0.20; microSquintR = amp * 0.18;
+        microBrowDnL = amp * 0.18; microBrowDnR = amp * 0.16; microBrowIn = amp * 0.22;
       } else {
-        const sub = Math.floor((performance.now() / 1000) * 0.3) % 3;
-        if (sub === 0) {
-          microBrowUpL = amp * 0.38; microBrowUpR = amp * 0.36;
-          microBrowIn  = amp * 0.30;
-        } else if (sub === 1) {
-          microBrowIn  = amp * 0.45;
-          microBrowDnL = amp * 0.10; microBrowDnR = amp * 0.10;
-        } else {
-          microBrowUpL = amp * 0.42;
-          microBrowDnR = amp * 0.18;
-        }
+        microSquintL = amp * 0.20; microSquintR = amp * 0.18;
       }
       if (p >= 1) this._microExpPhase = 0;
     }
@@ -2610,18 +2595,80 @@ _updateAnimating(now, cfg, dt) {
       eyeLookUpRight:   Math.max(0, -this._saccadeCurY),
       eyeLookDownLeft:  Math.max(0,  this._saccadeCurY),
       eyeLookDownRight: Math.max(0,  this._saccadeCurY),
-      browOuterUpLeft:  browL + microBrowUpL,
-      browOuterUpRight: browR + microBrowUpR,
-      browInnerUp:      browInner + microBrowIn,
-      browDownLeft:     microBrowDnL,
-      browDownRight:    microBrowDnR,
-      cheekSquintLeft:  cheekSq, cheekSquintRight: cheekSq,
-      mouthSmileLeft:   microSmileL, mouthSmileRight: microSmileR,
+      browOuterUpLeft: browL, browOuterUpRight: browR,
+      browInnerUp: browInner + microBrowIn,
+      browDownLeft: microBrowDnL, browDownRight: microBrowDnR,
+      cheekSquintLeft: cheekSq, cheekSquintRight: cheekSq,
+      mouthSmileLeft: microSmileL, mouthSmileRight: microSmileR,
     };
 
     this._lerpToTarget(target, cfg.m3dLerp);
     this._writeMorphs(this._current);
   }
+
+  
+
+
+  _lerpToTarget(target, lerpSpeed) {
+    const MOUTH = [
+      'jawOpen','jawForward','jawLeft','jawRight',
+      'mouthClose','mouthFunnel','mouthPucker','mouthLeft','mouthRight',
+      'mouthSmileLeft','mouthSmileRight','mouthFrownLeft','mouthFrownRight',
+      'mouthRollLower','mouthRollUpper','mouthShrugLower','mouthShrugUpper',
+      'mouthLowerDownLeft','mouthLowerDownRight','mouthUpperUpLeft','mouthUpperUpRight',
+      'mouthDimpleLeft','mouthDimpleRight','mouthStretchLeft','mouthStretchRight',
+      'mouthPressLeft','mouthPressRight',
+    ];
+    const BLINK = ['eyeBlinkLeft','eyeBlinkRight'];
+    const GAZE  = [
+      'eyeLookInLeft','eyeLookInRight','eyeLookOutLeft','eyeLookOutRight',
+      'eyeLookUpLeft','eyeLookUpRight','eyeLookDownLeft','eyeLookDownRight',
+      'eyeSquintLeft','eyeSquintRight',
+      'browOuterUpLeft','browOuterUpRight','browInnerUp','browDownLeft','browDownRight',
+      'cheekSquintLeft','cheekSquintRight',
+    ];
+    for (const k of MOUTH) {
+      const tgt = target[k] !== undefined ? target[k] : 0;
+      const cur = this._current[k] || 0;
+      const alpha = tgt > cur ? Math.min(1, lerpSpeed * 2.2) : Math.min(1, lerpSpeed * 1.4);
+      this._current[k] = lerp(cur, tgt, alpha);
+    }
+    for (const k of BLINK) {
+      const tgt = target[k] !== undefined ? target[k] : 0;
+      this._current[k] = lerp(this._current[k] || 0, tgt, Math.min(1, lerpSpeed * 3));
+    }
+    for (const k of GAZE) {
+      const tgt = target[k] !== undefined ? target[k] : 0;
+      this._current[k] = lerp(this._current[k] || 0, tgt, Math.min(1, lerpSpeed * 1.2));
+    }
+  }
+
+  _writeMorphs(values) {
+    for (const { mesh, dict } of this._meshNodes) {
+      for (const [name, idx] of Object.entries(dict)) {
+        const val = values[name] ?? values[name.charAt(0).toUpperCase() + name.slice(1)] ?? 0;
+        mesh.morphTargetInfluences[idx] = Math.max(0, Math.min(1, val));
+      }
+    }
+  }
+
+
+  stop() {
+    this._isAnimating  = false;
+    this._phonemeQueue = [];
+    if (this._endTimer) { clearTimeout(this._endTimer); this._endTimer = null; }
+    const MOUTH = [
+      'jawOpen','jawForward','jawLeft','jawRight','mouthClose','mouthFunnel',
+      'mouthPucker','mouthLeft','mouthRight','mouthSmileLeft','mouthSmileRight',
+      'mouthFrownLeft','mouthFrownRight','mouthRollLower','mouthRollUpper',
+      'mouthShrugLower','mouthShrugUpper','mouthLowerDownLeft','mouthLowerDownRight',
+      'mouthUpperUpLeft','mouthUpperUpRight','mouthDimpleLeft','mouthDimpleRight',
+      'mouthStretchLeft','mouthStretchRight','mouthPressLeft','mouthPressRight',
+    ];
+    for (const k of MOUTH) this._current[k] = 0;
+    this._writeMorphs(this._current);
+  }
+}
 
 // ══════════════════════════════════════════════════════════════════
 //  3D WIDGET
