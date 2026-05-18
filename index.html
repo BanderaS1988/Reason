@@ -532,7 +532,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
   </div>
 </div>
 
-<div id="space3dOverlay" onclick="collapse3D()"></div>
+<div id="space3dOverlay"></div>
 <div class="toast-wrap" id="toastWrap"></div>
 
 <main class="page-wrap">
@@ -2764,15 +2764,15 @@ animate();
   new ResizeObserver(resize).observe(widget);
 
   window.toggle3D = function () {
-    expanded = !expanded;
-    if (expanded) {
-      widget.classList.add('expanded');
-      overlay.classList.add('visible');
-      expandBtn.textContent = '✕';
-      expandBtn.title = 'Bezárás';
-      setTimeout(resize, 60);
-    } else collapse3D();
-  };
+  expanded = !expanded;
+  if (expanded) {
+    widget.classList.add('expanded');
+    overlay.classList.add('visible');
+    expandBtn.textContent = '✕';
+    expandBtn.title = 'Bezárás';
+    setTimeout(resize, 60);
+  } else collapse3D();
+};
   window.collapse3D = function () {
     expanded = false;
     widget.classList.remove('expanded');
