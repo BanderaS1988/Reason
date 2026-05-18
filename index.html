@@ -1205,6 +1205,7 @@ function ttsStartReading() {
   document.getElementById('ttsPlayBtn').disabled = true;
   const totalMs = _ttsEstimateMs();
   ttsProgressStart(totalMs);
+  if (window._promptStart) window._promptStart(ttsQueue.map(i => i.title + '. ' + i.text).join(' • '));
   ttsReadNext();
 }
 window.ttsStartReading = ttsStartReading;
@@ -1268,6 +1269,7 @@ function ttsReadNext() {
 
 function ttsFinished() {
   ttsProgressStop();
+  if (window._promptStop) window._promptStop();
   ttsIsSpeaking = false;
   ttsQueue = [];
   ttsQueueIndex = 0;
@@ -1280,6 +1282,7 @@ function ttsFinished() {
 
 function ttsStop() {
   ttsProgressStop();
+  if (window._promptStop) window._promptStop();
   speechSynthesis.cancel();
   if (window._tts3dLipStop) window._tts3dLipStop();
   ttsIsSpeaking = false;
@@ -2751,12 +2754,143 @@ if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
   }
   resize();
 
+
+  // ── TELEPROMPTER PANEL ────────────────────────────────────────
+const promptCanvas = document.createElement('canvas');
+promptCanvas.width  = 512;
+promptCanvas.height = 256;
+const promptCtx = promptCanvas.getContext('2d');
+const promptTex = new THREE.CanvasTexture(promptCanvas);
+
+const promptGeo = new THREE.PlaneGeometry(0.55, 0.28);
+const promptMat = new THREE.MeshBasicMaterial({
+  map: promptTex, transparent: true, opacity: 0.18,
+  depthWrite: false, side: THREE.DoubleSide
+});
+const promptMesh = new THREE.Mesh(promptGeo, promptMat);
+promptMesh.position.set(-0.10, 0.08, 0.30);
+promptMesh.rotation.y = 0.18;
+scene.add(promptMesh);
+
+// Kék visszafény a karakterre
+const promptLight = new THREE.PointLight(0x00aaff, 0.0, 1.2);
+promptLight.position.set(-0.10, 0.10, 0.38);
+scene.add(promptLight);
+
+let _promptScrollY  = 0;
+let _promptLines    = [];
+let _promptActive   = false;
+let _promptOpacity  = 0.18;
+let _promptLightInt = 0.0;
+
+function _promptSetText(text) {
+  const words = text.split(' ');
+  const lines = [];
+  let line = '';
+  for (const w of words) {
+    const test = line ? line + ' ' + w : w;
+    if (test.length > 36) { lines.push(line); line = w; }
+    else line = test;
+  }
+  if (line) lines.push(line);
+  _promptLines   = lines;
+  _promptScrollY = promptCanvas.height;
+}
+
+function _promptDraw() {
+  const w = promptCanvas.width, h = promptCanvas.height;
+  promptCtx.clearRect(0, 0, w, h);
+
+  // Háttér
+  const bg = promptCtx.createLinearGradient(0, 0, 0, h);
+  bg.addColorStop(0,   'rgba(0,30,60,0)');
+  bg.addColorStop(0.15,'rgba(0,40,80,' + (_promptActive ? 0.72 : 0.32) + ')');
+  bg.addColorStop(0.85,'rgba(0,40,80,' + (_promptActive ? 0.72 : 0.32) + ')');
+  bg.addColorStop(1,   'rgba(0,30,60,0)');
+  promptCtx.fillStyle = bg;
+  promptCtx.fillRect(0, 0, w, h);
+
+  // Keret
+  promptCtx.strokeStyle = 'rgba(0,180,255,' + (_promptActive ? 0.7 : 0.25) + ')';
+  promptCtx.lineWidth   = 1.5;
+  promptCtx.strokeRect(4, 4, w - 8, h - 8);
+
+  // REASON felirat tetején
+  promptCtx.font      = 'bold 13px monospace';
+  promptCtx.fillStyle = 'rgba(0,200,255,' + (_promptActive ? 0.9 : 0.3) + ')';
+  promptCtx.fillText('◈ REASON FELOLVASÓ', 14, 22);
+
+  // Elválasztó
+  promptCtx.strokeStyle = 'rgba(0,180,255,' + (_promptActive ? 0.5 : 0.15) + ')';
+  promptCtx.lineWidth   = 0.8;
+  promptCtx.beginPath();
+  promptCtx.moveTo(14, 30); promptCtx.lineTo(w - 14, 30);
+  promptCtx.stroke();
+
+  // Szöveg
+  promptCtx.save();
+  promptCtx.rect(10, 34, w - 20, h - 44);
+  promptCtx.clip();
+  promptCtx.font      = '15px monospace';
+  const lineH = 22;
+  _promptLines.forEach((ln, i) => {
+    const y = _promptScrollY + i * lineH;
+    if (y < 30 || y > h) return;
+    const fade = Math.min(1, Math.min(y - 34, h - 10 - y) / 28);
+    promptCtx.fillStyle = 'rgba(180,230,255,' + ((_promptActive ? 0.95 : 0.35) * Math.max(0, fade)) + ')';
+    promptCtx.fillText(ln, 14, y);
+  });
+  promptCtx.restore();
+
+  // Scanline effekt
+  for (let sy = 0; sy < h; sy += 4) {
+    promptCtx.fillStyle = 'rgba(0,0,0,0.08)';
+    promptCtx.fillRect(0, sy, w, 1);
+  }
+
+  promptTex.needsUpdate = true;
+}
+
+function _promptUpdate(delta) {
+  // Opacity és fény animáció
+  const targetOp  = _promptActive ? 0.82 : 0.18;
+  const targetInt = _promptActive ? 0.55 : 0.0;
+  _promptOpacity  += (targetOp  - _promptOpacity)  * Math.min(1, delta * 2.5);
+  _promptLightInt += (targetInt - _promptLightInt)  * Math.min(1, delta * 2.5);
+  promptMat.opacity        = _promptOpacity;
+  promptLight.intensity    = _promptLightInt;
+
+  // Lebegés
+  const t = performance.now() * 0.001;
+  promptMesh.position.y = 0.08 + Math.sin(t * 0.6) * 0.008;
+
+  // Görgetés
+  if (_promptActive && _promptLines.length) {
+    _promptScrollY -= delta * 28;
+    const totalH = _promptLines.length * 22;
+    if (_promptScrollY + totalH < 60) _promptScrollY = promptCanvas.height;
+  }
+
+  _promptDraw();
+}
+
+window._promptStart = function(text) {
+  _promptSetText(text);
+  _promptScrollY = promptCanvas.height;
+  _promptActive  = true;
+};
+window._promptStop = function() {
+  _promptActive = false;
+};
+// ── TELEPROMPTER VÉGE ─────────────────────────────────────────
+
 function animate() {
   requestAnimationFrame(animate);
   const delta = clock.getDelta();
   if (mixer) mixer.update(delta);
   controls.update();
   if (window.lipSync) window.lipSync.update();
+  _promptUpdate(delta);
   renderer.render(scene, camera);
 }
 animate();
