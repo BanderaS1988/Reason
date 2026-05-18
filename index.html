@@ -2885,10 +2885,18 @@ function _promptUpdate(delta) {
   promptMesh.position.y = 0.08 + Math.sin(t * 0.6) * 0.008;
 
   // Görgetés
+// Görgetés – TTS progress alapján szinkronizálva
   if (_promptActive && _promptLines.length) {
-    _promptScrollY -= delta * 35;
-    const totalH = _promptLines.length * 58;
-    if (_promptScrollY + totalH < 60) _promptScrollY = promptCanvas.height;
+    const totalH    = _promptLines.length * 58;
+    const totalScroll = promptCanvas.height + totalH;
+    if (_ttsProgressTotal > 0) {
+      const elapsed = _ttsProgressPause + (performance.now() - _ttsProgressStart);
+      const pct     = Math.min(1, elapsed / _ttsProgressTotal);
+      _promptScrollY = promptCanvas.height - pct * totalScroll;
+    } else {
+      _promptScrollY -= delta * 35;
+      if (_promptScrollY + totalH < 60) _promptScrollY = promptCanvas.height;
+    }
   }
 
   _promptDraw();
