@@ -2403,12 +2403,26 @@ this._saccadeTimer += dt;
 if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
   this._saccadeFromX = this._saccadeCurX;
   this._saccadeFromY = this._saccadeCurY;
-  this._saccadeTgtX  = (Math.random() - 0.5) * 0.55;
-  this._saccadeTgtY  = (Math.random() - 0.5) * 0.32;
-  this._saccadeDur   = 80 + Math.random() * 100;
+  // Olvasási minta: balról jobbra pásztáz, néha visszaugrik balra
+  if (!this._readSaccadeStep) this._readSaccadeStep = 0;
+  this._readSaccadeStep++;
+  if (this._readSaccadeStep > 4) {
+    // Sor vége: visszaugrik balra és kicsit lejjebb
+    this._saccadeTgtX  = -0.22;
+    this._saccadeTgtY  = (this._saccadeCurY || 0) + 0.06;
+    if (this._saccadeTgtY > 0.18) this._saccadeTgtY = -0.10;
+    this._readSaccadeStep = 0;
+    this._saccadeDur  = 120;
+    this._saccadeNext = 180;
+  } else {
+    // Sor mentén jobbra lép kis ugrásokkal
+    this._saccadeTgtX  = -0.22 + this._readSaccadeStep * 0.11;
+    this._saccadeTgtY  = (this._saccadeCurY || 0) + (Math.random() - 0.5) * 0.03;
+    this._saccadeDur   = 60 + Math.random() * 60;
+    this._saccadeNext  = 280 + Math.random() * 320;
+  }
   this._saccadeT     = 0;
   this._saccadePhase = 1;
-  this._saccadeNext  = 900 + Math.random() * 2200;
   this._saccadeTimer = 0;
 }
     if (this._saccadePhase === 1) {
