@@ -2800,9 +2800,18 @@ promptMesh.rotation.y = Math.PI + 0.18;
 scene.add(promptMesh);
 
 // Kék visszafény a karakterre
-const promptLight = new THREE.PointLight(0x00aaff, 0.0, 1.2);
-promptLight.position.set(-0.28, 0.10, 0.22);
+const promptLight = new THREE.PointLight(0x00aaff, 0.0, 1.8);
+promptLight.position.set(0.0, 0.14, 0.38);
 scene.add(promptLight);
+
+const promptLight2 = new THREE.PointLight(0x00ffcc, 0.0, 1.2);
+promptLight2.position.set(-0.18, 0.06, 0.32);
+scene.add(promptLight2);
+
+const promptLight3 = new THREE.PointLight(0x0055ff, 0.0, 0.9);
+promptLight3.position.set(0.10, 0.22, 0.30);
+scene.add(promptLight3);
+
 
 let _promptScrollY  = 0;
 let _promptLines    = [];
@@ -2885,26 +2894,42 @@ function _promptDraw() {
 }
 
 function _promptUpdate(delta) {
-  // Opacity és fény animáció
+  const t = performance.now() * 0.001;
+
+  // Panel opacity animáció
   const targetOp  = _promptActive ? 0.82 : 0.18;
-  const targetInt = _promptActive ? 0.55 : 0.0;
-  _promptOpacity  += (targetOp  - _promptOpacity)  * Math.min(1, delta * 2.5);
-  _promptLightInt += (targetInt - _promptLightInt)  * Math.min(1, delta * 2.5);
-  promptMat.opacity        = _promptOpacity;
-  promptLight.intensity    = _promptLightInt;
+  _promptOpacity += (targetOp - _promptOpacity) * Math.min(1, delta * 2.5);
+  promptMat.opacity = _promptOpacity;
+
+  // ── KÉPERNYŐ VISSZAFÉNY A KARAKTERRE ──────────────────────────
+  if (_promptActive) {
+    // Lassú légzés-szerű pulzálás
+    const breathe = 0.55 + 0.08 * Math.sin(t * 1.1);
+    // Apró gyors vibrálás (scanline illúzió)
+    const flicker = 1.0 + 0.04 * Math.sin(t * 47.3) + 0.02 * Math.sin(t * 83.7);
+    // Ritkás erősebb villanás ~2-3 mp-enként
+    const blink   = Math.max(0, Math.sin(t * 2.3) > 0.92 ? (Math.sin(t * 2.3) - 0.92) * 6 : 0);
+
+    promptLight.intensity  = breathe * flicker + blink * 0.3;
+    promptLight2.intensity = (breathe * 0.35 * flicker) + blink * 0.1;
+    promptLight3.intensity = Math.max(0, 0.18 * Math.sin(t * 3.7 + 1.2) * flicker);
+  } else {
+    // Fokozatos elsötétülés
+    promptLight.intensity  += (0.0 - promptLight.intensity)  * Math.min(1, delta * 3);
+    promptLight2.intensity += (0.0 - promptLight2.intensity) * Math.min(1, delta * 3);
+    promptLight3.intensity += (0.0 - promptLight3.intensity) * Math.min(1, delta * 3);
+  }
 
   // Lebegés
-  const t = performance.now() * 0.001;
   promptMesh.position.y = 0.08 + Math.sin(t * 0.6) * 0.008;
 
-  // Görgetés
-// Görgetés – TTS progress alapján szinkronizálva
+  // Görgetés – TTS progress alapján szinkronizálva
   if (_promptActive && _promptLines.length) {
-    const totalH    = _promptLines.length * 58;
+    const totalH      = _promptLines.length * 58;
     const totalScroll = promptCanvas.height + totalH;
     if (_ttsProgressTotal > 0) {
-      const elapsed = _ttsProgressPause + (performance.now() - _ttsProgressStart);
-      const pct     = Math.min(1, elapsed / _ttsProgressTotal);
+      const elapsed  = _ttsProgressPause + (performance.now() - _ttsProgressStart);
+      const pct      = Math.min(1, elapsed / _ttsProgressTotal);
       _promptScrollY = promptCanvas.height - pct * totalScroll;
     } else {
       _promptScrollY -= delta * 35;
@@ -2914,7 +2939,6 @@ function _promptUpdate(delta) {
 
   _promptDraw();
 }
-
 window._promptStart = function(text) {
   _promptSetText(text);
   _promptScrollY = promptCanvas.height;
