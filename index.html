@@ -2769,7 +2769,7 @@ const promptMat = new THREE.MeshBasicMaterial({
 });
 const promptMesh = new THREE.Mesh(promptGeo, promptMat);
 promptMesh.position.set(-0.10, 0.08, 0.55);
-promptMesh.rotation.y = 0.18;
+promptMesh.rotation.y = Math.PI + 0.18;
 scene.add(promptMesh);
 
 // Kék visszafény a karakterre
