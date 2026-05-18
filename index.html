@@ -407,11 +407,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
   </div>
   <nav class="main-nav">
     <div class="nav-inner" id="mainNav">
-      <div class="nav-item active" data-cat="all">Összes <span class="nav-count" id="nc-all">0</span></div>
-      <div class="nav-item" data-cat="Tech & AI hírek">🤖 Tech & AI <span class="nav-count" id="nc-Tech">0</span></div>
-      <div class="nav-item" data-cat="Időjárás & környezet">🌍 Időjárás & környezet <span class="nav-count" id="nc-kornyezet">0</span></div>
-      <div class="nav-item" data-cat="Bűnügyek & rejtélyek">🔍 Bűnügyek & rejtélyek <span class="nav-count" id="nc-bunugy">0</span></div>
-      <div class="nav-item" data-cat="Gasztro & utazás">🍜 Gasztro & utazás <span class="nav-count" id="nc-gasztro">0</span></div>
+      <div class="nav-item" data-cat="Mesterséges Intelligencia és Technológia">🤖 MI & Tech <span class="nav-count" id="nc-tech">0</span></div>
+<div class="nav-item" data-cat="Klímaváltozás és Fenntarthatóság">🌍 Klíma <span class="nav-count" id="nc-klima">0</span></div>
+<div class="nav-item" data-cat="Mentális Egészség és Önismeret">🧠 Mentális Egészség <span class="nav-count" id="nc-mental">0</span></div>
+<div class="nav-item" data-cat="Világgazdaság és Pénzügyek">💰 Gazdaság <span class="nav-count" id="nc-gazd">0</span></div>
+<div class="nav-item" data-cat="Űrkutatás és Asztrofizika">🚀 Űrkutatás <span class="nav-count" id="nc-ur">0</span></div>
+<div class="nav-item" data-cat="Orvostudomány és Élethosszabbítás">🩺 Orvostudomány <span class="nav-count" id="nc-orv">0</span></div>
+<div class="nav-item" data-cat="Filozófia és az Élet Értelme">💡 Filozófia <span class="nav-count" id="nc-fil">0</span></div>
+<div class="nav-item" data-cat="Oktatás és a Tudás Jövője">📚 Oktatás <span class="nav-count" id="nc-okt">0</span></div>
     </div>
   </nav>
 </header>
@@ -669,7 +672,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
         <div class="s-title">ℹ️ A REASON-ról</div>
         <div style="font-size:12px;color:var(--text3);line-height:1.75">
           <p style="margin-bottom:8px">A <strong>REASON</strong> Gyors. Független. Valódi.</p>
-          <p style="margin-bottom:8px">Négy témakörben találsz friss tartalmakat: <strong>Tech & AI</strong>, <strong>Időjárás & környezet</strong>, <strong>Bűnügyek & rejtélyek</strong> és <strong>Gasztro & utazás</strong>.</p>
+          <p style="margin-bottom:8px">Nyolc témakörben találsz friss tartalmakat: <strong>MI & Tech</strong>, <strong>Klímaváltozás</strong>, <strong>Mentális Egészség</strong>, <strong>Világgazdaság</strong>, <strong>Űrkutatás</strong>, <strong>Orvostudomány</strong>, <strong>Filozófia</strong> és <strong>Oktatás</strong>.</p>
           <p style="font-size:11px;color:var(--text4)">© 2025 REASON · Minden jog fenntartva</p>
         </div>
       </div>
@@ -710,16 +713,24 @@ let fetchOffset = 0, fetchHasMore = true;
 const SB_HDR = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' };
 
 const CAT_COLOR = {
-  'Tech & AI hírek': '#0066cc',
-  'Időjárás & környezet': '#10b981',
-  'Bűnügyek & rejtélyek': '#7c3aed',
-  'Gasztro & utazás': '#f59e0b',
+  'Mesterséges Intelligencia és Technológia': '#0066cc',
+  'Klímaváltozás és Fenntarthatóság': '#10b981',
+  'Mentális Egészség és Önismeret': '#e85d9b',
+  'Világgazdaság és Pénzügyek': '#f59e0b',
+  'Űrkutatás és Asztrofizika': '#7c3aed',
+  'Orvostudomány és Élethosszabbítás': '#ef4444',
+  'Filozófia és az Élet Értelme': '#a16207',
+  'Oktatás és a Tudás Jövője': '#0891b2',
 };
 const CAT_EMOJI = {
-  'Tech & AI hírek': '🤖',
-  'Időjárás & környezet': '🌍',
-  'Bűnügyek & rejtélyek': '🔍',
-  'Gasztro & utazás': '🍜',
+ 'Mesterséges Intelligencia és Technológia': '🤖',
+'Klímaváltozás és Fenntarthatóság': '🌍',
+'Mentális Egészség és Önismeret': '🧠',
+'Világgazdaság és Pénzügyek': '💰',
+'Űrkutatás és Asztrofizika': '🚀',
+'Orvostudomány és Élethosszabbítás': '🩺',
+'Filozófia és az Élet Értelme': '💡',
+'Oktatás és a Tudás Jövője': '📚',
 };
 
 // ══════════════════════════════════════════════════════════════════
@@ -1637,21 +1648,29 @@ function updateCatSidebar() {
 function updateNavCounts() {
   const counts = { all: allArticles.length };
   allArticles.forEach(a => { const c = a.category || 'Egyéb'; counts[c] = (counts[c] || 0) + 1; });
-  document.getElementById('nc-all').textContent       = counts['all'] || 0;
-  document.getElementById('nc-Tech').textContent      = counts['Tech & AI hírek'] || 0;
-  document.getElementById('nc-kornyezet').textContent = counts['Időjárás & környezet'] || 0;
-  document.getElementById('nc-bunugy').textContent    = counts['Bűnügyek & rejtélyek'] || 0;
-  document.getElementById('nc-gasztro').textContent   = counts['Gasztro & utazás'] || 0;
+  document.getElementById('nc-all').textContent   = counts['all'] || 0;
+document.getElementById('nc-tech').textContent  = counts['Mesterséges Intelligencia és Technológia'] || 0;
+document.getElementById('nc-klima').textContent = counts['Klímaváltozás és Fenntarthatóság'] || 0;
+document.getElementById('nc-mental').textContent= counts['Mentális Egészség és Önismeret'] || 0;
+document.getElementById('nc-gazd').textContent  = counts['Világgazdaság és Pénzügyek'] || 0;
+document.getElementById('nc-ur').textContent    = counts['Űrkutatás és Asztrofizika'] || 0;
+document.getElementById('nc-orv').textContent   = counts['Orvostudomány és Élethosszabbítás'] || 0;
+document.getElementById('nc-fil').textContent   = counts['Filozófia és az Élet Értelme'] || 0;
+document.getElementById('nc-okt').textContent   = counts['Oktatás és a Tudás Jövője'] || 0;
 }
 
 function updateStripTitle() {
   const map = {
-    all: 'Legfrissebb',
-    'Tech & AI hírek': '🤖 Tech & AI hírek',
-    'Időjárás & környezet': '🌍 Időjárás & környezet',
-    'Bűnügyek & rejtélyek': '🔍 Bűnügyek & rejtélyek',
-    'Gasztro & utazás': '🍜 Gasztro & utazás'
-  };
+  all: 'Legfrissebb',
+  'Mesterséges Intelligencia és Technológia': '🤖 Mesterséges Intelligencia és Technológia',
+  'Klímaváltozás és Fenntarthatóság': '🌍 Klímaváltozás és Fenntarthatóság',
+  'Mentális Egészség és Önismeret': '🧠 Mentális Egészség és Önismeret',
+  'Világgazdaság és Pénzügyek': '💰 Világgazdaság és Pénzügyek',
+  'Űrkutatás és Asztrofizika': '🚀 Űrkutatás és Asztrofizika',
+  'Orvostudomány és Élethosszabbítás': '🩺 Orvostudomány és Élethosszabbítás',
+  'Filozófia és az Élet Értelme': '💡 Filozófia és az Élet Értelme',
+  'Oktatás és a Tudás Jövője': '📚 Oktatás és a Tudás Jövője',
+};
   document.getElementById('stripTitle').textContent = map[cat] || cat;
 }
 
