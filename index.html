@@ -2813,6 +2813,8 @@ promptLight3.position.set(0.10, 0.22, 0.30);
 scene.add(promptLight3);
 
 
+
+
 let _promptScrollY  = 0;
 let _promptLines    = [];
 let _promptActive   = false;
@@ -2897,7 +2899,7 @@ function _promptUpdate(delta) {
   const t = performance.now() * 0.001;
 
   // Panel opacity animáció
-  const targetOp  = _promptActive ? 0.82 : 0.18;
+  const targetOp  = _promptActive ? 0.97 : 0.18;
   _promptOpacity += (targetOp - _promptOpacity) * Math.min(1, delta * 2.5);
   promptMat.opacity = _promptOpacity;
 
@@ -2939,6 +2941,8 @@ function _promptUpdate(delta) {
 
   _promptDraw();
 }
+
+  
 window._promptStart = function(text) {
   _promptSetText(text);
   _promptScrollY = promptCanvas.height;
