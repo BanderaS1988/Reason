@@ -2872,7 +2872,7 @@ function _promptUpdate(delta) {
 
   // Görgetés
   if (_promptActive && _promptLines.length) {
-    _promptScrollY -= delta * 14;
+    _promptScrollY -= delta * 35;
     const totalH = _promptLines.length * 58;
     if (_promptScrollY + totalH < 60) _promptScrollY = promptCanvas.height;
   }
