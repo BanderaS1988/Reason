@@ -1356,42 +1356,87 @@ window.ttsSeekForward = ttsSeekForward;
 
 function _ttsSeek(deltaMs) {
   if (!ttsIsSpeaking) return;
-  const elapsed  = _ttsProgressPause + (performance.now() - _ttsProgressStart);
-  const newMs    = Math.max(0, Math.min(_ttsProgressTotal, elapsed + deltaMs));
-  const fraction = newMs / _ttsProgressTotal;
 
-  // Megkeressük melyik cikknek melyik fonemájánál vagyunk
-  const cfg = getConfig();
+  const elapsed = _ttsProgressPause + (performance.now() - _ttsProgressStart);
+  const newMs   = Math.max(0, Math.min(_ttsProgressTotal, elapsed + deltaMs));
+
+  const cfg  = getConfig();
+  const rate = getTtsRate() > 0 ? getTtsRate() : 1;
   let acc = cfg.pStartDelay * 1000;
-  let targetQueueIdx = 0;
+  let targetQueueIdx    = 0;
+  let targetSentenceIdx = 0;
+
   outer: for (let qi = 0; qi < ttsQueue.length; qi++) {
-    const phonemes = textToPhonemes(ttsQueue[qi].title + '. ' + ttsQueue[qi].text, cfg);
-    for (const ph of phonemes) {
-      const dur = ph.dur * 1000 * (cfg.pOpenRatio + cfg.pPeakRatio + cfg.pCloseRatio);
-      if (acc + dur >= newMs * (getTtsRate() > 0 ? getTtsRate() : 1)) {
-        targetQueueIdx = qi;
+    const fullText  = ttsQueue[qi].title + '. ' + ttsQueue[qi].text;
+    const sentences = fullText.match(/[^.!?…]+[.!?…]*/g) || [fullText];
+
+    for (let si = 0; si < sentences.length; si++) {
+      const phonemes = textToPhonemes(sentences[si], cfg);
+      let sentMs = 0;
+      for (const ph of phonemes) {
+        sentMs += ph.dur * 1000 * (cfg.pOpenRatio + cfg.pPeakRatio + cfg.pCloseRatio);
+      }
+      sentMs = sentMs / rate;
+
+      if (acc + sentMs >= newMs) {
+        targetQueueIdx    = qi;
+        targetSentenceIdx = si;
         break outer;
       }
-      acc += dur;
+      acc += sentMs;
     }
-    acc += (cfg.pEndPause + cfg.pEndExtra) * 1000 + 400;
-    targetQueueIdx = Math.min(qi + 1, ttsQueue.length - 1);
+    acc += (cfg.pEndPause + cfg.pEndExtra) * 1000 / rate + 400;
+    targetQueueIdx    = Math.min(qi + 1, ttsQueue.length - 1);
+    targetSentenceIdx = 0;
   }
 
   speechSynthesis.cancel();
   if (window._tts3dLipStop) window._tts3dLipStop();
+
   ttsQueueIndex = targetQueueIdx;
 
-  // Progress újraindítása az új pozícióból
   if (_ttsProgressRAF) cancelAnimationFrame(_ttsProgressRAF);
   _ttsProgressPause = newMs;
   _ttsProgressStart = performance.now();
   _ttsProgressTick();
 
-  setTimeout(ttsReadNext, 80);
+  const item      = ttsQueue[targetQueueIdx];
+  const fullText  = item.title + '. ' + item.text;
+  const sentences = fullText.match(/[^.!?…]+[.!?…]*/g) || [fullText];
+  const remaining = sentences.slice(targetSentenceIdx).join(' ');
+
+  const voices  = speechSynthesis.getVoices();
+  const huVoice = voices.find(v =>
+    v.lang.startsWith('hu') ||
+    v.name.toLowerCase().includes('hungarian') ||
+    v.name.toLowerCase().includes('hun') ||
+    v.name.toLowerCase().includes('szabolcs')
+  );
+
+  const utt  = new SpeechSynthesisUtterance(remaining);
+  utt.rate   = getTtsRate();
+  utt.pitch  = getTtsPitch();
+  utt.volume = 1;
+  utt.lang   = 'hu-HU';
+  if (huVoice) utt.voice = huVoice;
+
+  utt.onstart = () => { if (window._tts3dLipStart) window._tts3dLipStart(remaining, utt.rate); };
+  utt.onend   = () => {
+    if (window._tts3dLipStop) window._tts3dLipStop();
+    ttsQueueIndex++;
+    setTimeout(ttsReadNext, 400);
+  };
+  utt.onerror = (e) => {
+    if (e.error === 'interrupted') return;
+    if (window._tts3dLipStop) window._tts3dLipStop();
+    ttsQueueIndex++;
+    setTimeout(ttsReadNext, 400);
+  };
+
+  ttsCurrentUtterance = utt;
+  setTimeout(() => speechSynthesis.speak(utt), 80);
 }
 
-// Drag a csíkon
 document.getElementById('ttsProgressTrack').addEventListener('click', function(e) {
   if (!ttsIsSpeaking && _ttsProgressTotal === 0) return;
   const rect = this.getBoundingClientRect();
