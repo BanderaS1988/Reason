@@ -2810,6 +2810,11 @@ promptCanvas.height = 1536;
 const promptCtx = promptCanvas.getContext('2d');
 const promptTex = new THREE.CanvasTexture(promptCanvas);
 
+  // EZT ADD HOZZÁ AZONNAL UTÁNA:
+promptCtx.fillStyle = 'rgba(0,15,35,0.92)';
+promptCtx.fillRect(0, 0, promptCanvas.width, promptCanvas.height);
+promptTex.needsUpdate = true;
+
 const promptGeo = new THREE.PlaneGeometry(0.52, 0.72);
 const promptMat = new THREE.MeshBasicMaterial({
   map: promptTex, transparent: true, opacity: 0.18,
