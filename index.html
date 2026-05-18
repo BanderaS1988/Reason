@@ -2831,7 +2831,7 @@ function _promptDraw() {
   promptCtx.save();
   promptCtx.rect(10, 34, w - 20, h - 44);
   promptCtx.clip();
-  promptCtx.font      = '15px monospace';
+  promptCtx.font = 'bold 17px sans-serif';
   const lineH = 22;
   _promptLines.forEach((ln, i) => {
     const y = _promptScrollY + i * lineH;
@@ -2866,7 +2866,7 @@ function _promptUpdate(delta) {
 
   // Görgetés
   if (_promptActive && _promptLines.length) {
-    _promptScrollY -= delta * 28;
+    _promptScrollY -= delta * 14;
     const totalH = _promptLines.length * 22;
     if (_promptScrollY + totalH < 60) _promptScrollY = promptCanvas.height;
   }
