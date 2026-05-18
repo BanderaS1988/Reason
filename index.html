@@ -2757,8 +2757,8 @@ if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
 
   // ── TELEPROMPTER PANEL ────────────────────────────────────────
 const promptCanvas = document.createElement('canvas');
-promptCanvas.width  = 512;
-promptCanvas.height = 256;
+promptCanvas.width  = 1024;
+promptCanvas.height = 1536;
 const promptCtx = promptCanvas.getContext('2d');
 const promptTex = new THREE.CanvasTexture(promptCanvas);
 
@@ -2789,7 +2789,7 @@ function _promptSetText(text) {
   let line = '';
   for (const w of words) {
     const test = line ? line + ' ' + w : w;
-  if (promptCtx.measureText(test).width > 488) { lines.push(line); line = w; }
+  if (promptCtx.measureText(test).width > 980) { lines.push(line); line = w; }
     else line = test;
   }
   if (line) lines.push(line);
@@ -2812,30 +2812,30 @@ function _promptDraw() {
 
   // Fejléc háttér
   promptCtx.fillStyle = 'rgba(0,100,180,0.55)';
-  promptCtx.fillRect(2, 2, w - 4, 36);
+ promptCtx.fillRect(2, 2, w - 4, 72);
 
   // Fejléc szöveg
-  promptCtx.font = 'bold 14px Arial, sans-serif';
+  promptCtx.font = 'bold 32px Arial, sans-serif';
   promptCtx.fillStyle = 'rgba(0,220,255,' + (_promptActive ? '1.0' : '0.4') + ')';
   promptCtx.letterSpacing = '2px';
-  promptCtx.fillText('◈  REASON FELOLVASÓ', 14, 24);
+  promptCtx.fillText('◈  REASON FELOLVASÓ', 28, 52);
 
-  // Elválasztó
+// Elválasztó
   promptCtx.strokeStyle = 'rgba(0,180,255,' + (_promptActive ? '0.6' : '0.2') + ')';
   promptCtx.lineWidth = 1;
   promptCtx.beginPath();
-  promptCtx.moveTo(2, 38); promptCtx.lineTo(w - 2, 38);
+  promptCtx.moveTo(2, 76); promptCtx.lineTo(w - 2, 76);
   promptCtx.stroke();
-
   // Szöveg terület clip
   promptCtx.save();
   promptCtx.beginPath();
-  promptCtx.rect(0, 42, w, h - 42);
+  promptCtx.rect(0, 80, w, h - 80);
   promptCtx.clip();
 
-  promptCtx.font = 'bold 16px Arial, sans-serif';
+ promptCtx.font = 'bold 38px Arial, sans-serif';
+
   promptCtx.letterSpacing = '0px';
-  const lineH = 26;
+  const lineH = 58;
   const maxW  = w - 24;
 
   _promptLines.forEach((ln, i) => {
@@ -2850,7 +2850,7 @@ function _promptDraw() {
 
     const alpha = (_promptActive ? 0.95 : 0.4) * fade;
     promptCtx.fillStyle = `rgba(200,235,255,${alpha})`;
-    promptCtx.fillText(ln, 12, y);
+   promptCtx.fillText(ln, 24, y);
   });
 
   promptCtx.restore();
@@ -2873,7 +2873,7 @@ function _promptUpdate(delta) {
   // Görgetés
   if (_promptActive && _promptLines.length) {
     _promptScrollY -= delta * 14;
-    const totalH = _promptLines.length * 22;
+    const totalH = _promptLines.length * 58;
     if (_promptScrollY + totalH < 60) _promptScrollY = promptCanvas.height;
   }
 
