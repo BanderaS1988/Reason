@@ -786,15 +786,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
         </div>
       </div>
 
-      <div class="s-widget" style="background:linear-gradient(135deg,#1a1814,#2a2520);color:#fff;text-align:center">
-        <div class="s-title" style="color:#f0c040;border-bottom-color:#f0c04040">📧 ÉRTESÍTSEN!</div>
-        <p style="font-size:13px;margin-bottom:16px">Értesülj elsőként az új cikkekről!</p>
-        <form id="subscribeForm" style="display:flex;flex-direction:column;gap:10px">
-          <input type="email" id="subEmail" placeholder="Email címed" required style="padding:10px;border-radius:8px;border:none;font-size:14px">
-          <button type="submit" style="padding:10px;background:#f0c040;color:#1a1814;border:none;border-radius:8px;font-weight:bold;cursor:pointer">Feliratkozom →</button>
-        </form>
-        <div id="subMsg" style="font-size:12px;margin-top:10px;min-height:20px"></div>
-      </div>
+      
     </aside>
   </div>
 </main>
@@ -3174,30 +3166,7 @@ animate();
 };
 })();
 
-// ══════════════════════════════════════════════════════════════════
-//  FELIRATKOZÁS
-// ══════════════════════════════════════════════════════════════════
-const subForm = document.getElementById('subscribeForm');
-if (subForm) {
-  subForm.addEventListener('submit', async e => {
-    e.preventDefault();
-    const email = document.getElementById('subEmail').value.trim();
-    const msgDiv = document.getElementById('subMsg');
-    if (!email || !email.includes('@')) { msgDiv.style.color = '#e8152f'; msgDiv.textContent = 'Kérlek, érvényes email címet adj meg!'; return; }
-    msgDiv.style.color = '#9e9890';
-    msgDiv.textContent = 'Küldés...';
-    try {
-      const res = await fetch(`${SB_URL}/rest/v1/subscribers`, {
-        method: 'POST',
-        headers: { ...SB_HDR, 'Prefer': 'return=minimal' },
-        body: JSON.stringify({ email })
-      });
-      if (res.ok) { msgDiv.style.color = '#1a7a3c'; msgDiv.textContent = '✅ Sikeres feliratkozás!'; document.getElementById('subEmail').value = ''; }
-      else if (res.status === 409) { msgDiv.style.color = '#f0c040'; msgDiv.textContent = 'Ez az email már feliratkozott.'; }
-      else throw new Error();
-    } catch { msgDiv.style.color = '#e8152f'; msgDiv.textContent = 'Hiba történt, próbáld később.'; }
-  });
-}
+
 
 // Service Worker
 if ('serviceWorker' in navigator) {
