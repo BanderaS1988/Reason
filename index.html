@@ -1303,9 +1303,15 @@ async function ttsCardToggle(id, checked) {
   const art = allArticles.find(a => String(a.id) === String(id));
   if (!art) return;
   if (checked) {
-    // Mindig kérd le a body-t, ne bízz a cache-ben
-    if (!art.body) art.body = await fetchArticleBody(id);
-    const rawText = (art.body || art.excerpt || art.title || '');
+    // Ha nincs még body, töltjük le és jelezzük
+    if (!art.body) {
+      showToast('⏳ Cikk betöltése...', 'info');
+      art.body = await fetchArticleBody(id);
+    }
+    // Body után újra ellenőrzés – ha még mindig üres, excerpt-et használunk
+    const rawText = (art.body && art.body.trim().length > 10)
+      ? art.body
+      : (art.excerpt || art.title || '');
     const plainText = rawText.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
     ttsSelectedIds.set(String(id), { title: art.title || 'Cikk', text: plainText });
     showToast('✓ Cikk kijelölve felolvasáshoz', 'success');
