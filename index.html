@@ -1048,13 +1048,12 @@ async function fetchArticleBody(id) {
 
   
 function manualRefresh() {
-
   document.getElementById('refreshBtn').classList.remove('flashing');
   fetchOffset = 0; fetchHasMore = true; allArticles = [];
+  _lastKnownCreatedAt = null;
   document.getElementById('refreshBtn').textContent = '...';
   fetchArticles(0);
 }
-
   
 window.manualRefresh = manualRefresh;
 function setStatus(msg) { document.getElementById('statusText').textContent = msg; }
@@ -3218,7 +3217,7 @@ let _lastKnownCreatedAt = null;
 async function pollForNewArticles() {
   try {
     const newest = await sbFetch(
-      '/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium&order=created_at.desc&limit=1'
+      '/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium,image_url&order=created_at.desc&limit=1'
     );
     if (!newest?.length) return;
 
@@ -3229,12 +3228,17 @@ async function pollForNewArticles() {
 
     if (newest[0].created_at > _lastKnownCreatedAt) {
       const newData = await sbFetch(
-`/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium,image_url&order=created_at.desc&created_at=gt.${encodeURIComponent(_lastKnownCreatedAt)}&limit=1000`      );
+        `/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium,image_url&order=created_at.desc&created_at=gt.${encodeURIComponent(_lastKnownCreatedAt)}&limit=1000`
+      );
       if (newData?.length) {
+        // csak azokat adjuk hozzá amiket még nem tartalmaz allArticles
+        const existingIds = new Set(allArticles.map(a => String(a.id)));
+        const truly_new = newData.filter(a => !existingIds.has(String(a.id)));
+        if (!truly_new.length) return;
+
         _lastKnownCreatedAt = newData[0].created_at;
-        allArticles = [...newData, ...allArticles];
-        lastCount = allArticles.length;
-        showToast(`🆕 ${newData.length} új cikk érkezett!`, 'success');
+        allArticles = [...truly_new, ...allArticles];
+        showToast(`🆕 ${truly_new.length} új cikk érkezett!`, 'success');
         const btn = document.getElementById('refreshBtn');
         btn.classList.add('flashing');
         applyFilters();
