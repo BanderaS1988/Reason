@@ -1303,6 +1303,7 @@ async function ttsCardToggle(id, checked) {
   const art = allArticles.find(a => String(a.id) === String(id));
   if (!art) return;
   if (checked) {
+    // Mindig kérd le a body-t, ne bízz a cache-ben
     if (!art.body) art.body = await fetchArticleBody(id);
     const rawText = (art.body || art.excerpt || art.title || '');
     const plainText = rawText.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
