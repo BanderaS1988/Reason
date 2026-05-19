@@ -816,7 +816,7 @@ const SB_URL  = 'https://kqugolmndqonbnjetdyi.supabase.co';
 const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxdWdvbG1uZHFvbmJuamV0ZHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2OTM3NjMsImV4cCI6MjA4ODI2OTc2M30.wGEBEJDPUKsUPu9W5vxvH7Do0wX9U3FdgKzEzny_zBg';
 const OWM_KEY = 'f5fd940d4f21028b4e87084b50e00dfb';
 const PAGE_SIZE = 12;
-const FETCH_LIMIT = 200;
+const FETCH_LIMIT = 1000;
 let fetchOffset = 0, fetchHasMore = true;
   
 const SB_HDR = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' };
@@ -1231,27 +1231,54 @@ function hlSearch(html) {
   return html.replace(re, '<mark class="hl">$1</mark>');
 }
 
-function loadMore() {
-  const startIdx = (cat === 'all' && !searchQ && filteredArticles.length > 0) ? 1 : 0;
-  const prevEnd = page * PAGE_SIZE;
-  page++;
-  const newCards = filteredArticles.slice(Math.max(prevEnd, startIdx), page * PAGE_SIZE);
-  if (newCards.length) {
-    document.getElementById('articlesGrid').insertAdjacentHTML('beforeend', newCards.map(renderCard).join(''));
-  }
-  if (filteredArticles.length <= page * PAGE_SIZE && fetchHasMore) {
-    const btn = document.querySelector('.load-more-btn');
-    if (btn) { btn.textContent = 'Betöltés...'; btn.disabled = true; }
-    fetchArticles(fetchOffset + FETCH_LIMIT).then(() => {
-      if (btn) { btn.textContent = 'Tovább olvasok →'; btn.disabled = false; }
-    });
-    return;
-  }
-  document.getElementById('lmWrap').style.display =
-    (filteredArticles.length > page * PAGE_SIZE || fetchHasMore) ? '' : 'none';
-  window.scrollBy({ top: 300, behavior: 'smooth' });
+// TÖRÖLD KI a meglévő loadMore() függvényt, és ezt másold be:
+
+async function loadMoreBatch() {
+    try {
+        const nextOffset = fetchOffset + FETCH_LIMIT;
+        const data = await sbFetch(`/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium,image_url&order=created_at.desc&limit=${FETCH_LIMIT}&offset=${nextOffset}`);
+        if (data && data.length) {
+            allArticles = [...allArticles, ...data];
+            fetchOffset = nextOffset;
+            fetchHasMore = data.length === FETCH_LIMIT;
+            applyFilters();
+            return true;
+        }
+        fetchHasMore = false;
+        return false;
+    } catch(e) {
+        console.error('loadMoreBatch hiba:', e);
+        return false;
+    }
 }
-window.loadMore = loadMore;
+
+async function loadMore() {
+    const lmWrap = document.getElementById('lmWrap');
+    const btn = document.querySelector('.load-more-btn');
+    
+    if (!fetchHasMore && filteredArticles.length <= page * PAGE_SIZE) {
+        if (lmWrap) lmWrap.style.display = 'none';
+        return;
+    }
+    
+    if (filteredArticles.length <= page * PAGE_SIZE && fetchHasMore) {
+        if (btn) { btn.textContent = 'Betöltés...'; btn.disabled = true; }
+        
+        await loadMoreBatch();
+        
+        if (btn) { btn.textContent = 'Tovább olvasok →'; btn.disabled = false; }
+    }
+    
+    page++;
+    renderArticles();
+    
+    const startIdx = (cat === 'all' && !searchQ && page === 1 && filteredArticles.length > 0) ? 1 : 0;
+    const hasMore = filteredArticles.length > (startIdx + (page - 1) * PAGE_SIZE);
+    
+    if (lmWrap) {
+        lmWrap.style.display = (hasMore || fetchHasMore) ? '' : 'none';
+    }
+}
 
 // ══════════════════════════════════════════════════════════════════
 //  TTS FELOLVASÓ
@@ -3195,7 +3222,7 @@ async function pollForNewArticles() {
 
     if (newest[0].created_at > _lastKnownCreatedAt) {
       const newData = await sbFetch(
-`/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium,image_url&order=created_at.desc&created_at=gt.${encodeURIComponent(_lastKnownCreatedAt)}&limit=200`      );
+`/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium,image_url&order=created_at.desc&created_at=gt.${encodeURIComponent(_lastKnownCreatedAt)}&limit=1000`      );
       if (newData?.length) {
         _lastKnownCreatedAt = newData[0].created_at;
         allArticles = [...newData, ...allArticles];
