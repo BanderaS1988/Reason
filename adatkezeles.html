@@ -40,7 +40,7 @@ strong{color:var(--text)}
   <div class="meta">Hatályos: 2025. január 1. · Az EU 2016/679 rendelet (GDPR) alapján</div>
 
   <h2>1. Az adatkezelő</h2>
-  <p>A REASON hírportál (<strong>reason-five.vercel.app</strong>) adatkezelője elérhető az alábbi email-címen: <strong>nagyandras880718@gmail.com</strong></p>
+  <p>A REASON hírportál (<strong>reason-five.vercel.app</strong>) adatkezelője magánszemély, elérhető az alábbi email-címen: <strong>andrasn591@gmail.com</strong></p>
 
   <h2>2. Kezelt adatok és céljuk</h2>
   <table>
@@ -57,66 +57,94 @@ strong{color:var(--text)}
       <td>Fiók törléséig</td>
     </tr>
     <tr>
-      <td>Név (opcionális)</td>
-      <td>Megjelenítés a profilban</td>
+      <td>Teljes név (opcionális)</td>
+      <td>Profil megjelenítése, hozzászólások</td>
       <td>Hozzájárulás</td>
       <td>Fiók törléséig</td>
     </tr>
     <tr>
+      <td>Hozzászólás szövege és neve</td>
+      <td>Cikkekhez fűzött kommentek megjelenítése</td>
+      <td>Hozzájárulás</td>
+      <td>Törlés kéréséig</td>
+    </tr>
+    <tr>
+      <td>Lájk aktivitás (cikk ID)</td>
+      <td>Lájkok számlálása, ismételt lájk megakadályozása</td>
+      <td>Jogos érdek</td>
+      <td>localStorage-ban, böngésző törléséig</td>
+    </tr>
+    <tr>
       <td>Session azonosító</td>
-      <td>Aktív olvasók számlálása</td>
+      <td>Aktív olvasók valós idejű számlálása</td>
       <td>Jogos érdek</td>
       <td>5 perc</td>
     </tr>
     <tr>
       <td>Cikk megtekintések (anonimizált)</td>
-      <td>Statisztika</td>
+      <td>Portálstatisztika</td>
       <td>Jogos érdek</td>
       <td>Határozatlan</td>
     </tr>
     <tr>
       <td>Fizetési adatok</td>
-      <td>Támogatás feldolgozása</td>
+      <td>Önkéntes támogatás feldolgozása</td>
       <td>Szerződés teljesítése</td>
-      <td>Stripe kezeli (nem tároljuk)</td>
+      <td>Kizárólag a Stripe kezeli, nem tároljuk</td>
+    </tr>
+    <tr>
+      <td>IP-cím (közelítő)</td>
+      <td>Időjárás megjelenítése helymeghatározás alapján</td>
+      <td>Jogos érdek</td>
+      <td>Nem tároljuk</td>
     </tr>
   </table>
 
   <h2>3. Adattovábbítás harmadik feleknek</h2>
   <ul>
-    <li><strong>Supabase (supabase.com)</strong> – adatbázis és autentikáció. Szerverek az EU-ban.</li>
-    <li><strong>Stripe, Inc.</strong> – fizetési tranzakciók feldolgozása. Bankkártya-adathoz az üzemeltető nem fér hozzá.</li>
-    <li><strong>Vercel, Inc.</strong> – webtárhely. Az oldal statikus fájljait tárolja.</li>
-    <li><strong>OpenWeatherMap</strong> – időjárás lekérdezés. IP-cím alapján, személyes adat nem kerül tárolásra.</li>
+    <li><strong>Supabase (supabase.com)</strong> – adatbázis, autentikáció és fájltárolás (3D modellek). Szerverek az EU-ban.</li>
+    <li><strong>Stripe, Inc.</strong> – önkéntes támogatások fizetési feldolgozása. Az üzemeltető bankkártya-adathoz nem fér hozzá.</li>
+    <li><strong>Vercel, Inc.</strong> – webtárhely és CDN szolgáltatás.</li>
+    <li><strong>Google AdSense</strong> – hirdetések megjelenítése. A Google saját adatkezelési szabályzata szerint jár el.</li>
+    <li><strong>OpenWeatherMap</strong> – időjárás-adatok lekérdezése. Személyes adat nem kerül tárolásra.</li>
+    <li><strong>Google Fonts</strong> – betűtípusok betöltése. IP-cím továbbítódhat a Google szerverei felé.</li>
   </ul>
 
-  <h2>4. Cookie-k (sütik)</h2>
-  <p>Az oldal az alábbi helyi tárolókat (localStorage) használja:</p>
+  <h2>4. Helyi tárolók (localStorage)</h2>
+  <p>Az oldal az alábbi helyi tárolókat használja a böngészőben, szerverre nem kerülnek:</p>
   <ul>
-    <li><strong>reason_token</strong> – bejelentkezési token, munkamenet azonosításhoz</li>
+    <li><strong>reason_token</strong> – bejelentkezési token</li>
     <li><strong>reason_refresh</strong> – token megújításhoz</li>
-    <li><strong>reason_gdpr</strong> – cookie hozzájárulás státusza</li>
+    <li><strong>reason_gdpr</strong> – cookie-hozzájárulás státusza</li>
+    <li><strong>reason_theme</strong> – választott megjelenési téma (világos/sötét)</li>
+    <li><strong>reason_modal_font</strong> – cikkolvasó betűméret beállítása</li>
+    <li><strong>reason_session</strong> – névtelen session azonosító az aktív olvasók számlálásához</li>
+    <li><strong>reason_liked_[id]</strong> – lájkolt cikkek nyilvántartása ismétlés elkerüléséhez</li>
   </ul>
-  <p>Harmadik féltől származó marketing cookie-t az oldal nem használ.</p>
 
-  <h2>5. Az érintett jogai</h2>
+  <h2>5. Google AdSense hirdetések</h2>
+  <p>A portálon Google AdSense rendszeren keresztül hirdetések jelennek meg. A Google cookie-kat és hasonló technológiákat használ a hirdetések személyre szabásához. Erről bővebben a <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="color:var(--accent)">Google adatvédelmi irányelvei</a> között olvashat.</p>
+
+  <h2>6. Az érintett jogai</h2>
   <ul>
     <li><strong>Hozzáférés joga:</strong> kérheti a róla kezelt adatok másolatát</li>
     <li><strong>Helyesbítés joga:</strong> kérheti pontatlan adatai kijavítását</li>
-    <li><strong>Törlés joga:</strong> kérheti adatai törlését („elfeledtetéshez való jog")</li>
+    <li><strong>Törlés joga:</strong> kérheti adatai törlését</li>
     <li><strong>Tiltakozás joga:</strong> tiltakozhat jogos érdeken alapuló adatkezelés ellen</li>
-    <li><strong>Panasztétel:</strong> panaszt nyújthat be a NAIH-nál (naih.hu)</li>
+    <li><strong>Panasztétel:</strong> panaszt nyújthat be a NAIH-nál (<a href="https://naih.hu" target="_blank" rel="noopener" style="color:var(--accent)">naih.hu</a>)</li>
   </ul>
-  <p>Kérelmét a következő email-címre küldheti: <strong>nagyandras880718@gmail.com</strong> — 30 napon belül válaszolunk.</p>
+  <p>Kérelmét az <strong>andrasn591@gmail.com</strong> email-címre küldheti – 30 napon belül válaszolunk.</p>
 
-  <h2>6. Adatbiztonság</h2>
-  <p>A jelszavak titkosítva (hash-elve) kerülnek tárolásra. Az adatátvitel HTTPS protokollon keresztül történik.</p>
+  <h2>7. Adatbiztonság</h2>
+  <p>A jelszavak titkosítva (hash-elve) kerülnek tárolásra a Supabase rendszerében. Az adatátvitel HTTPS protokollon keresztül történik. Az üzemeltető a tőle elvárható módon gondoskodik az adatok biztonságáról.</p>
 
-  <h2>7. Tájékoztató módosítása</h2>
+  <h2>8. Tájékoztató módosítása</h2>
   <p>Az üzemeltető fenntartja a jogot a tájékoztató módosítására. Lényeges változás esetén az oldalon értesítést jelenít meg.</p>
 
   <div class="contact-box">
-    <p><strong>Kapcsolat:</strong> nagyandras880718@gmail.com</p>
+    <p><strong>Adatkezelő elérhetősége:</strong> andrasn591@gmail.com</p>
+    <p><strong>Weboldal:</strong> reason-five.vercel.app</p>
+    <p><strong>Felügyeleti hatóság:</strong> NAIH – naih.hu</p>
   </div>
 </div>
 </body>
