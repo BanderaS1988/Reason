@@ -3222,14 +3222,14 @@ async function pollForNewArticles() {
     console.error('pollForNewArticles hiba:', e);
   }
 }
-setInterval(pollForNewArticles, 30 * 1000);
+setInterval(pollForNewArticles, 5 * 60 * 1000);
 
 renderArticles();
 pingVisitor();
 setInterval(pingVisitor, 60 * 1000);
 fetchActiveReaders();
 fetchTotalViews();
-setInterval(() => { fetchActiveReaders(); fetchTotalViews(); }, 30 * 1000);
+setInterval(() => { fetchActiveReaders(); fetchTotalViews(); }, 3 * 60 * 1000);
 initAuth();
 initGDPR();
 renderSupportBanner();
