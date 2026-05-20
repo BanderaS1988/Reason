@@ -17,7 +17,7 @@
     }
   ],
   "rewrites": [
-    { "source": "/sitemap.xml",      "destination": "/api/sitemap.xml" },
+    { "source": "/sitemap.xml", "destination": "/api/sitemap" }
     { "source": "/rss.xml",          "destination": "/api/rss.xml" },
     { "source": "/robots.txt",       "destination": "/api/robots.txt" },
     { "source": "/news-sitemap.xml", "destination": "/api/news-sitemap.xml" },
