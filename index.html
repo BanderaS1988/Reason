@@ -2402,12 +2402,14 @@ function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').
 
 function ageBadge(iso) {
   if (!iso) return '';
-  const diff = Date.now() - new Date(iso);
-  const h = diff / 3600000;
-  if (h < 1)  return '<span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#1a7a3c22;color:#1a7a3c;margin-left:4px">● Friss</span>';
-  if (h < 24) return '<span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#0066cc22;color:#0066cc;margin-left:4px">● Ma</span>';
-  if (h < 168)return '<span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#b8860b22;color:#b8860b;margin-left:4px">● Ezen a héten</span>';
-  return '<span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#9e989022;color:#9e9890;margin-left:4px">● Régebbi</span>';
+  const now   = new Date();
+  const date  = new Date(iso);
+  const diffH = (now - date) / 3600000;
+  const todayStr = now.toDateString();
+  const dateStr  = date.toDateString();
+  if (diffH < 1)             return '<span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#1a7a3c22;color:#1a7a3c;margin-left:4px">● Friss</span>';
+  if (todayStr === dateStr)  return '<span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#0066cc22;color:#0066cc;margin-left:4px">● Ma</span>';
+  return '';
 }
 
   
@@ -2417,8 +2419,7 @@ function fmtTime(iso) {
   if (diff < 60) return 'épp most';
   if (diff < 3600) return Math.floor(diff / 60) + ' perce';
   if (diff < 86400) return Math.floor(diff / 3600) + ' órája';
-  if (diff < 604800) return Math.floor(diff / 86400) + ' napja';
-  return new Date(iso).toLocaleDateString('hu-HU', { month: 'short', day: 'numeric' });
+  return new Date(iso).toLocaleDateString('hu-HU', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.') + '.';
 }
 function fmtTimeFull(iso) {
   if (!iso) return '–';
