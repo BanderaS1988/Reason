@@ -3,74 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>REASON – Betöltés...</title>
-<meta name="description" content="REASON – Független hírek">
-
-<!-- OG / Twitter – JS tölti fel -->
-<meta property="og:site_name" content="REASON">
-<meta property="og:type" content="article">
-<meta property="og:locale" content="hu_HU">
-<meta name="twitter:card" content="summary_large_image">
-
+<title>REASON</title>
+<meta name="description" content="REASON – Gyors. Független. Valódi.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7856205120757314" crossorigin="anonymous"></script>
-
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#f8f7f4;--bg2:#fff;--border:#e8e4dc;
   --text:#1a1814;--text2:#3d3a35;--text3:#706b62;--text4:#9e9890;
-  --accent:#c8102e;--font-d:'Playfair Display',Georgia,serif;--font-s:'Inter',sans-serif;
+  --accent:#c8102e;
+  --font-d:'Playfair Display',Georgia,serif;
+  --font-s:'Inter',sans-serif;
 }
 body{background:var(--bg);color:var(--text);font-family:var(--font-s);min-height:100vh}
-
-/* HEADER */
 .site-header{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .logo{font-family:var(--font-d);font-size:28px;font-weight:900;color:var(--text);text-decoration:none;letter-spacing:-1px}
 .logo span{color:var(--accent)}
 .back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-weight:600;color:var(--text3);text-decoration:none;background:var(--bg);transition:.15s}
 .back-btn:hover{border-color:var(--accent);color:var(--accent)}
-
-/* ARTICLE */
 .article-wrap{max-width:800px;margin:0 auto;padding:40px 24px 80px}
-.article-cat{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+.article-cat{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;color:var(--accent)}
 .article-title{font-family:var(--font-d);font-size:36px;font-weight:900;line-height:1.2;color:var(--text);margin-bottom:18px}
 .article-meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--text4);padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:32px}
+.article-hero{width:100%;max-height:420px;object-fit:cover;border-radius:10px;margin-bottom:32px}
 .article-body{font-family:var(--font-d);font-size:19px;line-height:2;color:var(--text2)}
 .article-body p{margin-bottom:22px;text-align:justify}
-.article-body p:first-child::first-letter{font-size:3.5em;font-weight:700;float:left;margin:0 8px -8px 0;line-height:.78;color:var(--accent);font-family:var(--font-d)}
-.article-body h2{font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--text);margin:36px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
-
-/* AD */
+.article-body p:first-child::first-letter{font-size:3.5em;font-weight:700;float:left;margin:0 8px -8px 0;line-height:.78;color:var(--accent)}
 .ad-wrap{margin:32px 0;text-align:center}
-
-/* SHARE */
 .share-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:20px 0;border-top:1px solid var(--border);margin-top:32px}
-.share-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:var(--font-s);transition:.15s}
+.share-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:var(--font-s);transition:.15s;text-decoration:none}
 .share-copy{background:var(--bg);border:2px solid var(--border);color:var(--text)}
 .share-copy:hover{border-color:var(--accent);color:var(--accent)}
 .share-fb{background:#1877f2;color:#fff}
 .share-tw{background:#000;color:#fff}
-.share-msg{font-size:12px;color:#1a7a3c;font-weight:600;min-height:18px}
-
-/* SKELETON / LOADING */
-.skeleton{background:linear-gradient(90deg,#eee 25%,#f5f5f5 50%,#eee 75%);background-size:200% 100%;animation:skel 1.4s infinite;border-radius:6px}
-@keyframes skel{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.skel-title{height:42px;margin-bottom:12px;width:85%}
-.skel-meta{height:18px;width:50%;margin-bottom:28px}
-.skel-p{height:18px;margin-bottom:14px}
-.skel-p.short{width:70%}
-
-/* ERROR */
-.error-box{text-align:center;padding:80px 24px}
-.error-icon{font-size:56px;margin-bottom:16px}
-.error-title{font-family:var(--font-d);font-size:26px;font-weight:700;margin-bottom:10px}
-.error-sub{font-size:14px;color:var(--text3);line-height:1.7}
-
-/* FOOTER */
+.share-msg{font-size:12px;color:#1a7a3c;font-weight:600}
+.comments-section{margin-top:48px;border-top:2px solid var(--border);padding-top:32px}
+.comments-title{font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:20px}
+.comment-item{border-bottom:1px solid var(--border);padding:14px 0}
+.comment-author{font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px}
+.comment-body{font-size:13px;color:var(--text2);line-height:1.6}
+.comment-date{font-size:10px;color:var(--text4);margin-top:4px}
+.comment-form{margin-top:28px}
+.comment-form h3{font-size:14px;font-weight:700;margin-bottom:14px}
+.comment-form input,.comment-form textarea{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13px;margin-bottom:10px;font-family:var(--font-s);background:#fff;color:var(--text);outline:none}
+.comment-form input:focus,.comment-form textarea:focus{border-color:var(--accent)}
+.comment-form textarea{min-height:100px;resize:vertical}
+.btn-comment{padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-s)}
+.back-link{display:inline-block;margin-top:40px;padding:10px 20px;background:var(--accent);color:#fff;text-decoration:none;border-radius:8px;font-size:13px;font-weight:700}
+.loading{text-align:center;padding:80px 24px;color:var(--text4);font-size:18px}
 footer{background:var(--text);color:var(--text4);text-align:center;padding:20px;font-size:11px;line-height:2}
 footer a{color:#f0c040;text-decoration:none}
-
 @media(max-width:600px){
   .article-title{font-size:26px}
   .article-body{font-size:17px}
@@ -85,17 +69,8 @@ footer a{color:#f0c040;text-decoration:none}
   <a class="back-btn" href="/">← Vissza a főoldalra</a>
 </header>
 
-<main class="article-wrap" id="articleWrap">
-  <!-- skeleton -->
-  <div id="skeleton">
-    <div class="skeleton skel-title"></div>
-    <div class="skeleton skel-meta"></div>
-    <div class="skeleton skel-p"></div>
-    <div class="skeleton skel-p"></div>
-    <div class="skeleton skel-p short"></div>
-    <div class="skeleton skel-p"></div>
-    <div class="skeleton skel-p short"></div>
-  </div>
+<main class="article-wrap" id="main">
+  <div class="loading">⏳ Betöltés...</div>
 </main>
 
 <footer>
@@ -108,11 +83,17 @@ footer a{color:#f0c040;text-decoration:none}
 <script>
 const SB_URL = 'https://kqugolmndqonbnjetdyi.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxdWdvbG1uZHFvbmJuamV0ZHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2OTM3NjMsImV4cCI6MjA4ODI2OTc2M30.wGEBEJDPUKsUPu9W5vxvH7Do0wX9U3FdgKzEzny_zBg';
-const SITE   = 'https://reason-five.vercel.app';
+const SITE = 'https://reason-five.vercel.app';
 
 const CAT_COLOR = {
-  'Tisza Párt':'#0066cc','Fidesz':'#f0a500','Mi Hazánk':'#1a7a3c',
-  'Belpolitika':'#c8102e','Vita indító gondolatok':'#7c3aed'
+  'Mesterséges Intelligencia és Technológia': '#0066cc',
+  'Klímaváltozás és Fenntarthatóság': '#10b981',
+  'Mentális Egészség és Önismeret': '#e85d9b',
+  'Világgazdaság és Pénzügyek': '#f59e0b',
+  'Űrkutatás és Asztrofizika': '#7c3aed',
+  'Orvostudomány és Élethosszabbítás': '#ef4444',
+  'Filozófia és az Élet Értelme': '#a16207',
+  'Oktatás és a Tudás Jövője': '#0891b2',
 };
 
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -122,58 +103,9 @@ function fmtDate(iso){
   return new Date(iso).toLocaleString('hu-HU',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});
 }
 
-// ID kinyerése az URL-ből: /cikk/UUID
-function getArticleId(){
-  const parts = window.location.pathname.split('/');
-  return parts[parts.length - 1] || parts[parts.length - 2];
-}
-
-function renderError(msg){
-  document.getElementById('articleWrap').innerHTML = `
-    <div class="error-box">
-      <div class="error-icon">📭</div>
-      <div class="error-title">A cikk nem található</div>
-      <div class="error-sub">${esc(msg)}<br><br><a href="/" style="color:var(--accent);font-weight:700">← Vissza a főoldalra</a></div>
-    </div>`;
-}
-
-function updateMeta(art){
-  const title = (art.title || 'REASON').slice(0, 70);
-  const desc  = (art.excerpt || art.body || '').slice(0, 160);
-  const url   = `${SITE}/cikk/${art.id}`;
-  const img   = art.image_url || `${SITE}/og-default.png`;
-
-  document.title = title + ' – REASON';
-  setMeta('description', desc);
-  setOG('og:title',       title);
-  setOG('og:description', desc);
-  setOG('og:url',         url);
-  setOG('og:image',       img);
-  setOG('twitter:title',       title);
-  setOG('twitter:description', desc);
-  setOG('twitter:image',       img);
-
-  // Canonical
-  let can = document.querySelector('link[rel="canonical"]');
-  if(!can){ can = document.createElement('link'); can.rel='canonical'; document.head.appendChild(can); }
-  can.href = url;
-
-  // JSON-LD
-  const schema = {
-    '@context':'https://schema.org','@type':'NewsArticle',
-    headline: art.title,
-    description: desc,
-    datePublished: art.created_at,
-    dateModified:  art.updated_at || art.created_at,
-    url,
-    author:    {'@type':'Organization','name':'REASON','url':SITE},
-    publisher: {'@type':'Organization','name':'REASON','url':SITE,'logo':{'@type':'ImageObject','url':`${SITE}/logo.png`}},
-    mainEntityOfPage: {'@type':'WebPage','@id':url},
-    inLanguage:'hu'
-  };
-  let ld = document.getElementById('jsonld');
-  if(!ld){ ld = document.createElement('script'); ld.id='jsonld'; ld.type='application/ld+json'; document.head.appendChild(ld); }
-  ld.textContent = JSON.stringify(schema);
+function getId(){
+  const parts = window.location.pathname.split('/').filter(Boolean);
+  return parts[parts.length-1];
 }
 
 function setMeta(name, content){
@@ -187,73 +119,156 @@ function setOG(prop, content){
   el.content = content;
 }
 
-function renderArticle(art){
-  const col  = CAT_COLOR[art.category] || '#c8102e';
-  const body = art.body || art.excerpt || '';
-  const paras = body.split(/\n\n+|\n/).filter(p => p.trim().length > 4);
-  const bodyHtml = paras.length
-    ? paras.map(p => `<p>${esc(p.trim())}</p>`).join('')
-    : `<p>${esc(body)}</p>`;
-
-  const url = `${SITE}/cikk/${art.id}`;
-
-  document.getElementById('articleWrap').innerHTML = `
-    <div class="article-cat" style="color:${col}">${esc(art.category||'')}</div>
-    <h1 class="article-title">${esc(art.title||'Cím nélkül')}</h1>
-    <div class="article-meta">
-      <span>🕐 ${fmtDate(art.created_at)}</span>
-      <span>👤 REASON Szerkesztőség</span>
-      <span>⏱ ${art.read_time||'?'} perc olvasás</span>
-    </div>
-
-    <div class="ad-wrap">
-      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7856205120757314"
-        data-ad-slot="4427813320" data-ad-format="auto" data-full-width-responsive="true"></ins>
-    </div>
-
-    <div class="article-body">${bodyHtml}</div>
-
-    <div class="ad-wrap">
-      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7856205120757314"
-        data-ad-slot="4427813320" data-ad-format="auto" data-full-width-responsive="true"></ins>
-    </div>
-
-    <div class="share-bar">
-      <button class="share-btn share-copy" onclick="copyLink('${esc(url)}')">🔗 Link másolása</button>
-      <a class="share-btn share-fb" href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}" target="_blank" rel="noopener">Facebook</a>
-      <a class="share-btn share-tw" href="https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent((art.title||'').slice(0,100))}" target="_blank" rel="noopener">X / Twitter</a>
-      <span class="share-msg" id="shareMsg"></span>
-    </div>`;
-
-  // AdSense init
-  try{ (adsbygoogle = window.adsbygoogle || []).push({}); (adsbygoogle = window.adsbygoogle || []).push({}); }catch(e){}
-}
-
 async function copyLink(url){
   try{ await navigator.clipboard.writeText(url); }
-  catch{ const ta=document.createElement('textarea');ta.value=url;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove(); }
-  const m = document.getElementById('shareMsg');
-  if(m){ m.textContent='✓ Link másolva!'; setTimeout(()=>{ m.textContent=''; },2500); }
+  catch{ const t=document.createElement('textarea');t.value=url;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove(); }
+  const m=document.getElementById('shareMsg');
+  if(m){ m.textContent='✓ Link másolva!'; setTimeout(()=>{m.textContent=''},2500); }
 }
 window.copyLink = copyLink;
 
+async function submitComment(articleId){
+  const author = document.getElementById('cAuthor').value.trim()||'Névtelen olvasó';
+  const body   = document.getElementById('cBody').value.trim();
+  const msg    = document.getElementById('cMsg');
+  if(body.length<3){ msg.style.color='var(--accent)'; msg.textContent='Túl rövid.'; return; }
+  msg.style.color='var(--text4)'; msg.textContent='Küldés...';
+  try{
+    const r = await fetch(`${SB_URL}/rest/v1/comments`,{
+      method:'POST',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body: JSON.stringify({article_id:articleId, author, body})
+    });
+    if(!r.ok) throw new Error();
+    msg.style.color='#1a7a3c'; msg.textContent='Köszönjük a hozzászólást!';
+    document.getElementById('cBody').value='';
+    document.getElementById('cAuthor').value='';
+    setTimeout(()=>location.reload(), 1200);
+  } catch{ msg.style.color='var(--accent)'; msg.textContent='Hiba, próbáld újra.'; }
+}
+window.submitComment = submitComment;
+
 async function init(){
-  const id = getArticleId();
-  if(!id || id.length < 10){ renderError('Érvénytelen cikk azonosító.'); return; }
+  const id = getId();
+  if(!id || id.length < 5){
+    document.getElementById('main').innerHTML = '<div class="loading">❌ Érvénytelen URL.</div>';
+    return;
+  }
 
   try{
-    const r = await fetch(
-      `${SB_URL}/rest/v1/articles?id=eq.${encodeURIComponent(id)}&select=*&limit=1`,
-      { headers:{ 'apikey':SB_KEY, 'Authorization':'Bearer '+SB_KEY } }
-    );
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    const data = await r.json();
-    if(!data.length){ renderError('Ez a cikk nem létezik vagy törölve lett.'); return; }
-    const art = data[0];
-    updateMeta(art);
-    renderArticle(art);
+    const [artRes, commentsRes] = await Promise.all([
+      fetch(`${SB_URL}/rest/v1/articles?id=eq.${encodeURIComponent(id)}&select=*&limit=1`,
+        {headers:{apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY}}),
+      fetch(`${SB_URL}/rest/v1/comments?article_id=eq.${encodeURIComponent(id)}&order=created_at.asc`,
+        {headers:{apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY}})
+    ]);
+
+    const artData = await artRes.json();
+    const art = artData?.[0];
+    if(!art){
+      document.getElementById('main').innerHTML = '<div class="loading">📭 A cikk nem található.</div>';
+      return;
+    }
+
+    const comments = await commentsRes.json() || [];
+    const col = CAT_COLOR[art.category] || '#c8102e';
+    const url = `${SITE}/cikk/${art.id}`;
+
+    // Meta frissítés
+    document.title = (art.title||'REASON') + ' – REASON';
+    setMeta('description', (art.excerpt||art.body||'').slice(0,160));
+    setOG('og:title', art.title||'');
+    setOG('og:description', (art.excerpt||'').slice(0,160));
+    setOG('og:url', url);
+    setOG('og:image', art.image_url||`${SITE}/og-default.png`);
+    setOG('og:type', 'article');
+
+    // Canonical
+    let can = document.querySelector('link[rel="canonical"]');
+    if(!can){ can=document.createElement('link'); can.rel='canonical'; document.head.appendChild(can); }
+    can.href = url;
+
+    // JSON-LD
+    const schema = {
+      '@context':'https://schema.org','@type':'NewsArticle',
+      headline: art.title,
+      description: (art.excerpt||'').slice(0,160),
+      datePublished: art.created_at,
+      dateModified: art.updated_at||art.created_at,
+      url,
+      image: art.image_url||`${SITE}/og-default.png`,
+      author:{'@type':'Organization','name':'REASON Szerkesztőség'},
+      publisher:{'@type':'Organization','name':'REASON','url':SITE,'logo':{'@type':'ImageObject','url':`${SITE}/logo.png`}},
+      mainEntityOfPage:{'@type':'WebPage','@id':url},
+      inLanguage:'hu',
+      articleSection: art.category||''
+    };
+    let ld = document.createElement('script');
+    ld.type='application/ld+json';
+    ld.textContent = JSON.stringify(schema);
+    document.head.appendChild(ld);
+
+    // Body
+    const body = art.body||art.excerpt||'';
+    const paras = body.split(/\n\n+|\n/).filter(p=>p.trim().length>4);
+    const bodyHtml = paras.length
+      ? paras.map(p=>`<p>${esc(p.trim())}</p>`).join('')
+      : `<p>${esc(body)}</p>`;
+
+    const commentsHtml = comments.length
+      ? comments.map(c=>`<div class="comment-item">
+          <div class="comment-author">${esc(c.author||'Névtelen')}</div>
+          <div class="comment-body">${esc(c.body)}</div>
+          <div class="comment-date">${fmtDate(c.created_at)}</div>
+        </div>`).join('')
+      : '<div style="font-size:13px;color:var(--text4);padding:14px 0">Még nincs hozzászólás. Légy az első!</div>';
+
+    document.getElementById('main').innerHTML = `
+      <div class="article-cat" style="color:${col}">${esc(art.category||'')}</div>
+      <h1 class="article-title">${esc(art.title||'')}</h1>
+      <div class="article-meta">
+        <span>🕐 ${fmtDate(art.created_at)}</span>
+        <span>👤 REASON Szerkesztőség</span>
+        <span>⏱ ${art.read_time||'?'} perc olvasás</span>
+      </div>
+      ${art.image_url ? `<img class="article-hero" src="${esc(art.image_url)}" alt="${esc(art.title)}">` : ''}
+      <div class="ad-wrap">
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7856205120757314" data-ad-slot="4427813320" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      </div>
+      <div class="article-body">${bodyHtml}</div>
+      <div class="ad-wrap">
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7856205120757314" data-ad-slot="4427813320" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      </div>
+      <div class="share-bar">
+        <button class="share-btn share-copy" onclick="copyLink('${esc(url)}')">🔗 Link másolása</button>
+        <a class="share-btn share-fb" href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}" target="_blank" rel="noopener">Facebook</a>
+        <a class="share-btn share-tw" href="https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent((art.title||'').slice(0,100))}" target="_blank" rel="noopener">X / Twitter</a>
+        <span class="share-msg" id="shareMsg"></span>
+      </div>
+      <div class="comments-section">
+        <h2 class="comments-title">Hozzászólások (${comments.length})</h2>
+        <div id="commentList">${commentsHtml}</div>
+        <div class="comment-form">
+          <h3>Írj hozzászólást</h3>
+          <input id="cAuthor" type="text" maxlength="80" placeholder="Neved (opcionális)">
+          <textarea id="cBody" maxlength="1000" placeholder="Hozzászólásod..."></textarea>
+          <button class="btn-comment" onclick="submitComment('${art.id}')">Küldés</button>
+          <div id="cMsg" style="font-size:12px;margin-top:8px;min-height:16px"></div>
+        </div>
+      </div>
+      <a href="/" class="back-link">← Vissza a főoldalra</a>`;
+
+    try{ (adsbygoogle=window.adsbygoogle||[]).push({}); (adsbygoogle=window.adsbygoogle||[]).push({}); }catch(e){}
+
+    // View tracking
+    fetch(`${SB_URL}/rest/v1/rpc/increment_view`,{
+      method:'POST',
+      headers:{apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({p_article_id:String(id)})
+    }).catch(()=>{});
+
   } catch(e){
-    renderError('Betöltési hiba: ' + e.message);
+    document.getElementById('main').innerHTML = `<div class="loading">❌ Hiba: ${esc(e.message)}</div>`;
   }
 }
 
