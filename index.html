@@ -3189,22 +3189,18 @@ async function pollForNewArticles() {
       '/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium,image_url&order=created_at.desc&limit=1'
     );
     if (!newest?.length) return;
-
     if (!_lastKnownCreatedAt) {
       _lastKnownCreatedAt = newest[0].created_at;
       return;
     }
-
     if (newest[0].created_at > _lastKnownCreatedAt) {
       const newData = await sbFetch(
         `/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium,image_url&order=created_at.desc&created_at=gt.${encodeURIComponent(_lastKnownCreatedAt)}&limit=1000`
       );
       if (newData?.length) {
-        // csak azokat adjuk hozzá amiket még nem tartalmaz allArticles
         const existingIds = new Set(allArticles.map(a => String(a.id)));
         const truly_new = newData.filter(a => !existingIds.has(String(a.id)));
         if (!truly_new.length) return;
-
         _lastKnownCreatedAt = newData[0].created_at;
         allArticles = [...truly_new, ...allArticles];
         showToast(`🆕 ${truly_new.length} új cikk érkezett!`, 'success');
@@ -3223,13 +3219,16 @@ async function pollForNewArticles() {
   }
 }
 setInterval(pollForNewArticles, 5 * 60 * 1000);
-
 renderArticles();
-pingVisitor();
-setInterval(pingVisitor, 60 * 1000);
-fetchActiveReaders();
-fetchTotalViews();
-setInterval(() => { fetchActiveReaders(); fetchTotalViews(); }, 3 * 60 * 1000);
+setTimeout(() => {
+  pingVisitor();
+  setInterval(pingVisitor, 60 * 1000);
+}, 3000);
+setTimeout(() => {
+  fetchActiveReaders();
+  fetchTotalViews();
+  setInterval(() => { fetchActiveReaders(); fetchTotalViews(); }, 3 * 60 * 1000);
+}, 5000);
 initAuth();
 initGDPR();
 renderSupportBanner();
