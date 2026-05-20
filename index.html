@@ -1172,7 +1172,7 @@ function renderCard(art) {
   const likes    = (art.like_count    ?? 0).toLocaleString('hu');
   const views    = (art.view_count    ?? 0).toLocaleString('hu');
   const comments = (art.comment_count ?? 0).toLocaleString('hu');
-  return `<div class="article-card" onclick="window.location.href='/cikk/${art.id}'" style="cursor:pointer;${isSelected ? 'border-color:var(--accent);box-shadow:0 0 0 2px rgba(200,16,46,.2)' : ''}">
+  return `<div class="article-card" onclick="openModal(allArticles.find(a=>a.id==='${art.id}'))" style="cursor:pointer;${isSelected ? 'border-color:var(--accent);box-shadow:0 0 0 2px rgba(200,16,46,.2)' : ''}">
 <div class="card-img" style="background:linear-gradient(135deg,${col}16,${col}08);${art.image_url ? `background-image:url(${art.image_url});background-size:cover;background-position:center;` : ''}">      ${!art.image_url ? `<div class="card-img-emoji">${ico}</div>` : ''}
       <div class="card-img-badge">${c}</div>
       ${art.is_premium ? '<div class="card-premium-ribbon">⭐ PRÉMIUM</div>' : ''}
@@ -1604,13 +1604,12 @@ document.getElementById('ttsProgressTrack').addEventListener('click', function(e
 //  MODAL
 // ══════════════════════════════════════════════════════════════════
 async function openModal(art) {
+  history.pushState({id: art.id}, '', '/cikk/' + art.id);  // ← EZ AZ ÚJ SOR
   const c = art.category || 'Egyéb', col = CAT_COLOR[c] || '#888';
   const tl = art.article_type || '';
   _currentModalArticleId = String(art.id);
-
   document.getElementById('modalCat').textContent  = c;
   document.getElementById('modalCat').style.color  = col;
-
   const tb = document.getElementById('modalTypeBadge');
   tb.textContent   = tl;
   tb.style.display = tl ? '' : 'none';
@@ -1708,6 +1707,7 @@ document.getElementById('articleModal').addEventListener('click', e => {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
 function closeModal() {
+  history.pushState({}, '', '/');  // ← EZ AZ ÚJ SOR
   document.getElementById('articleModal').classList.remove('open');
   document.body.style.overflow = '';
   _currentModalArticleId = null;
