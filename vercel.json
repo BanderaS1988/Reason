@@ -17,13 +17,13 @@
     }
   ],
   "rewrites": [
-    { "source": "/sitemap.xml", "destination": "/api/sitemap" }
-    { "source": "/rss.xml",          "destination": "/api/rss.xml" },
-    { "source": "/robots.txt",       "destination": "/api/robots.txt" },
-    { "source": "/news-sitemap.xml", "destination": "/api/news-sitemap.xml" },
-    { "source": "/llms.txt",         "destination": "/api/llms.txt" },
-    { "source": "/cikk/:id",         "destination": "/api/cikk" },
-    { "source": "/api/like",         "destination": "/pages/api/like.js" },
-    { "source": "/api/indexnow",     "destination": "/pages/api/indexnow.js" }
-  ]
+  { "source": "/sitemap.xml",      "destination": "/api/sitemap" },
+  { "source": "/rss.xml",          "destination": "/api/rss" },
+  { "source": "/robots.txt",       "destination": "/api/robots" },
+  { "source": "/news-sitemap.xml", "destination": "/api/news-sitemap" },
+  { "source": "/llms.txt",         "destination": "/api/llms" },
+  { "source": "/cikk/:id",         "destination": "/api/cikk" },
+  { "source": "/api/like",         "destination": "/pages/api/like.js" },
+  { "source": "/api/indexnow",     "destination": "/pages/api/indexnow.js" }
+]
 }
