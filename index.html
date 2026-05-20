@@ -625,54 +625,39 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
       <button class="theme-btn" id="themeBtnDark" onclick="setTheme('dark')">🌙 Sötét</button>
     </div>
     <div class="modal-body" id="modalBody"></div>
-    <div id="modalReactions" style="display:none;padding:0 44px 20px"></div>
+<div id="modalReactions" style="display:none;padding:0 44px 20px"></div>
 <div id="modalActionBar" style="display:none;padding:0 44px 28px">
-      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:20px;border-top:1px solid var(--border)">
-        <button id="modalLikeBtn" onclick="handleModalLike()" style="display:flex;align-items:center;gap:7px;padding:9px 18px;background:var(--bg2);border:2px solid var(--border);border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;transition:.15s;color:var(--text);font-family:var(--font-s)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          <span id="modalLikeCount">0</span>
-        </button>
-        <div style="position:relative">
-  <button onclick="toggleShareMenu()" style="display:flex;align-items:center;gap:7px;padding:9px 18px;background:var(--accent);border:none;border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;color:#fff;font-family:var(--font-s)">↗ Megosztás</button>
-  <div id="shareMenu" style="display:none;position:absolute;bottom:calc(100% + 8px);left:0;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:8px;min-width:200px;box-shadow:var(--shadow2);z-index:50">
-    <div onclick="shareToFacebook()" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text2);transition:.15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
-      <span style="font-size:18px">📘</span> Facebook
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:20px;border-top:1px solid var(--border)">
+    <button id="modalLikeBtn" onclick="handleModalLike()" style="display:flex;align-items:center;gap:7px;padding:9px 18px;background:var(--bg2);border:2px solid var(--border);border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;transition:.15s;color:var(--text);font-family:var(--font-s)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span id="modalLikeCount">0</span>
+    </button>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <button onclick="shareToFacebook()" title="Facebook" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg2)'">📘</button>
+      <button onclick="shareToX()" title="X / Twitter" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;font-family:serif;color:var(--text)" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg2)'">𝕏</button>
+      <button onclick="shareToWhatsApp()" title="WhatsApp" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg2)'">💬</button>
+      <button onclick="shareToReddit()" title="Reddit" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg2)'">🟠</button>
+      <button onclick="shareToTikTok()" title="TikTok" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg2)'">🎵</button>
+      <button onclick="copyShareLink()" title="Link másolása" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg2)'">🔗</button>
     </div>
-    <div onclick="shareToX()" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text2);transition:.15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
-      <span style="font-size:18px">𝕏</span> X / Twitter
-    </div>
-    <div onclick="shareToWhatsApp()" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text2);transition:.15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
-      <span style="font-size:18px">💬</span> WhatsApp
-    </div>
-    <div onclick="shareToReddit()" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text2);transition:.15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
-      <span style="font-size:18px">🟠</span> Reddit
-    </div>
-    <div style="height:1px;background:var(--border);margin:4px 0"></div>
-    <div onclick="copyShareLink()" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text2);transition:.15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='transparent'">
-      <span style="font-size:18px">🔗</span> Link másolása
-    </div>
+    <span id="modalShareMsg" style="font-size:12px;color:#1a7a3c;font-weight:600"></span>
   </div>
 </div>
-        <span id="modalShareMsg" style="font-size:12px;color:#1a7a3c;font-weight:600"></span>
-      </div>
-    </div>
-    <div id="modalCommentsSection" style="display:none;padding:0 44px 48px">
-<div id="modalRelated" style="margin-bottom:32px"></div>
-      <div style="border-top:2px solid var(--border);padding-top:28px">
-        <h2 style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:8px">
-          Hozzászólások
-          <span class="comment-count-badge" id="modalCommentCountBadge">0</span>
-        </h2>
-        <div style="font-size:11px;color:var(--text4);margin-bottom:18px" id="modalCommentCountText">Még nincs hozzászólás</div>
-        <div id="modalCommentList"></div>
-        <div style="margin-top:24px">
-          <h3 style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px">Írj hozzászólást</h3>
-          <input id="modalCAuthor" type="text" maxlength="80" placeholder="Neved (opcionális)" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13px;margin-bottom:10px;box-sizing:border-box;background:var(--bg);color:var(--text);font-family:var(--font-s)">
-          <textarea id="modalCBody" maxlength="1000" placeholder="Hozzászólásod..." style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13px;min-height:90px;resize:vertical;box-sizing:border-box;background:var(--bg);color:var(--text);font-family:var(--font-s)"></textarea>
-          <button onclick="submitModalComment()" style="margin-top:8px;padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-s)">Küldés</button>
-          <div id="modalCMsg" style="font-size:12px;margin-top:8px;min-height:16px"></div>
-        </div>
-      </div>
+<div id="modalCommentsSection" style="display:none;padding:0 44px 48px">
+  <div id="modalRelated" style="margin-bottom:32px"></div>
+  <div style="border-top:2px solid var(--border);padding-top:28px">
+    <h2 style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:8px">
+      Hozzászólások
+      <span class="comment-count-badge" id="modalCommentCountBadge">0</span>
+    </h2>
+    <div style="font-size:11px;color:var(--text4);margin-bottom:18px" id="modalCommentCountText">Még nincs hozzászólás</div>
+    <div id="modalCommentList"></div>
+    <div style="margin-top:24px">
+      <h3 style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px">Írj hozzászólást</h3>
+      <input id="modalCAuthor" type="text" maxlength="80" placeholder="Neved (opcionális)" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13px;margin-bottom:10px;box-sizing:border-box;background:var(--bg);color:var(--text);font-family:var(--font-s)">
+      <textarea id="modalCBody" maxlength="1000" placeholder="Hozzászólásod..." style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13px;min-height:90px;resize:vertical;box-sizing:border-box;background:var(--bg);color:var(--text);font-family:var(--font-s)"></textarea>
+      <button onclick="submitModalComment()" style="margin-top:8px;padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-s)">Küldés</button>
+      <div id="modalCMsg" style="font-size:12px;margin-top:8px;min-height:16px"></div>
     </div>
   </div>
 </div>
@@ -2074,6 +2059,10 @@ window.shareToFacebook = shareToFacebook;
 window.shareToX = shareToX;
 window.shareToWhatsApp = shareToWhatsApp;
 window.shareToReddit = shareToReddit;
+  function shareToTikTok() {
+  window.open('https://www.tiktok.com/share?url=' + encodeURIComponent(getShareUrl()), '_blank', 'width=600,height=400');
+}
+window.shareToTikTok = shareToTikTok;
 window.copyShareLink = copyShareLink;
 
 document.addEventListener('click', e => {
