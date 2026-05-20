@@ -3474,8 +3474,8 @@ if (speechSynthesis.onvoiceschanged !== undefined) { speechSynthesis.onvoicescha
 // ══════════════════════════════════════════════════════════════════
 initWeather();
 setInterval(initWeather, 10 * 60 * 1000);
-fetchArticles();
 let _lastKnownCreatedAt = null;
+fetchArticles();
 async function pollForNewArticles() {
   try {
     const newest = await sbFetch(
