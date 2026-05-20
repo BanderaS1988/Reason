@@ -23,7 +23,7 @@ function fmtDate(iso) {
 }
 
 module.exports = async (req, res) => {
-  const id = req.url.split('/cikk/')[1]?.split('?')[0];
+  const id = req.query.id;
 
   if (!id || id.length < 5) {
     res.status(404).send('Nem található');
