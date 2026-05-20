@@ -1381,7 +1381,7 @@ function ttsReadNext() {
   const item = ttsQueue[ttsQueueIndex];
   ttsRefreshQueueUI();
   document.getElementById('ttsStatus').textContent = `Felolvasás: ${ttsQueueIndex + 1}/${ttsQueue.length} – ${item.title.slice(0, 28)}…`;
-  const fullText = item.title + '. ' + item.text;
+   const fullText = item.text;
   const voices = speechSynthesis.getVoices();
   const huVoice = voices.find(v =>
     v.lang.startsWith('hu') ||
@@ -1570,7 +1570,7 @@ function _ttsSeek(deltaMs) {
   _ttsProgressTick();
 
   const item      = ttsQueue[targetQueueIdx];
-  const fullText  = item.title + '. ' + item.text;
+   const fullText  = item.text;
   const sentences = fullText.match(/[^.!?…]+[.!?…]*/g) || [fullText];
   const remaining = sentences.slice(targetSentenceIdx).join(' ');
 
