@@ -1,4 +1,5 @@
 {
+  "outputDirectory": ".next",
   "headers": [
     {
       "source": "/(.*)",
@@ -22,7 +23,6 @@
     { "source": "/robots.txt",       "destination": "/api/robots.txt" },
     { "source": "/news-sitemap.xml", "destination": "/api/news-sitemap.xml" },
     { "source": "/llms.txt",         "destination": "/api/llms.txt" },
-   
     { "source": "/api/like",         "destination": "/pages/api/like.js" },
     { "source": "/api/indexnow",     "destination": "/pages/api/indexnow.js" }
   ]
