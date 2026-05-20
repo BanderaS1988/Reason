@@ -3516,18 +3516,18 @@ async function pollForNewArticles() {
 
     // Toast + villogó gomb
     showToast(`🆕 ${truly_new.length} új cikk érkezett!`, 'success');
-    const btn = document.getElementById('refreshBtn');
-    if (btn) {
-      btn.classList.remove('flashing'); // reset, ha már villogott
-      void btn.offsetWidth;             // reflow – újraindítja az animációt
-      btn.classList.add('flashing');
-    }
+const btn = document.getElementById('refreshBtn');
+if (btn) {
+  btn.classList.remove('flashing');
+  setTimeout(() => btn.classList.add('flashing'), 20);
+}
+
 
   } catch (e) {
     console.error('pollForNewArticles hiba:', e);
   }
 }
-setInterval(pollForNewArticles, 5 * 60 * 1000);
+setInterval(pollForNewArticles, 30 * 1000);
 renderArticles();
 setTimeout(() => {
   pingVisitor();
