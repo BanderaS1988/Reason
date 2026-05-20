@@ -2841,6 +2841,19 @@ if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
   const widget    = document.getElementById('space3dWidget');
   const overlay   = document.getElementById('space3dOverlay');
   const expandBtn = document.getElementById('space3dExpandBtn');
+  const resetBtn = document.createElement('button');
+resetBtn.id = 'space3dResetBtn';
+resetBtn.title = 'Alaphelyzet';
+resetBtn.textContent = '⌖';
+resetBtn.style.cssText = 'position:absolute;top:10px;right:48px;width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;backdrop-filter:blur(4px);z-index:5';
+resetBtn.addEventListener('mouseenter', () => resetBtn.style.background = 'rgba(255,255,255,.25)');
+resetBtn.addEventListener('mouseleave', () => resetBtn.style.background = 'rgba(255,255,255,.12)');
+resetBtn.addEventListener('click', () => {
+  camera.position.set(0.2025, 0.1218, 0.5717);
+  controls.target.set(-0.1161, 0.0403, 0.0325);
+  controls.update();
+});
+widget.appendChild(resetBtn);
   let expanded = false;
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
