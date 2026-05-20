@@ -2077,20 +2077,22 @@ async function loadModalReactions(articleId) {
   const el = document.getElementById('modalReactions');
   if (!el) return;
   const REACTIONS = [
-    { key: 'shock',   label: 'Megdöbbentett',     emoji: '😮' },
+    { key: 'shock',   label: 'Megdöbbentett',      emoji: '😮' },
     { key: 'learned', label: 'Megtanultam valamit', emoji: '💡' },
     { key: 'worry',   label: 'Aggaszt',             emoji: '😟' },
     { key: 'hope',    label: 'Reményt adott',        emoji: '🌱' },
   ];
   const voted = localStorage.getItem('reason_reaction_' + articleId);
   let counts = {};
+  REACTIONS.forEach(r => { counts[r.key] = 0; });
   try {
     const rows = await sbFetch('/rest/v1/article_reactions?article_id=eq.' + articleId + '&select=reaction');
-    REACTIONS.forEach(r => { counts[r.key] = 0; });
     rows.forEach(r => { if (counts[r.reaction] !== undefined) counts[r.reaction]++; });
-  } catch { REACTIONS.forEach(r => { counts[r.key] = 0; }); }
+  } catch {}
+
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
   el.style.display = 'block';
+
   if (!voted) {
     el.innerHTML = `
       <div style="border-top:1px solid var(--border);padding-top:20px">
@@ -2120,7 +2122,7 @@ async function loadModalReactions(articleId) {
                 <div style="flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden">
                   <div style="height:100%;width:${pct}%;background:${isVoted ? 'var(--accent)' : 'var(--border2)'};border-radius:4px;transition:width .4s"></div>
                 </div>
-                <span style="font-size:12px;color:var(--text4);font-family:var(--font-m);width:36px;text-align:right">${pct}%</span>
+                <span style="font-size:12px;color:${isVoted ? 'var(--accent)' : 'var(--text4)'};font-family:var(--font-m);width:36px;text-align:right;font-weight:${isVoted ? '700' : '400'}">${pct}%</span>
               </div>`;
           }).join('')}
           <div style="font-size:11px;color:var(--text4);margin-top:4px">${total} szavazat összesen</div>
@@ -2132,6 +2134,7 @@ async function loadModalReactions(articleId) {
 async function submitReaction(articleId, reaction) {
   const lk = 'reason_reaction_' + articleId;
   if (localStorage.getItem(lk)) return;
+  // Azonnal mentjük lokálisan, hogy az újratöltéskor már voted legyen
   localStorage.setItem(lk, reaction);
   try {
     await sbFetch('/rest/v1/article_reactions', {
@@ -2140,6 +2143,8 @@ async function submitReaction(articleId, reaction) {
       body: JSON.stringify({ article_id: articleId, reaction })
     });
   } catch {}
+  // Kis várakozás hogy az adatbázis feldolgozza, majd frissítünk
+  await new Promise(res => setTimeout(res, 300));
   await loadModalReactions(articleId);
   showToast('Köszönjük a visszajelzést!', 'success');
 }
