@@ -499,9 +499,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
         <div id="clock-display">00:00:00</div>
         <div id="date-display">–</div>
       </div>
-      <div id="authBtnWrap">
-        <button onclick="openAuth()" style="padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-s);letter-spacing:.04em">Bejelentkezés</button>
-      </div>
+      
       <div class="weather-widget" id="headerWeather">
         <div id="hWeatherIcon" style="font-size:22px">🌤</div>
         <div>
@@ -535,35 +533,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
   <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </div>
 
-<!-- AUTH MODAL -->
-<div class="auth-overlay" id="authModal">
-  <div class="auth-box">
-    <div class="auth-close" onclick="closeAuth()">✕</div>
-    <div class="auth-logo">RE<span>A</span>SON</div>
-    <div style="font-size:11px;color:var(--text4);margin-bottom:20px;letter-spacing:.1em;text-transform:uppercase">Olvasói fiók</div>
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Bejelentkezés</button>
-      <button class="auth-tab" id="tabReg" onclick="switchTab('reg')">Regisztráció</button>
-    </div>
-    <div id="authLoginForm">
-      <div class="auth-field"><label>Email cím</label><input type="email" id="loginEmail" placeholder="email@cimed.hu" autocomplete="email"></div>
-      <div class="auth-field"><label>Jelszó</label><input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"></div>
-      <button class="auth-submit" onclick="doLogin()">Bejelentkezés</button>
-    </div>
-    <div id="authRegForm" style="display:none">
-      <div class="auth-field"><label>Teljes név</label><input type="text" id="regName" placeholder="Kovács Péter" autocomplete="name"></div>
-      <div class="auth-field"><label>Email cím</label><input type="email" id="regEmail" placeholder="email@cimed.hu" autocomplete="email"></div>
-      <div class="auth-field"><label>Jelszó</label><input type="password" id="regPass" placeholder="min. 6 karakter" autocomplete="new-password"></div>
-      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:10px">
-        <input type="checkbox" id="gdprCheck" style="margin-top:2px;flex-shrink:0">
-        <label for="gdprCheck" style="font-size:11px;color:var(--text3);line-height:1.5;cursor:pointer">Elfogadom az <a href="/adatkezeles" style="color:var(--cyan)">Adatkezelési tájékoztatót</a></label>
-      </div>
-      <button class="auth-submit" onclick="doRegister()">Regisztráció</button>
-    </div>
-    <div class="auth-msg" id="authMsg"></div>
-    <div class="gdpr-note">🔒 Adataidat biztonságosan tároljuk. Nem adjuk át harmadik félnek.<br><a href="/adatkezeles">Adatkezelési tájékoztató</a></div>
-  </div>
-</div>
+
 
 <!-- SUPPORT MODAL -->
 <div class="auth-overlay" id="supportModal">
