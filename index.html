@@ -1810,17 +1810,31 @@ async function fetchActiveReaders() {
 
 async function trackArticleView(articleId) {
   try {
-    await fetch(`${SB_URL}/rest/v1/rpc/increment_view`, { method: 'POST', headers: SB_HDR, body: JSON.stringify({ p_article_id: String(articleId) }) });
+    const rows = await sbFetch(
+      `/rest/v1/articles?id=eq.${articleId}&select=view_count&limit=1`
+    );
+    const cur = rows?.[0]?.view_count ?? 0;
+    await sbFetch(`/rest/v1/articles?id=eq.${articleId}`, {
+      method: 'PATCH',
+      headers: { ...SB_HDR, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ view_count: cur + 1 })
+    });
+    const cached = allArticles.find(a => String(a.id) === String(articleId));
+    if (cached) cached.view_count = cur + 1;
     fetchTotalViews();
   } catch {}
 }
 
 async function fetchTotalViews() {
   try {
-    const r = await fetch(`${SB_URL}/rest/v1/article_views?select=view_count`, { headers: SB_HDR });
+    const r = await fetch(
+      `${SB_URL}/rest/v1/articles?select=view_count`,
+      { headers: SB_HDR }
+    );
     if (!r.ok) return;
     const data = await r.json();
-    document.getElementById('statTotalViews').textContent = data.reduce((s, row) => s + (row.view_count || 0), 0).toLocaleString('hu');
+    document.getElementById('statTotalViews').textContent =
+      data.reduce((s, row) => s + (row.view_count || 0), 0).toLocaleString('hu');
   } catch {}
 }
 
