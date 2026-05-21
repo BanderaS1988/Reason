@@ -22,7 +22,7 @@
   { "source": "/robots.txt",       "destination": "/api/robots" },
   { "source": "/news-sitemap.xml", "destination": "/api/news-sitemap" },
   { "source": "/llms.txt",         "destination": "/api/llms" },
-  { "source": "/cikk/:id",         "destination": "/api/cikk?id=:id" }
+  { "source": "/cikk/:id",         "destination": "/api/cikk?id=:id" },
   { "source": "/api/like",         "destination": "/pages/api/like.js" },
   { "source": "/api/indexnow",     "destination": "/pages/api/indexnow.js" }
 ]
