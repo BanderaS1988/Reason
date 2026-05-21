@@ -1958,9 +1958,18 @@ async function loadModalViewCount(articleId) {
   if (!el) return;
   try {
     const rows = await sbFetch(
-      '/rest/v1/article_views?article_id=eq.' + articleId + '&select=view_count&limit=1'
+      '/rest/v1/articles?id=eq.' + articleId + '&select=view_count&limit=1'
     );
-    el.textContent = (rows?.[0]?.view_count ?? 0).toLocaleString('hu');
+    const cur = rows?.[0]?.view_count ?? 0;
+    await sbFetch(`/rest/v1/articles?id=eq.${articleId}`, {
+      method: 'PATCH',
+      headers: { ...SB_HDR, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ view_count: cur + 1 })
+    });
+    el.textContent = (cur + 1).toLocaleString('hu');
+    const cached = allArticles.find(a => String(a.id) === String(articleId));
+    if (cached) cached.view_count = cur + 1;
+    fetchTotalViews();
   } catch {
     el.textContent = '–';
   }
@@ -2415,12 +2424,8 @@ function fmtTimeFull(iso) {
   return new Date(iso).toLocaleString('hu-HU', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
-// openModal wrappelés view tracking miatt
-const _origOpen = openModal;
-window.openModal = async function (art) { 
-  await _origOpen(art); 
-  if (art?.id) trackArticleView(art.id); 
-};
+
+
 
 function renderSupportBanner() {
   const mc = document.getElementById('mainCol');
