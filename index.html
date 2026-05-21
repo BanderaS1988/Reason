@@ -1773,10 +1773,19 @@ function openBookmarks() {
 window.openBookmarks = openBookmarks;
   
 function closeModal() {
-  history.pushState({}, '', '/');  // ← EZ AZ ÚJ SOR
+  history.pushState({}, '', '/');
   document.getElementById('articleModal').classList.remove('open');
   document.body.style.overflow = '';
+  if (_currentModalArticleId) {
+    const art = allArticles.find(a => String(a.id) === String(_currentModalArticleId));
+    if (art) {
+      art.like_count = parseInt(document.getElementById('modalLikeCount').textContent) || art.like_count;
+      art.view_count = parseInt(document.getElementById('modalStatViews').textContent.replace(/\s/g,'')) || art.view_count;
+      art.comment_count = parseInt(document.getElementById('modalStatComments').textContent) || art.comment_count;
+    }
+  }
   _currentModalArticleId = null;
+  renderArticles();
 }
 window.closeModal = closeModal;
 
