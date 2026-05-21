@@ -1960,14 +1960,15 @@ async function loadModalViewCount(articleId) {
       '/rest/v1/articles?id=eq.' + articleId + '&select=view_count&limit=1'
     );
     const cur = rows?.[0]?.view_count ?? 0;
+    const newVal = cur + 1;
+    el.textContent = newVal.toLocaleString('hu');
+    const cached = allArticles.find(a => String(a.id) === String(articleId));
+    if (cached) cached.view_count = newVal;
     await sbFetch(`/rest/v1/articles?id=eq.${articleId}`, {
       method: 'PATCH',
       headers: { ...SB_HDR, 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ view_count: cur + 1 })
+      body: JSON.stringify({ view_count: newVal })
     });
-    el.textContent = (cur + 1).toLocaleString('hu');
-    const cached = allArticles.find(a => String(a.id) === String(articleId));
-    if (cached) cached.view_count = cur + 1;
     fetchTotalViews();
   } catch {
     el.textContent = '–';
