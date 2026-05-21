@@ -987,7 +987,7 @@ async function sbFetch(path, opts = {}) {
 async function fetchArticles(offset = 0) {
   try {
     const data = await sbFetch(
-      `/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium,image_url&order=created_at.desc&limit=${FETCH_LIMIT}&offset=${offset}`
+      `/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium,image_url&order=created_at.desc&limit=${FETCH_LIMIT}&offset=${offset}`
     );
     if (!Array.isArray(data)) throw new Error();
     if (offset === 0) allArticles = data;
@@ -1211,7 +1211,7 @@ function hlSearch(html) {
 async function loadMoreBatch() {
     try {
         const nextOffset = fetchOffset + FETCH_LIMIT;
-        const data = await sbFetch(`/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium,image_url&order=created_at.desc&limit=${FETCH_LIMIT}&offset=${nextOffset}`);
+        const data = await sbFetch(`/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium,image_url&order=created_at.desc&limit=${FETCH_LIMIT}&offset=${nextOffset}`);
         if (data && data.length) {
             allArticles = [...allArticles, ...data];
             fetchOffset = nextOffset;
@@ -1609,9 +1609,9 @@ async function openModal(art) {
   if (statsBar) {
     statsBar.style.display = 'flex';
     document.getElementById('modalStatLikes').textContent    = (art.like_count ?? 0).toLocaleString('hu');
-    document.getElementById('modalStatViews').textContent    = '…';
-    document.getElementById('modalStatComments').textContent = '…';
-    loadModalViewCount(art.id);
+    document.getElementById('modalStatViews').textContent    = (art.view_count ?? 0).toLocaleString('hu');
+document.getElementById('modalStatComments').textContent = (art.comment_count ?? 0).toLocaleString('hu');
+loadModalViewCount(art.id);
   }
 
   // Modal megnyitása és töltő szöveg azonnal
