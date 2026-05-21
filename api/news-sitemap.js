@@ -16,8 +16,9 @@ async function getArticles() {
 
 module.exports = async (req, res) => {
   const articles = await getArticles();
-  const twoDaysAgo = Date.now() - 48 * 60 * 60 * 1000;
-  const recent = articles.filter(a => new Date(a.created_at).getTime() >= twoDaysAgo);
+const twoDaysAgo = Date.now() - 48 * 60 * 60 * 1000;
+let recent = articles.filter(a => new Date(a.created_at).getTime() >= twoDaysAgo);
+if (recent.length === 0) recent = articles.slice(0, 10);
   const items = recent.map(a => `
   <url>
     <loc>${SITE}/cikk/${a.id}</loc>
