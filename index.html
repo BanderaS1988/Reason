@@ -1972,27 +1972,31 @@ async function loadModalViewCount(articleId) {
   const el = document.getElementById('modalStatViews');
   if (!el) return;
   const lk = 'reason_viewed_' + articleId;
-  if (localStorage.getItem(lk)) {
-    const rows = await sbFetch('/rest/v1/articles?id=eq.' + articleId + '&select=view_count&limit=1');
-    el.textContent = (rows?.[0]?.view_count ?? 0).toLocaleString('hu');
-    return;
-  }
-  localStorage.setItem(lk, '1');
   try {
-    const rows = await sbFetch(
-      '/rest/v1/articles?id=eq.' + articleId + '&select=view_count&limit=1'
-    );
-    const cur = rows?.[0]?.view_count ?? 0;
-    const newVal = cur + 1;
-    el.textContent = newVal.toLocaleString('hu');
+    const rows = await sbFetch('/rest/v1/articles?id=eq.' + articleId + '&select=view_count,like_count,comment_count&limit=1');
+    const row = rows?.[0];
+    if (!row) return;
+    el.textContent = (row.view_count ?? 0).toLocaleString('hu');
+    document.getElementById('modalStatLikes').textContent    = (row.like_count    ?? 0).toLocaleString('hu');
+    document.getElementById('modalStatComments').textContent = (row.comment_count ?? 0).toLocaleString('hu');
+    document.getElementById('modalLikeCount').textContent    = (row.like_count    ?? 0);
     const cached = allArticles.find(a => String(a.id) === String(articleId));
-    if (cached) cached.view_count = newVal;
-    await sbFetch(`/rest/v1/articles?id=eq.${articleId}`, {
-      method: 'PATCH',
-      headers: { ...SB_HDR, 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ view_count: newVal })
-    });
-    fetchTotalViews();
+    if (cached) {
+      cached.view_count    = row.view_count;
+      cached.like_count    = row.like_count;
+      cached.comment_count = row.comment_count;
+    }
+    if (!localStorage.getItem(lk)) {
+      localStorage.setItem(lk, '1');
+      await sbFetch(`/rest/v1/articles?id=eq.${articleId}`, {
+        method: 'PATCH',
+        headers: { ...SB_HDR, 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ view_count: (row.view_count ?? 0) + 1 })
+      });
+      el.textContent = ((row.view_count ?? 0) + 1).toLocaleString('hu');
+      if (cached) cached.view_count = (row.view_count ?? 0) + 1;
+      fetchTotalViews();
+    }
   } catch {
     el.textContent = '–';
   }
