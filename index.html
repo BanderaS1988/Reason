@@ -990,7 +990,20 @@ async function fetchArticles(offset = 0) {
       `/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium,image_url&order=created_at.desc&limit=${FETCH_LIMIT}&offset=${offset}`
     );
     if (!Array.isArray(data)) throw new Error();
-    if (offset === 0) allArticles = data;
+    if (offset === 0) {
+      // Meglévő view/like/comment értékek megőrzése ha az adatbázis 0-t küld
+      allArticles = data.map(newArt => {
+        const old = allArticles.find(a => String(a.id) === String(newArt.id));
+        if (!old) return newArt;
+        return {
+          ...newArt,
+          view_count:    Math.max(newArt.view_count    ?? 0, old.view_count    ?? 0),
+          like_count:    Math.max(newArt.like_count    ?? 0, old.like_count    ?? 0),
+          comment_count: Math.max(newArt.comment_count ?? 0, old.comment_count ?? 0),
+        };
+      });
+      page = 1;
+    }
     else allArticles = [...allArticles, ...data];
     fetchHasMore = data.length === FETCH_LIMIT;
     fetchOffset = offset;
