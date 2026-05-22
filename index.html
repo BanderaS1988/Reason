@@ -1156,7 +1156,7 @@ function renderCard(art) {
   const likes    = (art.like_count    ?? 0).toLocaleString('hu');
   const views    = (art.view_count    ?? 0).toLocaleString('hu');
   const comments = (art.comment_count ?? 0).toLocaleString('hu');
-  return `<div class="article-card" onclick="openModal(allArticles.find(a=>a.id==='${art.id}'))" style="cursor:pointer;${isSelected ? 'border-color:var(--accent);box-shadow:0 0 0 2px rgba(200,16,46,.2)' : ''}">
+  return `<div class="article-card" onclick="openArticleById('${art.id}')" style="cursor:pointer;${isSelected ? 'border-color:var(--accent);box-shadow:0 0 0 2px rgba(200,16,46,.2)' : ''}">
 <div class="card-img" style="background:linear-gradient(135deg,${col}16,${col}08);${art.image_url ? `background-image:url(${art.image_url});background-size:cover;background-position:center;` : ''}">      ${!art.image_url ? `<div class="card-img-emoji">${ico}</div>` : ''}
       <div class="card-img-badge">${c}</div>
       ${art.is_premium ? '<div class="card-premium-ribbon">⭐ PRÉMIUM</div>' : ''}
@@ -1836,13 +1836,20 @@ async function trackArticleView(articleId) {
 async function fetchTotalViews() {
   try {
     const r = await fetch(
-      `${SB_URL}/rest/v1/articles?select=view_count`,
-      { headers: SB_HDR }
+      `${SB_URL}/rest/v1/rpc/sum_view_count`,
+      { method: 'POST', headers: SB_HDR, body: JSON.stringify({}) }
     );
-    if (!r.ok) return;
+    if (!r.ok) {
+      // Fallback ha az RPC nem létezik
+      const r2 = await fetch(`${SB_URL}/rest/v1/articles?select=view_count`, { headers: SB_HDR });
+      if (!r2.ok) return;
+      const data = await r2.json();
+      document.getElementById('statTotalViews').textContent =
+        data.reduce((s, row) => s + (row.view_count || 0), 0).toLocaleString('hu');
+      return;
+    }
     const data = await r.json();
-    document.getElementById('statTotalViews').textContent =
-      data.reduce((s, row) => s + (row.view_count || 0), 0).toLocaleString('hu');
+    document.getElementById('statTotalViews').textContent = (data || 0).toLocaleString('hu');
   } catch {}
 }
 
@@ -1964,26 +1971,19 @@ window.handleModalLike = handleModalLike;
 async function loadModalViewCount(articleId) {
   const el = document.getElementById('modalStatViews');
   if (!el) return;
+  const lk = 'reason_viewed_' + articleId;
+  if (localStorage.getItem(lk)) {
+    const rows = await sbFetch('/rest/v1/articles?id=eq.' + articleId + '&select=view_count&limit=1');
+    el.textContent = (rows?.[0]?.view_count ?? 0).toLocaleString('hu');
+    return;
+  }
+  localStorage.setItem(lk, '1');
   try {
     const rows = await sbFetch(
       '/rest/v1/articles?id=eq.' + articleId + '&select=view_count&limit=1'
     );
     const cur = rows?.[0]?.view_count ?? 0;
     const newVal = cur + 1;
-    el.textContent = newVal.toLocaleString('hu');
-    const cached = allArticles.find(a => String(a.id) === String(articleId));
-    if (cached) cached.view_count = newVal;
-    await sbFetch(`/rest/v1/articles?id=eq.${articleId}`, {
-      method: 'PATCH',
-      headers: { ...SB_HDR, 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ view_count: newVal })
-    });
-    fetchTotalViews();
-  } catch {
-    el.textContent = '–';
-  }
-}
-
 
   
 async function handleModalShare() {
@@ -2217,6 +2217,10 @@ async function submitModalComment() {
   const body   = document.getElementById('modalCBody').value.trim();
   const msgEl  = document.getElementById('modalCMsg');
   if (body.length < 3) { msgEl.style.color = 'var(--accent)'; msgEl.textContent = 'Túl rövid a hozzászólás.'; return; }
+  const spamKey = 'reason_comment_last';
+  const lastComment = parseInt(localStorage.getItem(spamKey) || '0');
+  if (Date.now() - lastComment < 30000) { msgEl.style.color = 'var(--accent)'; msgEl.textContent = 'Várj 30 másodpercet a következő hozzászólás előtt.'; return; }
+  localStorage.setItem(spamKey, Date.now());
   msgEl.style.color = 'var(--text4)';
   msgEl.textContent = 'Küldés...';
   try {
