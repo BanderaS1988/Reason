@@ -1247,8 +1247,8 @@ async function loadMore() {
     page++;
     renderArticles();
     
-    const startIdx = (cat === 'all' && !searchQ && page === 1 && filteredArticles.length > 0) ? 1 : 0;
-    const hasMore = filteredArticles.length > (startIdx + (page - 1) * PAGE_SIZE);
+    const startIdx = (cat === 'all' && !searchQ && filteredArticles.length > 0) ? 1 : 0;
+const hasMore = filteredArticles.length > (startIdx + page * PAGE_SIZE);
     
     if (lmWrap) {
         lmWrap.style.display = (hasMore || fetchHasMore) ? '' : 'none';
@@ -3500,26 +3500,16 @@ async function pollForNewArticles() {
     const truly_new   = newData.filter(a => !existingIds.has(String(a.id)));
     if (!truly_new.length) return;
 
-    // Frissítjük az állapotot
+// Csak eltároljuk hogy van új – NEM töltjük be
     _lastKnownCreatedAt = newData[0].created_at;
-    allArticles = [...truly_new, ...allArticles];
 
-    // UI frissítés
-    applyFilters();
-    updateStats();
-    updateCatSidebar();
-    updateNavCounts();
-    updateTicker(allArticles);
-    setStatus('Utoljára frissítve: ' + new Date().toLocaleTimeString('hu-HU'));
-
-    // Toast + villogó gomb
-    showToast(`🆕 ${truly_new.length} új cikk érkezett!`, 'success');
-const btn = document.getElementById('refreshBtn');
-if (btn) {
-  btn.classList.remove('flashing');
-  setTimeout(() => btn.classList.add('flashing'), 20);
-}
-
+    // Csak jelzés – a tényleges betöltés F5 vagy gombnyomásra történik
+    showToast(`🆕 ${truly_new.length} új cikk érkezett – nyomj frissítést!`, 'success');
+    const btn = document.getElementById('refreshBtn');
+    if (btn) {
+      btn.classList.remove('flashing');
+      setTimeout(() => btn.classList.add('flashing'), 20);
+    }
 
   } catch (e) {
     console.error('pollForNewArticles hiba:', e);
