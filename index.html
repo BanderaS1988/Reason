@@ -1023,13 +1023,13 @@ async function fetchArticleBody(id) {
 
 
   
-function manualRefresh() {
+window.manualRefresh = function manualRefresh() {
   document.getElementById('refreshBtn').classList.remove('flashing');
   fetchOffset = 0; fetchHasMore = true; allArticles = [];
   _lastKnownCreatedAt = null;
   document.getElementById('refreshBtn').textContent = '...';
   fetchArticles(0);
-}
+};
   
 window.manualRefresh = manualRefresh;
 function setStatus(msg) { document.getElementById('statusText').textContent = msg; }
@@ -1984,6 +1984,19 @@ async function loadModalViewCount(articleId) {
     );
     const cur = rows?.[0]?.view_count ?? 0;
     const newVal = cur + 1;
+    el.textContent = newVal.toLocaleString('hu');
+    const cached = allArticles.find(a => String(a.id) === String(articleId));
+    if (cached) cached.view_count = newVal;
+    await sbFetch(`/rest/v1/articles?id=eq.${articleId}`, {
+      method: 'PATCH',
+      headers: { ...SB_HDR, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ view_count: newVal })
+    });
+    fetchTotalViews();
+  } catch {
+    el.textContent = '–';
+  }
+}
 
   
 async function handleModalShare() {
