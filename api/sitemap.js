@@ -14,25 +14,20 @@ module.exports = async (req, res) => {
 
   const urls = articles.map(a => {
     const lastmod = (a.created_at || new Date().toISOString()).slice(0, 10);
-    return `
-  <url>
-    <loc>${SITE}/cikk/${a.id}</loc>
-    <lastmod>${lastmod}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>`;
+    return '\n  <url>\n    <loc>' + SITE + '/cikk/' + a.id + '</loc>\n    <lastmod>' + lastmod + '</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>';
   }).join('');
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${SITE}/</loc>
-    <changefreq>hourly</changefreq>
-    <priority>1.0</priority>
-  </url>${urls}
-</urlset>`;
-
-  res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+  res.setHeader('Content-Type', 'text/xml');
   res.setHeader('Cache-Control', 'no-store');
-  res.status(200).send(xml);
+  res.status(200).send(
+    '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+    '  <url>\n' +
+    '    <loc>' + SITE + '/</loc>\n' +
+    '    <changefreq>hourly</changefreq>\n' +
+    '    <priority>1.0</priority>\n' +
+    '  </url>' +
+    urls +
+    '\n</urlset>'
+  );
 };
