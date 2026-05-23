@@ -5,11 +5,11 @@ const SB_URL = 'https://kqugolmndqonbnjetdyi.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxdWdvbG1uZHFvbmJuamV0ZHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2OTM3NjMsImV4cCI6MjA4ODI2OTc2M30.wGEBEJDPUKsUPu9W5vxvH7Do0wX9U3FdgKzEzny_zBg';
 
 function isBot(ua) {
-  return /googlebot|bingbot|facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|applebot|duckduckbot|yandexbot|baidu|sogou|exabot|facebot|ia_archiver|facebook|instagram|messenger/i.test(ua || '');
+  return /googlebot|bingbot|facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegrambot|slackbot|discordbot|applebot|duckduckbot|yandexbot|baidu|sogou|ia_archiver/i.test(ua || '');
 }
 
 function isWebView(ua) {
-  return /FBAN|FBAV|FB_IAB|FB4A|FBIOS|MessengerForiOS|MessengerForAndroid|Instagram|Line\/|MicroMessenger|TwitterAndroid|TwitteriPhone/i.test(ua || '');
+  return /FBAN|FBAV|FB_IAB|FB4A|FBIOS|MessengerForiOS|MessengerForAndroid|Instagram|MicroMessenger|TwitterAndroid|TwitteriPhone/i.test(ua || '');
 }
 
 const CAT_COLOR = {
@@ -67,12 +67,12 @@ function renderSSRHtml(articles) {
     const ico = CAT_EMOJI[c] || '📰';
     return `
       <a href="https://reason-five.vercel.app/cikk/${art.id}" style="display:block;background:#fff;border:1px solid #e8e4dc;border-radius:12px;overflow:hidden;text-decoration:none;color:inherit;margin-bottom:16px">
-        <div style="height:160px;background:linear-gradient(135deg,${col}22,${col}08);display:flex;align-items:center;justify-content:center;font-size:48px">${ico}</div>
+        <div style="height:140px;background:linear-gradient(135deg,${col}22,${col}08);display:flex;align-items:center;justify-content:center;font-size:44px">${ico}</div>
         <div style="padding:14px 16px">
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${col};margin-bottom:6px">${esc(c)}</div>
           <div style="font-family:Georgia,serif;font-size:17px;font-weight:700;line-height:1.35;color:#1a1814;margin-bottom:8px">${esc(art.title || '')}</div>
           <div style="font-size:12px;color:#706b62;line-height:1.6;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(art.excerpt || '')}</div>
-          <div style="font-size:11px;color:#9e9890">🕐 ${fmtTime(art.created_at)} · ⏱ ${art.read_time || '?'} perc</div>
+          <div style="font-size:11px;color:#9e9890">🕐 ${fmtTime(art.created_at)} · ⏱ ${art.read_time || '?'} perc · ❤️ ${art.like_count || 0} · 💬 ${art.comment_count || 0}</div>
         </div>
       </a>`;
   }).join('');
@@ -89,28 +89,30 @@ function renderSSRHtml(articles) {
 <meta property="og:image" content="https://reason-five.vercel.app/og-default.png">
 <meta property="og:url" content="https://reason-five.vercel.app/">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="hu_HU">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #f8f7f4; font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; }
-.header { background: #fff; border-bottom: 1px solid #e8e4dc; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
-.logo { font-family: Georgia, serif; font-size: 28px; font-weight: 900; color: #1a1814; letter-spacing: -1px; }
-.logo span { color: #c8102e; }
-.open-btn { background: #c8102e; color: #fff; border: none; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; }
-.container { max-width: 640px; margin: 0 auto; padding: 20px 16px 60px; }
-.banner { background: #fff3f3; border: 1px solid #c8102e33; border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; font-size: 13px; color: #c8102e; font-weight: 600; text-align: center; }
-.section-title { font-family: Georgia, serif; font-size: 22px; font-weight: 900; color: #1a1814; margin-bottom: 16px; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f8f7f4;font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:#1a1814}
+.header{background:#fff;border-bottom:1px solid #e8e4dc;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{font-family:Georgia,serif;font-size:28px;font-weight:900;color:#1a1814;letter-spacing:-1px}
+.logo span{color:#c8102e}
+.open-btn{background:#c8102e;color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
+.container{max-width:640px;margin:0 auto;padding:20px 16px 80px}
+.banner{background:#fff3f3;border:1px solid #c8102e44;border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:#c8102e;font-weight:600;text-align:center;line-height:1.5}
+.section-title{font-family:Georgia,serif;font-size:22px;font-weight:900;color:#1a1814;margin-bottom:16px}
+.footer{text-align:center;margin-top:32px}
 </style>
 </head>
 <body>
 <div class="header">
   <div class="logo">RE<span>A</span>SON</div>
-  <a href="https://reason-five.vercel.app/" class="open-btn">Megnyitás →</a>
+  <a href="https://reason-five.vercel.app/" class="open-btn">Teljes oldal →</a>
 </div>
 <div class="container">
-  <div class="banner">📱 A teljes élményért nyisd meg böngészőben!</div>
-  <div class="section-title">Legfrissebb cikkek</div>
+  <div class="banner">📱 A teljes élményért nyisd meg böngészőben!<br><a href="https://reason-five.vercel.app/" style="color:#c8102e;font-weight:700">reason-five.vercel.app</a></div>
+  <div class="section-title">⚡ Legfrissebb cikkek</div>
   ${cards}
-  <div style="text-align:center;margin-top:24px">
+  <div class="footer">
     <a href="https://reason-five.vercel.app/" class="open-btn" style="font-size:14px;padding:14px 32px">Összes cikk megtekintése →</a>
   </div>
 </div>
@@ -118,18 +120,35 @@ body { background: #f8f7f4; font-family: -apple-system, BlinkMacSystemFont, 'Int
 </html>`;
 }
 
+function getFullHtml() {
+  try {
+    return readFileSync(join(process.cwd(), 'index.html'), 'utf8');
+  } catch {
+    // Ha a readFileSync nem megy Vercelen, redirect az index.html-re
+    return null;
+  }
+}
+
 export default async function handler(req, res) {
   const ua = req.headers['user-agent'] || '';
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=30');
+  res.setHeader('Access-Control-Allow-Origin', '*');
 
+  // Bot vagy WebView (Messenger, Instagram, Facebook app)
   if (isBot(ua) || isWebView(ua)) {
     const articles = await fetchArticles();
     return res.status(200).send(renderSSRHtml(articles));
   }
 
-  // Normál böngésző – index.html
-  const html = readFileSync(join(process.cwd(), 'index.html'), 'utf8');
-  return res.status(200).send(html);
+  // Normál böngésző
+  const html = getFullHtml();
+  if (html) {
+    return res.status(200).send(html);
+  }
+
+  // Fallback ha readFileSync nem megy
+  res.setHeader('Location', '/index.html');
+  return res.status(302).send('');
 }
