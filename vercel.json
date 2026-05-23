@@ -1,23 +1,18 @@
 {
   "functions": {
-    "api/sitemap.js": {
-      "maxDuration": 30
-    },
-    "api/news-sitemap.js": {
-      "maxDuration": 30
-    },
-    "api/cikk.js": {
-      "maxDuration": 30
-    }
+    "api/sitemap.js":      { "maxDuration": 30 },
+    "api/news-sitemap.js": { "maxDuration": 30 },
+    "api/cikk.js":         { "maxDuration": 30 },
+    "api/indexnow.js":     { "maxDuration": 30 }
   },
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "x-robots-tag", "value": "index, follow" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+        { "key": "x-robots-tag",             "value": "index, follow" },
+        { "key": "X-Content-Type-Options",   "value": "nosniff" },
+        { "key": "X-Frame-Options",          "value": "SAMEORIGIN" },
+        { "key": "Cache-Control",            "value": "no-cache, no-store, must-revalidate" }
       ]
     },
     {
@@ -33,8 +28,6 @@
     { "source": "/robots.txt",       "destination": "/api/robots" },
     { "source": "/news-sitemap.xml", "destination": "/api/news-sitemap" },
     { "source": "/llms.txt",         "destination": "/api/llms" },
-    { "source": "/cikk/:id",         "destination": "/api/cikk?id=:id" },
-    { "source": "/api/like",         "destination": "/pages/api/like.js" },
-    { "source": "/api/indexnow",     "destination": "/pages/api/indexnow.js" }
+    { "source": "/cikk/:id",         "destination": "/api/cikk?id=:id" }
   ]
 }
