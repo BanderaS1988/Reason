@@ -1,0 +1,3570 @@
+
+<!DOCTYPE html>
+<html lang="hu" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://kqugolmndqonbnjetdyi.supabase.co">
+<link rel="preconnect" href="https://api.openweathermap.org">
+<title>REASON – Friss Hírek</title>
+<meta name="description" content="REASON – Gyors. Forrásalapú. Automatizált.">
+  <meta name="msvalidate.01" content="62C27298236CF1E899A59ADCC2EF0083" />
+<meta property="og:site_name" content="REASON">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://reason-five.vercel.app/">
+<meta property="og:title" content="REASON – Friss Hírek">
+<meta property="og:description" content="Gyors. Forrásalapú. Automatizált.">
+<meta property="og:image" content="https://reason-five.vercel.app/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="hu_HU">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="REASON – Friss Hírek">
+<meta name="twitter:description" content="Gyors. Forrásalapú. Automatizált.">
+<meta name="twitter:image" content="https://reason-five.vercel.app/og-default.png">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7856205120757314" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+:root{
+  --bg:#f8f7f4;--bg2:#ffffff;--bg3:#f2f0ec;
+  --surface:#ffffff;--border:#e8e4dc;--border2:#d4cfc4;
+  --text:#1a1814;--text2:#3d3a35;--text3:#706b62;--text4:#9e9890;
+  --accent:#c8102e;--accent2:#e8152f;
+  --gold:#b8860b;--cyan:#0066cc;--green:#1a7a3c;--purple:#7c3aed;
+  --tag-bg:#f0ede6;--tag-text:#5a5650;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.05);
+  --shadow2:0 2px 8px rgba(0,0,0,.12),0 8px 24px rgba(0,0,0,.08);
+  --font-d:'Playfair Display',Georgia,serif;
+  --font-s:'Inter',system-ui,sans-serif;
+  --font-m:'JetBrains Mono',monospace;
+  --modal-font-size:18px;
+}
+[data-theme="dark"]{
+  --bg:#0f0e0c;--bg2:#1a1814;--bg3:#242018;
+  --surface:#1a1814;--border:#2e2a24;--border2:#3d3830;
+  --text:#f0ede6;--text2:#c8c4bc;--text3:#9e9890;--text4:#706b62;
+  --tag-bg:#242018;--tag-text:#9e9890;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:15px;line-height:1.6;min-height:100vh}
+.logo-a{color:var(--accent);display:inline-block;animation:pulse-a 3s ease-in-out infinite}
+@keyframes pulse-a{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.logo-a.spin{animation:spin-a .6s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes spin-a{0%{transform:rotateY(0deg)}100%{transform:rotateY(360deg)}}
+  .ticker-wrap,
+.site-header {
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+.ticker-wrap{background:var(--accent);color:#fff;overflow:hidden;height:34px;display:flex;align-items:center;position:sticky;top:0;z-index:200}
+.ticker-label{background:rgba(0,0,0,.25);padding:0 14px;height:100%;display:flex;align-items:center;font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
+.ticker-scroll{flex:1;overflow:hidden;position:relative;height:100%}
+.ticker-inner{display:flex;animation:ticker 40s linear infinite;white-space:nowrap;align-items:center;height:34px;will-change:transform}
+.ticker-inner:hover{animation-play-state:paused}
+.ticker-item{padding:0 28px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px}
+.ticker-sep{opacity:.4;margin:0 4px}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.site-header{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:34px;z-index:190;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:14px 28px 12px;max-width:1400px;margin:0 auto;gap:16px;flex-wrap:wrap}
+.logo{font-family:var(--font-d);font-size:34px;font-weight:900;color:var(--text);letter-spacing:-1.5px;line-height:1;cursor:pointer;user-select:none}
+.logo-tagline{font-size:10px;color:var(--text4);letter-spacing:.18em;text-transform:uppercase;margin-top:2px}
+.header-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.clock-block{text-align:right}
+#clock-display{font-family:var(--font-m);font-size:16px;font-weight:600;color:var(--text);letter-spacing:.05em;line-height:1}
+#date-display{font-size:10px;color:var(--text4);margin-top:2px;letter-spacing:.02em}
+.weather-widget{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--bg3);border-radius:10px;border:1px solid var(--border);cursor:default;transition:.2s}
+.weather-widget:hover{border-color:var(--border2)}
+.main-nav{border-top:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.main-nav::-webkit-scrollbar{display:none}
+.nav-inner{display:flex;padding:0 28px;max-width:1400px;margin:0 auto}
+.nav-item{padding:10px 16px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:.15s;user-select:none}
+.nav-item:hover{color:var(--text)}
+.nav-item.active{color:var(--accent);border-bottom-color:var(--accent)}
+.nav-count{display:inline-block;background:var(--accent);color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:10px;margin-left:4px;vertical-align:middle;min-width:16px;text-align:center}
+.page-wrap{max-width:1400px;margin:0 auto;padding:28px 28px 80px}
+.main-layout{display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start}
+@media(max-width:1000px){.main-layout{grid-template-columns:1fr}}
+.status-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;margin-bottom:20px;border-bottom:1px solid var(--border)}
+.status-left{display:flex;align-items:center;gap:12px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse-dot 2s infinite;flex-shrink:0}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+@keyframes pulse-checkbox{0%,100%{outline-color:var(--accent);outline-width:2px}50%{outline-color:transparent;outline-width:3px}}
+.status-text{font-size:12px;color:var(--text3)}
+.refresh-btn{font-size:11px;color:var(--cyan);cursor:pointer;padding:4px 10px;border:1px solid var(--cyan);border-radius:5px;background:transparent;font-family:var(--font-s);transition:.15s}
+.refresh-btn:hover{background:var(--cyan);color:#fff}
+.featured-section{margin-bottom:32px}
+.section-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text4);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.featured-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:.2s;display:grid;grid-template-columns:280px 1fr}
+.featured-card:hover{box-shadow:var(--shadow2);border-color:var(--border2)}
+.featured-img{display:flex;align-items:center;justify-content:center;font-size:64px;opacity:.18;min-height:240px}
+.featured-content{padding:28px 30px;display:flex;flex-direction:column}
+.featured-cat{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+.featured-title{font-family:var(--font-d);font-size:24px;font-weight:800;line-height:1.3;color:var(--text);margin-bottom:12px;flex:1}
+.featured-excerpt{font-size:13px;color:var(--text3);line-height:1.65;margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.featured-foot{display:flex;align-items:center;gap:14px;font-size:11px;color:var(--text4)}
+.top-strip{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap}
+.strip-left{display:flex;align-items:baseline;gap:10px}
+.strip-title{font-family:var(--font-d);font-size:26px;font-weight:900;color:var(--text)}
+.strip-count{font-size:11px;color:var(--text4);font-family:var(--font-m);background:var(--tag-bg);padding:2px 8px;border-radius:10px}
+.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sort-select{padding:5px 10px;border:1px solid var(--border);border-radius:6px;background:var(--surface);font-size:11px;color:var(--text2);font-family:var(--font-s);cursor:pointer;outline:none}
+.view-toggle{display:flex;gap:3px}
+.view-btn{width:30px;height:30px;border-radius:5px;border:1px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:13px;transition:.15s}
+.view-btn.active{background:var(--text);color:#fff;border-color:var(--text)}
+.search-wrap{position:relative;margin-bottom:20px}
+.search-input{width:100%;padding:10px 16px 10px 38px;border:1px solid var(--border2);border-radius:8px;background:var(--surface);font-size:13px;font-family:var(--font-s);color:var(--text);outline:none;transition:.2s}
+.search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(200,16,46,.08)}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text4);pointer-events:none}
+.search-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:var(--text4);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1}
+.search-clear.visible{display:flex}
+.articles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px}
+.articles-grid.list-view{grid-template-columns:1fr;gap:10px}
+.article-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:.2s;display:flex;flex-direction:column;text-decoration:none;color:inherit}
+.article-card:hover{box-shadow:var(--shadow2);border-color:var(--border2);transform:translateY(-2px)}
+.articles-grid.list-view .article-card{flex-direction:row;border-radius:8px;min-height:auto}
+.articles-grid.list-view .article-card:hover{transform:none;box-shadow:var(--shadow)}
+.card-img{height:190px;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0}
+.articles-grid.list-view .card-img{width:160px;height:auto;min-height:100px}
+.card-img-emoji{font-size:40px;opacity:.18}
+.card-img-badge{position:absolute;bottom:8px;left:8px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:rgba(255,255,255,.88);color:var(--text2);backdrop-filter:blur(4px)}
+.card-premium-ribbon{position:absolute;top:8px;right:8px;background:#f0c040;color:#5a3e00;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:.06em}
+.card-body{padding:15px 16px;flex:1;display:flex;flex-direction:column}
+.card-meta{display:flex;align-items:center;gap:7px;margin-bottom:7px;flex-wrap:wrap}
+.card-cat{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.card-sep{width:3px;height:3px;border-radius:50%;background:var(--border2);flex-shrink:0}
+.card-time{font-size:10px;color:var(--text4);font-family:var(--font-m)}
+.card-title{font-family:var(--font-d);font-size:17px;font-weight:700;line-height:1.35;color:var(--text);margin-bottom:8px;flex:1}
+.articles-grid.list-view .card-title{font-size:14px;margin-bottom:4px}
+.card-excerpt{font-size:12px;color:var(--text3);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:10px}
+.articles-grid.list-view .card-excerpt{-webkit-line-clamp:1;margin-bottom:4px}
+.card-foot{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border);margin-top:auto;font-size:10px;color:var(--text4)}
+.card-readtime{display:flex;align-items:center;gap:3px}
+.hl{background:#fff3b0;border-radius:2px;padding:0 1px}
+.empty-state{text-align:center;padding:100px 24px;color:var(--text4)}
+.empty-icon{font-size:60px;margin-bottom:18px;opacity:.25;display:block}
+.empty-title{font-family:var(--font-d);font-size:24px;color:var(--text3);margin-bottom:10px}
+.empty-sub{font-size:13px;line-height:1.8;max-width:400px;margin:0 auto}
+.load-more-wrap{text-align:center;margin-top:40px}
+.load-more-btn{padding:13px 36px;background:var(--text);color:#fff;border:none;border-radius:8px;font-family:var(--font-s);font-size:13px;font-weight:600;cursor:pointer;transition:.2s;letter-spacing:.04em}
+.load-more-btn:hover{background:var(--accent)}
+.load-more-btn:disabled{opacity:.35;cursor:not-allowed}
+.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(20,18,14,.72);backdrop-filter:blur(8px);display:flex;align-items:flex-start;justify-content:center;padding:48px 20px 40px;opacity:0;pointer-events:none;transition:opacity .3s;overflow-y:auto;max-height:100vh}
+.modal-overlay.open{opacity:1;pointer-events:auto}
+.article-modal{background:var(--bg2);border-radius:18px;width:100%;max-width:800px;box-shadow:0 32px 100px rgba(0,0,0,.25);overflow-y:auto;max-height:90vh;transform:scale(.97) translateY(16px);transition:transform .35s cubic-bezier(.4,0,.2,1);position:relative;flex-shrink:0}
+.modal-overlay.open .article-modal{transform:scale(1) translateY(0)}
+.modal-header{padding:32px 44px 22px;border-bottom:1px solid var(--border);background:var(--bg2)}
+.modal-cat-bar{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.modal-cat{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.modal-type-badge{font-size:9px;padding:2px 8px;border-radius:3px;background:var(--tag-bg);color:var(--tag-text)}
+.modal-premium{background:#fff8e6;border:1px solid #f0c040;color:#8a6800;font-size:9px;font-weight:700;padding:2px 8px;border-radius:3px}
+.modal-title{font-family:var(--font-d);font-size:32px;font-weight:800;line-height:1.22;color:var(--text);margin-bottom:16px}
+.modal-meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--text4)}
+.modal-body{padding:36px 44px 28px;font-family:var(--font-d);font-size:var(--modal-font-size);line-height:2.05;color:var(--text2)}
+.modal-body p{margin-bottom:22px;text-align:justify}
+.modal-body p:first-child::first-letter{font-size:3.5em;font-weight:700;float:left;margin:0 8px -8px 0;line-height:.78;color:var(--accent);font-family:var(--font-d)}
+.modal-body h2{font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--text);margin:40px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.modal-close{position:absolute;top:18px;right:18px;width:38px;height:38px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--text3);transition:.15s;z-index:10}
+.modal-close:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.modal-toolbar{display:flex;align-items:center;gap:8px;padding:10px 44px;background:var(--bg3);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.modal-toolbar-label{font-size:10px;color:var(--text4);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-right:2px}
+.modal-tool-btn{width:32px;height:32px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;font-family:var(--font-s)}
+.modal-tool-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.modal-font-size-display{font-size:11px;color:var(--text3);font-family:var(--font-m);min-width:32px;text-align:center}
+.modal-toolbar-sep{width:1px;height:20px;background:var(--border);margin:0 4px}
+.theme-btn{padding:6px 12px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:.15s;font-family:var(--font-s);display:flex;align-items:center;gap:5px}
+.theme-btn:hover{border-color:var(--border2);background:var(--bg3)}
+.theme-btn.active{background:var(--text);color:#fff;border-color:var(--text)}
+.sidebar{display:flex;flex-direction:column;gap:20px;position:sticky;top:110px}
+.s-widget{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;overflow:hidden}
+.s-title{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text4);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.stat-row:last-child{border-bottom:none}
+.stat-val{font-weight:700;color:var(--text);font-family:var(--font-m);font-size:14px}
+.cat-row{display:flex;align-items:center;gap:8px;padding:7px 0;cursor:pointer;border-bottom:1px solid var(--border);transition:.15s}
+.cat-row:last-child{border-bottom:none}
+.cat-row:hover .cat-name{color:var(--accent)}
+.cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cat-name{font-size:12px;font-weight:500;color:var(--text2);flex:1;transition:.15s}
+.cat-count{font-size:11px;color:var(--text4);font-family:var(--font-m);background:var(--bg3);padding:1px 7px;border-radius:10px}
+.forecast-grid{display:flex;gap:5px;margin-top:4px}
+.fc-day{flex:1;text-align:center;padding:8px 4px;background:var(--bg3);border-radius:7px;border:1px solid var(--border)}
+.fc-name{font-size:8px;color:var(--text4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.fc-ico{font-size:18px;line-height:1;margin-bottom:3px}
+.fc-temp{font-size:12px;font-weight:700;color:var(--text);font-family:var(--font-m)}
+.weather-main{display:flex;align-items:center;gap:12px;padding:10px 0;margin-bottom:8px;border-bottom:1px solid var(--border)}
+.weather-big-temp{font-size:32px;font-weight:700;font-family:var(--font-m);color:var(--text)}
+.weather-big-icon{font-size:36px}
+.weather-details{font-size:11px;color:var(--text3);line-height:1.8}
+#space3dWidget{background:#000;border:1px solid var(--border);border-radius:12px;overflow:hidden;position:relative;width:100%;height:260px;transition:border-radius .45s cubic-bezier(.4,0,.2,1),box-shadow .45s cubic-bezier(.4,0,.2,1)}
+#space3dWidget.expanded{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(92vw,860px);height:min(88vh,600px);z-index:700;border-radius:20px;box-shadow:0 40px 120px rgba(0,0,0,.45)}
+#space3dCanvas{width:100%;height:100%;display:block}
+#space3dLabel{position:absolute;bottom:12px;left:16px;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.55);pointer-events:none;font-family:var(--font-s)}
+#space3dExpandBtn{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;backdrop-filter:blur(4px);z-index:5}
+#space3dExpandBtn:hover{background:rgba(255,255,255,.25)}
+#space3dOverlay{position:fixed;inset:0;z-index:699;opacity:0;pointer-events:none;transition:opacity .4s}
+#space3dOverlay.visible{opacity:1;pointer-events:none}
+#ttsReaderPanel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+#ttsReaderPanel .tts-title{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text4);padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+#ttsReaderPanel .tts-queue{font-size:11px;color:var(--text3);min-height:20px;max-height:80px;overflow-y:auto;line-height:1.6}
+#ttsReaderPanel .tts-queue span{display:block;padding:2px 0;border-bottom:1px solid var(--border)}
+#ttsReaderPanel .tts-queue span:last-child{border-bottom:none}
+#ttsReaderPanel .tts-queue .tts-active-item{color:var(--accent);font-weight:600}
+#ttsReaderPanel .tts-sliders{display:flex;flex-direction:column;gap:7px}
+#ttsReaderPanel .tts-srow{display:flex;align-items:center;gap:8px}
+#ttsReaderPanel .tts-srow label{font-size:11px;color:var(--text3);width:80px;flex-shrink:0}
+#ttsReaderPanel .tts-srow input[type=range]{flex:1;accent-color:var(--accent);height:3px;cursor:pointer}
+#ttsReaderPanel .tts-srow span{font-size:11px;color:var(--text2);width:36px;text-align:left;font-family:var(--font-m)}
+#ttsReaderPanel .tts-btns{display:flex;gap:8px}
+#ttsReaderPanel .tts-btn-play{flex:1;padding:9px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-s);transition:.15s}
+#ttsReaderPanel .tts-btn-play:hover{background:var(--accent2)}
+#ttsReaderPanel .tts-btn-play:disabled{opacity:.4;cursor:not-allowed}
+#ttsReaderPanel .tts-btn-stop{padding:9px 14px;background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-s);transition:.15s}
+#ttsReaderPanel .tts-btn-stop:hover{background:var(--text);color:#fff}
+#ttsReaderPanel .tts-status{font-size:10px;color:var(--text4);text-align:center;min-height:14px}
+.auth-overlay{position:fixed;inset:0;z-index:600;background:rgba(20,18,14,.8);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}
+.auth-overlay.open{opacity:1;pointer-events:auto}
+.auth-box{background:var(--bg2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:420px;padding:36px 40px;position:relative;box-shadow:0 32px 100px rgba(0,0,0,.3)}
+.auth-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--text3);transition:.15s}
+.auth-close:hover{background:var(--accent);color:#fff}
+.auth-logo{font-family:var(--font-d);font-size:28px;font-weight:900;color:var(--text);letter-spacing:-1px;margin-bottom:4px}
+.auth-logo span{color:var(--accent)}
+.auth-tabs{display:flex;gap:0;margin-bottom:24px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.auth-tab{flex:1;padding:9px;text-align:center;font-size:12px;font-weight:700;cursor:pointer;background:transparent;border:none;color:var(--text3);font-family:var(--font-s);transition:.15s}
+.auth-tab.active{background:var(--text);color:#fff}
+.auth-field{margin-bottom:14px}
+.auth-field label{display:block;font-size:11px;font-weight:600;color:var(--text3);margin-bottom:5px;letter-spacing:.04em}
+.auth-field input{width:100%;padding:10px 13px;border:1px solid var(--border2);border-radius:7px;background:var(--bg3);font-size:13px;font-family:var(--font-s);color:var(--text);outline:none;transition:.2s;box-sizing:border-box}
+.auth-field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(200,16,46,.08)}
+.auth-submit{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-s);transition:.2s;margin-top:6px;letter-spacing:.04em}
+.auth-submit:hover{background:var(--accent2)}
+.auth-submit:disabled{opacity:.5;cursor:not-allowed}
+.auth-msg{font-size:11px;margin-top:10px;text-align:center;min-height:16px}
+.auth-msg.err{color:var(--accent)}
+.auth-msg.ok{color:var(--green)}
+.gdpr-note{font-size:10px;color:var(--text4);line-height:1.6;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);text-align:center}
+.gdpr-note a{color:var(--cyan);text-decoration:none}
+.support-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;background:linear-gradient(135deg,#f0c040,#e8a800);color:#5a3e00;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-s);transition:.2s;letter-spacing:.03em;white-space:nowrap}
+.support-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(232,168,0,.3)}
+.support-banner{background:linear-gradient(135deg,#1a1814,#2a2520);border:1px solid #f0c04030;border-radius:12px;padding:20px 24px;margin-top:20px;text-align:center}
+.support-banner h3{font-family:var(--font-d);font-size:18px;color:#f0c040;margin-bottom:6px}
+.support-banner p{font-size:12px;color:var(--text3);margin-bottom:14px;line-height:1.6}
+.user-menu-wrap{position:relative}
+.user-btn{display:flex;align-items:center;gap:8px;padding:7px 13px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text);transition:.2s}
+.user-btn:hover{border-color:var(--border2)}
+.user-avatar{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.user-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:6px;min-width:160px;box-shadow:var(--shadow2);z-index:300;display:none}
+.user-dropdown.open{display:block}
+.user-dd-item{padding:8px 12px;font-size:12px;color:var(--text2);cursor:pointer;border-radius:6px;transition:.15s}
+.user-dd-item:hover{background:var(--bg3);color:var(--text)}
+.user-dd-item.danger{color:var(--accent)}
+.gdpr-banner{position:fixed;bottom:0;left:0;right:0;z-index:800;background:var(--text);color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:12px;line-height:1.5}
+.gdpr-banner a{color:#f0c040;text-decoration:none}
+.gdpr-accept{padding:8px 20px;background:#f0c040;color:#1a1814;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-s);white-space:nowrap}
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:7px;pointer-events:none}
+.toast{padding:11px 16px;background:var(--text);color:#fff;border-radius:9px;font-size:12px;font-weight:500;box-shadow:var(--shadow2);animation:toastIn .3s ease;display:flex;align-items:center;gap:8px;pointer-events:auto;max-width:280px}
+.toast.success{background:var(--green)}
+.toast.warn{background:#b86000}
+.toast.info{background:var(--cyan)}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.comment-count-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--text3);font-family:var(--font-m);background:var(--tag-bg);padding:2px 8px;border-radius:10px;margin-left:6px}
+  @keyframes btn-flash {
+  0%,100% { background:transparent; color:#1a7a3c; border-color:#1a7a3c; }
+  50% { background:#1a7a3c; color:#fff; border-color:#1a7a3c; }
+}
+.refresh-btn.flashing {
+  animation: btn-flash 1.8s ease-in-out infinite;
+  border-color:#1a7a3c;
+  color:#1a7a3c;
+}
+/* ═══════════════════════════════════════════
+   MOBIL – fő breakpointok
+═══════════════════════════════════════════ */
+
+/* ── Tablet (max 1000px) ── */
+@media(max-width:1000px){
+  .main-layout{ grid-template-columns:1fr }
+  .sidebar{ position:static; top:auto }
+}
+
+/* ── Mobil (max 700px) ── */
+@media(max-width:700px){
+
+  /* HEADER */
+  .header-top{
+    padding:10px 12px;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .logo{ font-size:26px }
+  .logo-tagline{ display:none }          /* helytakarékos */
+  .header-right{
+    gap:8px;
+    flex-wrap:nowrap;
+    width:100%;
+    justify-content:space-between;
+  }
+  #authBtnWrap button{ padding:6px 10px; font-size:11px }
+  .weather-widget{ padding:5px 8px; gap:6px }
+  .weather-widget #hWeatherTemp{ font-size:16px }
+  .weather-widget #hWeatherDesc{ display:none }  /* kevés hely */
+  #clock-display{ font-size:13px }
+  #date-display{ font-size:9px }
+
+  /* NAV */
+  .nav-inner{ padding:0 8px; gap:0 }
+  .nav-item{ padding:8px 10px; font-size:10px }
+
+  /* PAGE */
+  .page-wrap{ padding:12px 10px 70px }
+
+  /* FEATURED CARD */
+  .featured-card{
+    grid-template-columns:1fr;
+    border-radius:10px;
+  }
+  .featured-img{ min-height:120px; font-size:40px }
+  .featured-content{ padding:14px 16px }
+  .featured-title{ font-size:18px }
+
+  /* CIKK GRID */
+  .articles-grid{ grid-template-columns:1fr; gap:14px }
+  .articles-grid.list-view .article-card{ flex-direction:column }
+  .articles-grid.list-view .card-img{
+    width:100%; height:140px; min-height:unset
+  }
+  .card-img{ height:160px }
+  .card-title{ font-size:15px }
+  .card-body{ padding:12px 13px }
+
+  /* STATUS BAR */
+  .status-bar{ flex-wrap:wrap; gap:6px }
+  .strip-title{ font-size:20px }
+
+  /* TOP STRIP */
+  .top-strip{ flex-wrap:wrap; gap:8px }
+  .controls{ gap:6px }
+
+  /* MODAL */
+  .modal-overlay{ padding:0; align-items:flex-end }
+  .article-modal{
+    border-radius:18px 18px 0 0;
+    max-height:95vh;
+    width:100%;
+  }
+  .modal-header{ padding:18px 16px 14px }
+  .modal-title{ font-size:20px; line-height:1.25 }
+  .modal-toolbar{ padding:8px 16px; gap:6px; flex-wrap:wrap }
+  .modal-body{ padding:16px 16px 20px; font-size:15px !important }
+  .modal-body p:first-child::first-letter{ font-size:2.8em }
+  #modalActionBar{ padding:0 16px 20px !important }
+  #modalCommentsSection{ padding:0 16px 36px !important }
+  .modal-close{ top:12px; right:12px; width:34px; height:34px }
+
+  /* SIDEBAR WIDGETEK mobilon */
+  #space3dWidget{ height:200px }
+  .s-widget{ border-radius:10px }
+  .forecast-grid{ gap:3px }
+  .fc-day{ padding:6px 2px }
+
+  /* TTS PANEL */
+  #ttsReaderPanel .tts-srow label{ width:65px; font-size:10px }
+
+  /* TICKER */
+  .ticker-label{ display:none }   /* felirat mobilon helyet foglal */
+  .ticker-item{ font-size:11px; padding:0 16px }
+
+  /* TOAST */
+  .toast-wrap{ bottom:16px; right:12px; left:12px }
+  .toast{ max-width:100% }
+
+  /* GDPR banner */
+  .gdpr-banner{ padding:10px 14px; font-size:11px }
+
+  /* FOOTER */
+  footer{ font-size:10px }
+}
+
+/* ── Kis mobil (max 400px) ── */
+@media(max-width:400px){
+  .logo{ font-size:22px }
+  .weather-widget{ display:none }   /* nagyon kis képernyőn elrejtjük */
+  .header-right{ justify-content:flex-end }
+  .modal-title{ font-size:18px }
+  .card-title{ font-size:14px }
+}
+
+
+#ttsProgressBar{
+  display:none;
+  flex-direction:column;
+  gap:6px;
+  padding:10px 16px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:10px;
+  margin-top:8px;
+}
+#ttsProgressBar.visible{display:flex}
+#ttsProgressTrack{
+  position:relative;
+  height:6px;
+  background:var(--border2);
+  border-radius:3px;
+  cursor:pointer;
+}
+#ttsProgressFill{
+  height:100%;
+  background:var(--accent);
+  border-radius:3px;
+  width:0%;
+  pointer-events:none;
+  transition:width .1s linear;
+}
+#ttsProgressHandle{
+  position:absolute;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:14px;height:14px;
+  background:#fff;
+  border:2px solid var(--accent);
+  border-radius:50%;
+  left:0%;
+  cursor:grab;
+  transition:left .1s linear;
+}
+#ttsProgressHandle:active{cursor:grabbing}
+#ttsProgressMeta{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:10px;
+  color:var(--text4);
+  font-family:var(--font-m);
+}
+#ttsProgressSkip{
+  display:flex;
+  gap:6px;
+}
+#ttsProgressSkip button{
+  padding:3px 10px;
+  border:1px solid var(--border);
+  border-radius:5px;
+  background:var(--surface);
+  color:var(--text2);
+  font-size:11px;
+  cursor:pointer;
+  font-family:var(--font-s);
+  transition:.15s;
+}
+#ttsProgressSkip button:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+  
+</style>
+</head>
+<body>
+
+<div class="ticker-wrap">
+  <div class="ticker-label">⚡ ÉLŐBEN</div>
+  <div class="ticker-scroll">
+    <div class="ticker-inner" id="tickerInner">
+      <span class="ticker-item">REASON – Friss hírek · Valós idejű frissítés</span><span class="ticker-sep">·</span>
+      <span class="ticker-item">Cikkek betöltése folyamatban...</span><span class="ticker-sep">·</span>
+      <span class="ticker-item">REASON – Friss hírek · Valós idejű frissítés</span><span class="ticker-sep">·</span>
+      <span class="ticker-item">Cikkek betöltése folyamatban...</span><span class="ticker-sep">·</span>
+    </div>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="header-top">
+    <div>
+      <div class="logo" onclick="filterByCat('all')">RE<span class="logo-a" id="logoA">A</span>SON</div>
+      <div class="logo-tagline">Hírek · Gyorsan · Érthetően</div>
+    </div>
+    <div class="header-right">
+      <button id="themeToggle" onclick="toggleTheme()" style="width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">🌙</button>
+      <button onclick="openBookmarks()" title="Mentett cikkek" id="bookmarkNavBtn" style="width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative">🔖<span id="bookmarkNavCount" style="position:absolute;top:-5px;right:-5px;background:var(--accent);color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:10px;display:none">0</span></button>
+      <div class="clock-block">
+        <div id="clock-display">00:00:00</div>
+        <div id="date-display">–</div>
+      </div>
+      
+      <div class="weather-widget" id="headerWeather">
+        <div id="hWeatherIcon" style="font-size:22px">🌤</div>
+        <div>
+          <div style="display:flex;align-items:baseline;gap:6px">
+            <span id="hWeatherTemp" style="font-size:20px;font-weight:700;font-family:var(--font-m)">–°C</span>
+            <span style="font-size:11px;color:var(--text3)" id="hWeatherDesc">Helymeghatározás...</span>
+          </div>
+          <div style="font-size:10px;color:var(--text4)" id="hWeatherLoc">–</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nav class="main-nav">
+    <div class="nav-inner" id="mainNav">
+      
+      <div class="nav-item active" data-cat="all">📰 Összes <span class="nav-count" id="nc-all">0</span></div>
+      <div class="nav-item" data-cat="Mesterséges Intelligencia és Technológia">🤖 MI &amp; Tech <span class="nav-count" id="nc-tech">0</span></div>
+<div class="nav-item" data-cat="Klímaváltozás és Fenntarthatóság">🌍 Klíma <span class="nav-count" id="nc-klima">0</span></div>
+<div class="nav-item" data-cat="Mentális Egészség és Önismeret">🧠 Mentális Egészség <span class="nav-count" id="nc-mental">0</span></div>
+<div class="nav-item" data-cat="Világgazdaság és Pénzügyek">💰 Gazdaság <span class="nav-count" id="nc-gazd">0</span></div>
+<div class="nav-item" data-cat="Űrkutatás és Asztrofizika">🚀 Űrkutatás <span class="nav-count" id="nc-ur">0</span></div>
+<div class="nav-item" data-cat="Orvostudomány és Élethosszabbítás">🩺 Orvostudomány <span class="nav-count" id="nc-orv">0</span></div>
+<div class="nav-item" data-cat="Filozófia és az Élet Értelme">💡 Filozófia <span class="nav-count" id="nc-fil">0</span></div>
+<div class="nav-item" data-cat="Oktatás és a Tudás Jövője">📚 Oktatás <span class="nav-count" id="nc-okt">0</span></div>
+    </div>
+  </nav>
+</header>
+
+<div style="margin:16px auto 0;max-width:1400px;padding:0 28px;min-height:0">
+  <ins class="adsbygoogle" style="display:block;min-height:0" data-ad-client="ca-pub-7856205120757314" data-ad-slot="4427813320" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+
+
+
+<!-- SUPPORT MODAL -->
+<div class="auth-overlay" id="supportModal">
+  <div class="auth-box">
+    <div class="auth-close" onclick="closeSupport()">✕</div>
+    <div style="text-align:center;padding:10px 0">
+      <div style="font-size:40px;margin-bottom:12px">❤️</div>
+      <div class="auth-logo" style="text-align:center">Támogasd a <span>REASON</span>-t</div>
+      <p style="font-size:13px;color:var(--text3);margin:12px 0 24px;line-height:1.7">A REASON egy hírportál. Támogatásával segít fenntartani és fejleszteni a portált.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+        <button class="support-btn" style="width:100%;justify-content:center;font-size:14px;padding:12px" onclick="doSupport(500)">☕ 500 Ft – Egy kávé</button>
+        <button class="support-btn" style="width:100%;justify-content:center;font-size:14px;padding:12px" onclick="doSupport(1000)">🍕 1 000 Ft – Egy szelet pizza</button>
+        <button class="support-btn" style="width:100%;justify-content:center;font-size:14px;padding:12px" onclick="doSupport(3000)">🏆 3 000 Ft – Havi támogató</button>
+      </div>
+
+      <div class="auth-msg" id="supportMsg"></div>
+      <div class="gdpr-note">A Stripe biztonságos fizetési rendszerén keresztül.</div>
+    </div>
+  </div>
+</div>
+
+<div class="gdpr-banner" id="gdprBanner" style="display:none">
+  <span>🍪 Ez az oldal sütiket és localStorage-t használ. <a href="/adatkezeles">Adatkezelési tájékoztató</a></span>
+  <button class="gdpr-accept" onclick="acceptGDPR()">Elfogadom</button>
+</div>
+
+<!-- ARTICLE MODAL -->
+<div class="modal-overlay" id="articleModal">
+  <div class="article-modal" id="articleModalBox">
+    <div id="modalReadProgress" style="position:sticky;top:0;left:0;width:100%;height:3px;background:var(--border);z-index:20">
+  <div id="modalReadFill" style="height:100%;width:0%;background:var(--accent);transition:width .1s linear;border-radius:0 2px 2px 0"></div>
+</div>
+    <div class="modal-close" id="modalClose">✕</div>
+<div id="modalBookmark" onclick="toggleBookmark()" title="Mentés" style="position:absolute;top:18px;right:58px;width:38px;height:38px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--text3);transition:.15s;z-index:10">🔖</div>
+    <div class="modal-header">
+      <div class="modal-cat-bar">
+        <span class="modal-cat" id="modalCat">–</span>
+        <span class="modal-type-badge" id="modalTypeBadge" style="display:none"></span>
+        <span class="modal-premium" id="modalPremium" style="display:none">⭐ PRÉMIUM</span>
+      </div>
+      <h1 class="modal-title" id="modalTitle">–</h1>
+      <div class="modal-meta" id="modalMeta"></div>
+    </div>
+
+<div id="modalStatsBar" style="display:none;padding:10px 44px;background:var(--bg3);border-bottom:1px solid var(--border);align-items:center;gap:20px;font-size:12px;color:var(--text3)">  <span>❤️ <strong id="modalStatLikes">0</strong> lájk</span>
+  <span>💬 <strong id="modalStatComments">0</strong> komment</span>
+  <span id="modalStatViewsWrap">👁 <strong id="modalStatViews">0</strong> megtekintés</span>
+</div>
+    
+    <div class="modal-toolbar">
+      <span class="modal-toolbar-label">Betűméret</span>
+      <button class="modal-tool-btn" onclick="modalFontChange(-2)" title="Kicsinyítés">A−</button>
+      <span class="modal-font-size-display" id="modalFontSizeDisplay">18px</span>
+      <button class="modal-tool-btn" onclick="modalFontChange(2)" title="Nagyítás">A+</button>
+      <div class="modal-toolbar-sep"></div>
+      <span class="modal-toolbar-label">Téma</span>
+      <button class="theme-btn" id="themeBtnLight" onclick="setTheme('light')">☀️ Világos</button>
+      <button class="theme-btn" id="themeBtnDark" onclick="setTheme('dark')">🌙 Sötét</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+<div id="modalReactions" style="display:none;padding:0 44px 20px"></div>
+<div id="modalActionBar" style="display:none;padding:0 44px 28px">
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:20px;border-top:1px solid var(--border)">
+    <button id="modalLikeBtn" onclick="handleModalLike()" style="display:flex;align-items:center;gap:7px;padding:9px 18px;background:var(--bg2);border:2px solid var(--border);border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;transition:.15s;color:var(--text);font-family:var(--font-s)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span id="modalLikeCount">0</span>
+    </button>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <button onclick="shareToFacebook()" title="Facebook" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg2)'">📘</button>
+      <button onclick="shareToX()" title="X / Twitter" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;font-family:serif;color:var(--text)" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg2)'">𝕏</button>
+      <button onclick="shareToWhatsApp()" title="WhatsApp" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg2)'">💬</button>
+      <button onclick="shareToReddit()" title="Reddit" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg2)'">🟠</button>
+      <button onclick="shareToTikTok()" title="TikTok" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg2)'">🎵</button>
+      <button onclick="copyShareLink()" title="Link másolása" style="width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg2)'">🔗</button>
+    </div>
+    <span id="modalShareMsg" style="font-size:12px;color:#1a7a3c;font-weight:600"></span>
+  </div>
+</div>
+<div id="modalCommentsSection" style="display:none;padding:0 44px 48px">
+  <div id="modalRelated" style="margin-bottom:32px"></div>
+  <div style="border-top:2px solid var(--border);padding-top:28px">
+    <h2 style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:8px">
+      Hozzászólások
+      <span class="comment-count-badge" id="modalCommentCountBadge">0</span>
+    </h2>
+    <div style="font-size:11px;color:var(--text4);margin-bottom:18px" id="modalCommentCountText">Még nincs hozzászólás</div>
+    <div id="modalCommentList"></div>
+    <div style="margin-top:24px">
+      <h3 style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px">Írj hozzászólást</h3>
+      <input id="modalCAuthor" type="text" maxlength="80" placeholder="Neved (opcionális)" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13px;margin-bottom:10px;box-sizing:border-box;background:var(--bg);color:var(--text);font-family:var(--font-s)">
+      <textarea id="modalCBody" maxlength="1000" placeholder="Hozzászólásod..." style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13px;min-height:90px;resize:vertical;box-sizing:border-box;background:var(--bg);color:var(--text);font-family:var(--font-s)"></textarea>
+      <button onclick="submitModalComment()" style="margin-top:8px;padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-s)">Küldés</button>
+      <div id="modalCMsg" style="font-size:12px;margin-top:8px;min-height:16px"></div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+
+<div id="space3dOverlay"></div>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<main class="page-wrap">
+  <div class="main-layout">
+    <div id="mainCol">
+      <div id="articlesSection">
+        <div id="featuredSection" style="display:none">
+          <div class="section-label">⭐ Kiemelt cikk</div>
+          <div class="featured-card" id="featuredCard"></div>
+        </div>
+        <div class="status-bar">
+          <div class="status-left">
+            <div class="live-dot"></div>
+            <span class="status-text" id="statusText">Adatok betöltése...</span>
+          </div>
+          <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()">↻ Frissítés</button>
+        </div>
+        <div class="top-strip">
+          <div class="strip-left">
+            <div class="strip-title" id="stripTitle">Legfrissebb</div>
+            <span class="strip-count" id="stripCount">0 cikk</span>
+          </div>
+          <div class="controls">
+            <select class="sort-select" onchange="setSort(this.value)" id="sortSelect">
+              <option value="newest">Legújabb elöl</option>
+              <option value="oldest">Legrégebbi elöl</option>
+            </select>
+            <div class="view-toggle">
+              <button class="view-btn active" id="gvBtn" onclick="setView('grid')" title="Rács">⊞</button>
+              <button class="view-btn" id="lvBtn" onclick="setView('list')" title="Lista">☰</button>
+            </div>
+          </div>
+        </div>
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" type="text" id="searchInput" placeholder="Keresés a cikkek között..." oninput="onSearch(this.value)" autocomplete="off">
+          <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
+        </div>
+        <div class="articles-grid" id="articlesGrid"></div>
+        <div id="emptyState" style="display:none">
+          <div class="empty-state">
+            <span class="empty-icon">📭</span>
+            <div class="empty-title" id="emptyTitle">Még nincsenek cikkek</div>
+            <div class="empty-sub" id="emptySub">Hamarosan friss hírek érkeznek.</div>
+          </div>
+        </div>
+        <div class="load-more-wrap" id="lmWrap" style="display:none">
+          <button class="load-more-btn" onclick="loadMore()">Tovább olvasok →</button>
+        </div>
+      </div>
+    </div>
+
+    <aside class="sidebar" id="sidebarCol">
+      <div class="s-widget">
+        <div class="s-title">📊 Portálstatisztika</div>
+        <div class="stat-row"><span style="font-size:12px;color:var(--text3)">Összes cikk</span><span class="stat-val" id="statTotal">0</span></div>
+        <div class="stat-row"><span style="font-size:12px;color:var(--text3)">Mai cikkek</span><span class="stat-val" id="statToday">0</span></div>
+        <div class="stat-row"><span style="font-size:12px;color:var(--text3)">Aktív olvasók</span><span class="stat-val" id="statActiveReaders">–</span></div>
+        <div class="stat-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:10px">
+          <button class="support-btn" style="width:100%;justify-content:center" onclick="openSupport()">❤️ Támogasd a REASON-t</button>
+        </div>
+        <div class="stat-row"><span style="font-size:12px;color:var(--text3)">Összes olvasás</span><span class="stat-val" id="statTotalViews">–</span></div>
+        <div class="stat-row"><span style="font-size:12px;color:var(--text3)">Utolsó frissítés</span><span class="stat-val" id="statLast" style="font-size:11px">–</span></div>
+      </div>
+
+      <div id="space3dWidget">
+        <canvas id="space3dCanvas"></canvas>
+        <div id="space3dLabel">🌌 </div>
+        <button id="space3dExpandBtn" onclick="toggle3D()" title="Nagyítás / Kicsinyítés">⛶</button>
+      </div>
+
+      <div id="ttsReaderPanel">
+        <div class="tts-title">
+          <span>🔊 Felolvasó – 3D karakter</span>
+          <span id="ttsQueueCount" style="font-size:10px;color:var(--text4)">0 kijelölt</span>
+        </div>
+        <div class="tts-queue" id="ttsQueueList">
+          <span style="color:var(--text4);font-style:italic">Jelölj ki cikkeket felolvasáshoz.</span>
+        </div>
+        <div class="tts-sliders">
+          <div class="tts-srow">
+            <label>Sebesség</label>
+            <input type="range" id="ttsRate" min="0.5" max="2" step="0.05" value="1">
+            <span id="ttsRateVal">1.00×</span>
+          </div>
+          <div class="tts-srow">
+            <label>Hangmagasság</label>
+            <input type="range" id="ttsPitch" min="0.5" max="2" step="0.05" value="0.5">
+            <span id="ttsPitchVal">0.50</span>
+          </div>
+        </div>
+        <div class="tts-btns">
+          <button class="tts-btn-play" id="ttsPlayBtn" onclick="ttsStartReading()" disabled>▶ Felolvas</button>
+          <button class="tts-btn-stop" onclick="ttsStop()">■ Stop</button>
+        </div>
+
+        <div id="ttsProgressBar">
+  <div id="ttsProgressTrack">
+    <div id="ttsProgressFill"></div>
+    <div id="ttsProgressHandle"></div>
+  </div>
+  <div id="ttsProgressMeta">
+    <span id="ttsProgressTime">0:00 / 0:00</span>
+    <div id="ttsProgressSkip">
+      <button onclick="ttsSeekBack()">⏪ −10s</button>
+      <button onclick="ttsSeekForward()">+10s ⏩</button>
+    </div>
+  </div>
+</div>
+        <div class="tts-status" id="ttsStatus">–</div>
+      </div>
+
+      <div class="s-widget">
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7856205120757314" data-ad-slot="4427813320" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+      </div>
+
+      <div class="s-widget">
+        <div class="s-title">📂 Kategóriák</div>
+        <div id="catList"><div style="font-size:12px;color:var(--text4);padding:4px 0">Betöltés...</div></div>
+      </div>
+
+      <div class="s-widget" id="weatherSidebar">
+        <div class="s-title">🌦 Időjárás – <span id="weatherCityLabel">–</span></div>
+        <div id="weatherSidebarContent"><div style="font-size:12px;color:var(--text4)">Helymeghatározás...</div></div>
+      </div>
+
+      <div class="s-widget">
+        <div class="s-title">ℹ️ A REASON-ról</div>
+        <div style="font-size:12px;color:var(--text3);line-height:1.75">
+          <p style="margin-bottom:8px">A <strong>REASON</strong> Gyors. Forrásalapú. Automatizált.</p>
+          <p style="margin-bottom:8px">Nyolc témakörben találsz friss tartalmakat: <strong>MI & Tech</strong>, <strong>Klímaváltozás</strong>, <strong>Mentális Egészség</strong>, <strong>Világgazdaság</strong>, <strong>Űrkutatás</strong>, <strong>Orvostudomány</strong>, <strong>Filozófia</strong> és <strong>Oktatás</strong>.</p>
+          <p style="font-size:11px;color:var(--text4)">© 2025 REASON · Minden jog fenntartva</p>
+        </div>
+      </div>
+
+      
+    </aside>
+  </div>
+</main>
+
+<footer style="background:var(--text);color:var(--text4);text-align:center;padding:20px;font-size:11px;line-height:2">
+  © 2025 REASON ·
+  <a href="/aszf.html" style="color:#f0c040;text-decoration:none">ÁSZF</a> ·
+  <a href="/adatkezeles.html" style="color:#f0c040;text-decoration:none">Adatkezelés</a> ·
+  <a href="/cookie.html" style="color:#f0c040;text-decoration:none">Cookie tájékoztató</a>
+</footer>
+
+<script>
+'use strict';
+
+// ══════════════════════════════════════════════════════════════════
+//  KONSTANSOK
+// ══════════════════════════════════════════════════════════════════
+const SB_URL  = 'https://kqugolmndqonbnjetdyi.supabase.co';
+const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxdWdvbG1uZHFvbmJuamV0ZHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2OTM3NjMsImV4cCI6MjA4ODI2OTc2M30.wGEBEJDPUKsUPu9W5vxvH7Do0wX9U3FdgKzEzny_zBg';
+const OWM_KEY = 'f5fd940d4f21028b4e87084b50e00dfb';
+const PAGE_SIZE = 12;
+const FETCH_LIMIT = 1000;
+let fetchOffset = 0, fetchHasMore = true;
+  
+const SB_HDR = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' };
+
+const CAT_COLOR = {
+  'Mesterséges Intelligencia és Technológia': '#0066cc',
+  'Klímaváltozás és Fenntarthatóság': '#10b981',
+  'Mentális Egészség és Önismeret': '#e85d9b',
+  'Világgazdaság és Pénzügyek': '#f59e0b',
+  'Űrkutatás és Asztrofizika': '#7c3aed',
+  'Orvostudomány és Élethosszabbítás': '#ef4444',
+  'Filozófia és az Élet Értelme': '#a16207',
+  'Oktatás és a Tudás Jövője': '#0891b2',
+};
+const CAT_EMOJI = {
+ 'Mesterséges Intelligencia és Technológia': '🤖',
+'Klímaváltozás és Fenntarthatóság': '🌍',
+'Mentális Egészség és Önismeret': '🧠',
+'Világgazdaság és Pénzügyek': '💰',
+'Űrkutatás és Asztrofizika': '🚀',
+'Orvostudomány és Élethosszabbítás': '🩺',
+'Filozófia és az Élet Értelme': '💡',
+'Oktatás és a Tudás Jövője': '📚',
+};
+
+// ══════════════════════════════════════════════════════════════════
+//  GLOBÁLIS ÁLLAPOT
+// ══════════════════════════════════════════════════════════════════
+window.allArticles = [];
+window.filteredArticles = [];
+window.page = 1;
+window.cat = 'all';
+window.sort = 'newest';
+window.view = 'grid';
+window.searchQ = '';
+window.lastCount = -1;
+let currentUser = null;
+let _currentModalArticleId = null;
+
+// ══════════════════════════════════════════════════════════════════
+//  LOGO ANIMÁCIÓ
+// ══════════════════════════════════════════════════════════════════
+(function initLogoA() {
+  function triggerSpin() {
+    const el = document.getElementById('logoA');
+    if (!el) return;
+    el.classList.remove('spin');
+    void el.offsetWidth;
+    el.classList.add('spin');
+    el.addEventListener('animationend', () => el.classList.remove('spin'), { once: true });
+    scheduleNext();
+  }
+  function scheduleNext() { setTimeout(triggerSpin, 4000 + Math.random() * 8000); }
+  scheduleNext();
+})();
+
+// ══════════════════════════════════════════════════════════════════
+//  BETŰMÉRET
+// ══════════════════════════════════════════════════════════════════
+let modalFontSize = parseInt(localStorage.getItem('reason_modal_font') || '18', 10);
+function applyModalFont() {
+  document.documentElement.style.setProperty('--modal-font-size', modalFontSize + 'px');
+  const d = document.getElementById('modalFontSizeDisplay');
+  if (d) d.textContent = modalFontSize + 'px';
+  localStorage.setItem('reason_modal_font', modalFontSize);
+}
+function modalFontChange(delta) {
+  modalFontSize = Math.max(12, Math.min(32, modalFontSize + delta));
+  applyModalFont();
+}
+window.modalFontChange = modalFontChange;
+applyModalFont();
+
+// ══════════════════════════════════════════════════════════════════
+//  TÉMA
+// ══════════════════════════════════════════════════════════════════
+function setTheme(t) {
+  document.documentElement.dataset.theme = t;
+  document.getElementById('themeToggle').textContent = t === 'dark' ? '☀️' : '🌙';
+  localStorage.setItem('reason_theme', t);
+  document.getElementById('themeBtnLight').classList.toggle('active', t === 'light');
+  document.getElementById('themeBtnDark').classList.toggle('active', t === 'dark');
+}
+function toggleTheme() { setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'); }
+window.toggleTheme = toggleTheme;
+window.setTheme = setTheme;
+setTheme(localStorage.getItem('reason_theme') || 'light');
+
+// ══════════════════════════════════════════════════════════════════
+//  ÓRA
+// ══════════════════════════════════════════════════════════════════
+function tick() {
+  const n = new Date();
+  document.getElementById('clock-display').textContent = n.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const d = n.toLocaleDateString('hu-HU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  document.getElementById('date-display').textContent = d.charAt(0).toUpperCase() + d.slice(1);
+}
+setInterval(tick, 1000);
+tick();
+
+// ══════════════════════════════════════════════════════════════════
+//  IDŐJÁRÁS
+// ══════════════════════════════════════════════════════════════════
+const WICO = id => {
+  if (id >= 200 && id < 300) return '⛈';
+  if (id >= 300 && id < 400) return '🌦';
+  if (id >= 500 && id < 510) return '🌧';
+  if (id >= 510 && id < 600) return '🌨';
+  if (id >= 600 && id < 700) return '❄️';
+  if (id >= 700 && id < 800) return '🌫';
+  if (id === 800) return '☀️';
+  if (id === 801) return '🌤';
+  if (id === 802) return '⛅';
+  return '🌥';
+};
+function initWeather() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      p => loadWeather(p.coords.latitude, p.coords.longitude),
+      () => loadWeatherByCity('Budapest'),
+      { timeout: 6000 }
+    );
+  } else loadWeatherByCity('Budapest');
+}
+async function loadWeatherByCity(city) {
+  try {
+    const [c, f] = await Promise.all([
+      fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${OWM_KEY}&units=metric&lang=hu`),
+      fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&appid=${OWM_KEY}&units=metric&lang=hu&cnt=40`)
+    ]);
+    if (!c.ok) throw new Error();
+    renderWeather(await c.json(), await f.json());
+  } catch { document.getElementById('hWeatherDesc').textContent = 'Nem elérhető'; }
+}
+async function loadWeather(lat, lon) {
+  try {
+    const [c, f] = await Promise.all([
+      fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OWM_KEY}&units=metric&lang=hu`),
+      fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${OWM_KEY}&units=metric&lang=hu&cnt=40`)
+    ]);
+    if (!c.ok) throw new Error();
+    renderWeather(await c.json(), await f.json());
+  } catch { loadWeatherByCity('Budapest'); }
+}
+function renderWeather(cj, fj) {
+  const temp = Math.round(cj.main.temp), feels = Math.round(cj.main.feels_like);
+  const desc = cj.weather[0].description, ico = WICO(cj.weather[0].id);
+  const hum = cj.main.humidity, wind = Math.round(cj.wind.speed * 3.6), city = cj.name;
+  document.getElementById('hWeatherIcon').textContent = ico;
+  document.getElementById('hWeatherTemp').textContent = temp + '°C';
+  document.getElementById('hWeatherDesc').textContent = desc.charAt(0).toUpperCase() + desc.slice(1);
+  document.getElementById('hWeatherLoc').textContent = city + ' · ' + hum + '% páratartalom';
+  document.getElementById('weatherCityLabel').textContent = city;
+  document.getElementById('weatherSidebarContent').innerHTML = `
+    <div class="weather-main">
+      <div class="weather-big-icon">${ico}</div>
+      <div><div class="weather-big-temp">${temp}°C</div>
+      <div class="weather-details">Érzett: ${feels}°C<br>${desc.charAt(0).toUpperCase() + desc.slice(1)}<br>Páratartalom: ${hum}%<br>Szél: ${wind} km/h</div></div>
+    </div>
+    <div class="forecast-grid" id="forecastGrid"></div>`;
+  const days = {}, DN = ['Vas', 'Hét', 'Kedd', 'Szer', 'Csüt', 'Pén', 'Szo'];
+  fj.list.forEach(item => {
+    const d = new Date(item.dt * 1000), k = d.toDateString();
+    if (!days[k]) days[k] = { name: DN[d.getDay()], temps: [], ids: [] };
+    days[k].temps.push(item.main.temp);
+    days[k].ids.push(item.weather[0].id);
+  });
+  const fg = document.getElementById('forecastGrid');
+  if (fg) fg.innerHTML = Object.values(days).slice(0, 5).map(day => {
+    const avg = Math.round(day.temps.reduce((a, b) => a + b, 0) / day.temps.length);
+    return `<div class="fc-day"><div class="fc-name">${day.name}</div><div class="fc-ico">${WICO(day.ids[Math.floor(day.ids.length / 2)])}</div><div class="fc-temp">${avg}°</div></div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  SUPABASE HELPER
+// ══════════════════════════════════════════════════════════════════
+async function sbFetch(path, opts = {}) {
+  const { headers: extraHeaders, ...restOpts } = opts;
+  const r = await fetch(SB_URL + path, {
+    headers: { ...SB_HDR, ...(extraHeaders || {}) },
+    ...restOpts
+  });
+  if (!r.ok) { const e = await r.json().catch(() => ({})); throw new Error(e.message || 'HTTP ' + r.status); }
+  const t = await r.text();
+  return t ? JSON.parse(t) : [];
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  CIKKEK BETÖLTÉSE
+// ══════════════════════════════════════════════════════════════════
+async function fetchArticles(offset = 0) {
+  try {
+    const data = await sbFetch(
+      `/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium,image_url&order=created_at.desc&limit=${FETCH_LIMIT}&offset=${offset}`
+    );
+    if (!Array.isArray(data)) throw new Error();
+    if (offset === 0) {
+      // Meglévő view/like/comment értékek megőrzése ha az adatbázis 0-t küld
+      allArticles = data.map(newArt => {
+        const old = allArticles.find(a => String(a.id) === String(newArt.id));
+        if (!old) return newArt;
+        return {
+          ...newArt,
+          view_count:    Math.max(newArt.view_count    ?? 0, old.view_count    ?? 0),
+          like_count:    Math.max(newArt.like_count    ?? 0, old.like_count    ?? 0),
+          comment_count: Math.max(newArt.comment_count ?? 0, old.comment_count ?? 0),
+        };
+      });
+      page = 1;
+    }
+    else allArticles = [...allArticles, ...data];
+    fetchHasMore = data.length === FETCH_LIMIT;
+    fetchOffset = offset;
+    if (allArticles.length) updateTicker(allArticles);
+    applyFilters();
+    updateStats();
+    updateCatSidebar();
+    updateNavCounts();
+    setStatus('Utoljára frissítve: ' + new Date().toLocaleTimeString('hu-HU'));
+    ttsRefreshQueueUI();
+  } catch {
+    setStatus('Kapcsolódás sikertelen...');
+    renderArticles();
+  } finally {
+    document.getElementById('refreshBtn').textContent = '↻ Frissítés';
+  }
+}
+
+async function fetchArticleBody(id) {
+  try {
+    const rows = await sbFetch(
+      `/rest/v1/articles?id=eq.${id}&select=body&limit=1`
+    );
+    return rows?.[0]?.body || '';
+  } catch {
+    return '';
+  }
+}
+
+
+
+  
+window.manualRefresh = function manualRefresh() {
+  document.getElementById('refreshBtn').classList.remove('flashing');
+  fetchOffset = 0; fetchHasMore = true; allArticles = [];
+  _lastKnownCreatedAt = null;
+  document.getElementById('refreshBtn').textContent = '...';
+  fetchArticles(0);
+};
+  
+window.manualRefresh = manualRefresh;
+function setStatus(msg) { document.getElementById('statusText').textContent = msg; }
+
+// ══════════════════════════════════════════════════════════════════
+//  KERESÉS / SZŰRÉS / RENDEZÉS / NÉZET
+// ══════════════════════════════════════════════════════════════════
+function onSearch(v) {
+  searchQ = v.trim().toLowerCase();
+  document.getElementById('searchClear').classList.toggle('visible', !!searchQ);
+  page = 1;
+  applyFilters();
+}
+window.onSearch = onSearch;
+
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  searchQ = '';
+  document.getElementById('searchClear').classList.remove('visible');
+  applyFilters();
+}
+window.clearSearch = clearSearch;
+
+function applyFilters() {
+  let arr = [...allArticles];
+  if (cat !== 'all') arr = arr.filter(a => a.category === cat);
+  if (searchQ) arr = arr.filter(a =>
+    (a.title || '').toLowerCase().includes(searchQ) ||
+    (a.excerpt || '').toLowerCase().includes(searchQ) ||
+    (a.body || '').toLowerCase().includes(searchQ)
+  );
+  if (sort === 'newest') arr.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+  else arr.sort((a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0));
+  filteredArticles = arr;
+  page = 1;
+  renderArticles();
+}
+
+function setSort(v) { sort = v; applyFilters(); }
+window.setSort = setSort;
+
+function setView(v) {
+  view = v;
+  document.getElementById('articlesGrid').classList.toggle('list-view', v === 'list');
+  document.getElementById('gvBtn').classList.toggle('active', v === 'grid');
+  document.getElementById('lvBtn').classList.toggle('active', v === 'list');
+}
+window.setView = setView;
+
+document.getElementById('mainNav').addEventListener('click', e => {
+  const item = e.target.closest('.nav-item');
+  if (!item) return;
+  const c = item.dataset.cat;
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  item.classList.add('active');
+  cat = c;
+  updateStripTitle();
+  applyFilters();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+function filterByCat(c) {
+  cat = c;
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.toggle('active', i.dataset.cat === c));
+  applyFilters();
+  updateStripTitle();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+window.filterByCat = filterByCat;
+
+// ══════════════════════════════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════════════════════════════
+function renderArticles() {
+  const grid = document.getElementById('articlesGrid');
+  const empty = document.getElementById('emptyState');
+  const lmw = document.getElementById('lmWrap');
+  const feat = document.getElementById('featuredSection');
+  document.getElementById('stripCount').textContent = filteredArticles.length + ' cikk';
+  if (!filteredArticles.length) {
+    grid.innerHTML = '';
+    empty.style.display = '';
+    lmw.style.display = 'none';
+    feat.style.display = 'none';
+    document.getElementById('emptyTitle').textContent = searchQ ? 'Nincs találat' : 'Még nincsenek cikkek';
+    document.getElementById('emptySub').textContent = searchQ ? `"${searchQ}" kifejezésre nincs eredmény.` : 'Hamarosan friss hírek érkeznek.';
+    return;
+  }
+  empty.style.display = 'none';
+  let startIdx = 0;
+  if (cat === 'all' && !searchQ && page === 1 && filteredArticles.length > 0) {
+    renderFeatured(filteredArticles[0]);
+    feat.style.display = '';
+    startIdx = 1;
+  } else feat.style.display = 'none';
+  grid.innerHTML = filteredArticles.slice(startIdx, page * PAGE_SIZE).map(a => renderCard(a)).join('');
+  lmw.style.display = (filteredArticles.length > page * PAGE_SIZE || fetchHasMore) ? '' : 'none';
+}
+
+function renderFeatured(art) {
+  const c = art.category || 'Egyéb', col = CAT_COLOR[c] || '#888', ico = CAT_EMOJI[c] || '📰';
+  const fc = document.getElementById('featuredCard');
+  fc.style.background = col + '0a';
+  fc.style.cursor = 'pointer';
+  fc.onclick = () => window.location.href = '/cikk/' + art.id;
+  fc.innerHTML = `
+    <div class="featured-img" style="background:linear-gradient(135deg,${col}20,${col}08)">${ico}</div>
+    <div class="featured-content">
+      <div class="featured-cat" style="color:${col}">${c}</div>
+      <div class="featured-title">${esc(art.title || 'Cím nélkül')}</div>
+      <div class="featured-excerpt">${esc(art.excerpt || '')}</div>
+      <div class="featured-foot">
+        <span>🕐 ${fmtTime(art.created_at)}</span>
+        <span>⏱ ${art.read_time || '?'} perc</span>
+        ${art.is_premium ? '<span style="color:#b8860b">⭐ Prémium</span>' : ''}
+      </div>
+    </div>`;
+}
+
+function renderCard(art) {
+  const c = art.category || 'Egyéb', col = CAT_COLOR[c] || '#888', ico = CAT_EMOJI[c] || '📰';
+  const ex = art.excerpt || (art.body || '').slice(0, 220);
+  const isSelected = ttsSelectedIds.has(String(art.id));
+  const likes    = (art.like_count    ?? 0).toLocaleString('hu');
+  const views    = (art.view_count    ?? 0).toLocaleString('hu');
+  const comments = (art.comment_count ?? 0).toLocaleString('hu');
+  return `<div class="article-card" onclick="openArticleById('${art.id}')" style="cursor:pointer;${isSelected ? 'border-color:var(--accent);box-shadow:0 0 0 2px rgba(200,16,46,.2)' : ''}">
+<div class="card-img" style="background:linear-gradient(135deg,${col}16,${col}08);${art.image_url ? `background-image:url(${art.image_url});background-size:cover;background-position:center;` : ''}">      ${!art.image_url ? `<div class="card-img-emoji">${ico}</div>` : ''}
+      <div class="card-img-badge">${c}</div>
+      ${art.is_premium ? '<div class="card-premium-ribbon">⭐ PRÉMIUM</div>' : ''}
+      ${isSelected ? '<div style="position:absolute;top:8px;left:8px;background:var(--accent);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;">🔊 Kijelölve</div>' : ''}
+    </div>
+    <div class="card-body">
+      <div class="card-meta">
+        <span class="card-cat" style="color:${col}">${c}</span>
+        <span class="card-sep"></span>
+        <span class="card-time">${fmtTime(art.created_at)}${ageBadge(art.created_at)}</span>
+      </div>
+      <div class="card-title">${hlSearch(esc(art.title || 'Cím nélkül'))}</div>
+      <div class="card-excerpt">${hlSearch(esc(ex))}</div>
+      <div onclick="event.stopPropagation()" style="padding:8px 16px 0;border-top:1px solid var(--border);display:flex;align-items:center;gap:7px">
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);cursor:pointer;user-select:none">
+          <input type="checkbox"
+  ${isSelected ? 'checked' : ''}
+  onchange="ttsCardToggle('${art.id}', this.checked)"
+  style="width:14px;height:14px;accent-color:var(--accent);cursor:pointer;${!isSelected ? 'outline:2px solid var(--accent);outline-offset:2px;animation:pulse-checkbox 1.5s ease-in-out infinite;border-radius:2px;' : ''}">
+          🔊 <span style="color:var(--accent)">Felolvasáshoz</span>
+        </label>
+        ${isSelected ? '<span style="font-size:9px;background:var(--accent);color:#fff;padding:1px 7px;border-radius:10px;font-weight:700;">Kijelölve</span>' : ''}
+      </div>
+      <div class="card-foot">
+        <span>REASON Szerkesztőség</span>
+        <span style="display:flex;align-items:center;gap:10px;font-size:10px;color:var(--text4)">
+          <span title="Lájkok">❤️ ${likes}</span>
+          <span title="Kommentek">💬 ${comments}</span>
+          <span title="Megtekintések">👁 ${views}</span>
+          <span title="Olvasási idő">⏱ ${art.read_time || '?'} perc</span>
+        </span>
+      </div>
+    </div>
+  </div>`;
+}
+
+
+function openArticleById(id) {
+  const art = allArticles.find(a => String(a.id) === String(id));
+  if (art) openModal(art);
+}
+window.openArticleById = openArticleById;
+
+function hlSearch(html) {
+  if (!searchQ) return html;
+  const re = new RegExp('(' + searchQ.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+  return html.replace(re, '<mark class="hl">$1</mark>');
+}
+
+// TÖRÖLD KI a meglévő loadMore() függvényt, és ezt másold be:
+
+async function loadMoreBatch() {
+    try {
+        const nextOffset = fetchOffset + FETCH_LIMIT;
+        const data = await sbFetch(`/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium,image_url&order=created_at.desc&limit=${FETCH_LIMIT}&offset=${nextOffset}`);
+        if (data && data.length) {
+            allArticles = [...allArticles, ...data];
+            fetchOffset = nextOffset;
+            fetchHasMore = data.length === FETCH_LIMIT;
+            applyFilters();
+            return true;
+        }
+        fetchHasMore = false;
+        return false;
+    } catch(e) {
+        console.error('loadMoreBatch hiba:', e);
+        return false;
+    }
+}
+
+async function loadMore() {
+    const lmWrap = document.getElementById('lmWrap');
+    const btn = document.querySelector('.load-more-btn');
+    
+    if (!fetchHasMore && filteredArticles.length <= page * PAGE_SIZE) {
+        if (lmWrap) lmWrap.style.display = 'none';
+        return;
+    }
+    
+    if (filteredArticles.length <= page * PAGE_SIZE && fetchHasMore) {
+        if (btn) { btn.textContent = 'Betöltés...'; btn.disabled = true; }
+        
+        await loadMoreBatch();
+        
+        if (btn) { btn.textContent = 'Tovább olvasok →'; btn.disabled = false; }
+    }
+    
+    page++;
+    renderArticles();
+    
+    const startIdx = (cat === 'all' && !searchQ && filteredArticles.length > 0) ? 1 : 0;
+const hasMore = filteredArticles.length > (startIdx + page * PAGE_SIZE);
+    
+    if (lmWrap) {
+        lmWrap.style.display = (hasMore || fetchHasMore) ? '' : 'none';
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  TTS FELOLVASÓ
+// ══════════════════════════════════════════════════════════════════
+const ttsSelectedIds = new Map();
+let ttsCurrentUtterance = null;
+let ttsIsSpeaking = false;
+let ttsQueue = [];
+let ttsQueueIndex = 0;
+
+function getTtsRate()  { return parseFloat(document.getElementById('ttsRate').value); }
+function getTtsPitch() { return parseFloat(document.getElementById('ttsPitch').value); }
+
+document.getElementById('ttsRate').addEventListener('input', function () {
+  document.getElementById('ttsRateVal').textContent = parseFloat(this.value).toFixed(2) + '×';
+});
+document.getElementById('ttsPitch').addEventListener('input', function () {
+  document.getElementById('ttsPitchVal').textContent = parseFloat(this.value).toFixed(2);
+});
+
+async function ttsCardToggle(id, checked) {
+  const art = allArticles.find(a => String(a.id) === String(id));
+  if (!art) return;
+  if (checked) {
+    // Ha nincs még body, töltjük le és jelezzük
+    if (!art.body) {
+      showToast('⏳ Cikk betöltése...', 'info');
+      art.body = await fetchArticleBody(id);
+    }
+    // Body után újra ellenőrzés – ha még mindig üres, excerpt-et használunk
+    const rawText = (art.body && art.body.trim().length > 10)
+      ? art.body
+      : (art.excerpt || art.title || '');
+    const plainText = rawText.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    ttsSelectedIds.set(String(id), { title: art.title || 'Cikk', text: plainText });
+    showToast('✓ Cikk kijelölve felolvasáshoz', 'success');
+  } else {
+    ttsSelectedIds.delete(String(id));
+    showToast('Cikk eltávolítva a felolvasási sorból', '');
+  }
+  ttsRefreshQueueUI();
+  renderArticles();
+}
+
+function ttsRefreshQueueUI() {
+  const list = document.getElementById('ttsQueueList');
+  const count = document.getElementById('ttsQueueCount');
+  const playBtn = document.getElementById('ttsPlayBtn');
+  const size = ttsSelectedIds.size;
+  count.textContent = size + ' kijelölt';
+  playBtn.disabled = size === 0;
+  if (size === 0) {
+    list.innerHTML = '<span style="color:var(--text4);font-style:italic">Jelölj ki cikkeket felolvasáshoz.</span>';
+    return;
+  }
+  let html = '';
+  ttsSelectedIds.forEach((val, id) => {
+    const title = val.title.length > 36 ? val.title.slice(0, 36) + '…' : val.title;
+    const isActive = ttsIsSpeaking && ttsQueue[ttsQueueIndex] && ttsQueue[ttsQueueIndex].id === id;
+    html += `<span class="${isActive ? 'tts-active-item' : ''}" title="${esc(val.title)}">
+      ${isActive ? '▶ ' : ''}${esc(title)}
+      <button onclick="ttsRemoveItem('${id}')" style="float:right;background:none;border:none;color:var(--text4);cursor:pointer;font-size:11px;padding:0 2px;line-height:1" title="Eltávolít">✕</button>
+    </span>`;
+  });
+  list.innerHTML = html;
+}
+
+function ttsRemoveItem(id) {
+  ttsSelectedIds.delete(String(id));
+  ttsRefreshQueueUI();
+  renderArticles();
+  if (ttsIsSpeaking && ttsQueue[ttsQueueIndex] && ttsQueue[ttsQueueIndex].id === String(id)) ttsStop();
+}
+window.ttsRemoveItem = ttsRemoveItem;
+
+function ttsStartReading() {
+  if (ttsSelectedIds.size === 0) return;
+  ttsStop();
+  ttsQueue = [];
+  ttsSelectedIds.forEach((val, id) => ttsQueue.push({ id, title: val.title, text: val.text }));
+  ttsQueueIndex = 0;
+  ttsIsSpeaking = true;
+  document.getElementById('ttsPlayBtn').disabled = true;
+  const totalMs = _ttsEstimateMs();
+  ttsProgressStart(totalMs);
+  if (window._promptStart) window._promptStart(ttsQueue.map(i => i.title + '. ' + i.text).join(' • '));
+  ttsReadNext();
+}
+window.ttsStartReading = ttsStartReading;
+
+function ttsReadNext() {
+  if (!ttsIsSpeaking) return;
+  if (ttsQueueIndex >= ttsQueue.length) { ttsFinished(); return; }
+  const item = ttsQueue[ttsQueueIndex];
+  ttsRefreshQueueUI();
+  document.getElementById('ttsStatus').textContent = `Felolvasás: ${ttsQueueIndex + 1}/${ttsQueue.length} – ${item.title.slice(0, 28)}…`;
+   const fullText = item.text;
+  const voices = speechSynthesis.getVoices();
+  const huVoice = voices.find(v =>
+    v.lang.startsWith('hu') ||
+    v.name.toLowerCase().includes('hungarian') ||
+    v.name.toLowerCase().includes('hun') ||
+    v.name.toLowerCase().includes('szabolcs')
+  );
+  const utt = new SpeechSynthesisUtterance(fullText);
+  utt.rate = getTtsRate();
+  utt.pitch = getTtsPitch();
+  utt.volume = 1;
+  utt.lang = 'hu-HU';
+  if (huVoice) utt.voice = huVoice;
+  utt.onstart = () => {
+    if (window._tts3dLipStart) window._tts3dLipStart(fullText, utt.rate);
+  };
+  utt.onboundary = (e) => {
+    if (e.name !== 'word') return;
+    if (window.lipSync && window.lipSync._isAnimating && window.lipSync._charIndexMap) {
+      const map = window.lipSync._charIndexMap;
+      let bestChar = 0;
+      for (const k of Object.keys(map)) {
+        const ki = parseInt(k);
+        if (ki <= e.charIndex && ki >= bestChar) bestChar = ki;
+      }
+      const qIdx = map[bestChar];
+      if (qIdx !== undefined && window.lipSync._phonemeQueue[qIdx]) {
+        const ph = window.lipSync._phonemeQueue[qIdx];
+        window.lipSync._startTime = performance.now() - ph.startT;
+      }
+    }
+  };
+  utt.onend = () => {
+    if (!ttsIsSpeaking) return;
+    if (window._tts3dLipStop) window._tts3dLipStop();
+    ttsQueueIndex++;
+    setTimeout(ttsReadNext, 400);
+  };
+  utt.onerror = (e) => {
+    if (e.error === 'interrupted') return;
+    if (!ttsIsSpeaking) return;
+    if (window._tts3dLipStop) window._tts3dLipStop();
+    ttsQueueIndex++;
+    setTimeout(ttsReadNext, 400);
+  };
+  ttsCurrentUtterance = utt;
+  if (speechSynthesis.speaking) speechSynthesis.cancel();
+  setTimeout(() => speechSynthesis.speak(utt), 80);
+}
+
+function ttsFinished() {
+  ttsIsSpeaking = false;
+  ttsProgressStop();
+  if (window._promptStop) window._promptStop();
+  ttsIsSpeaking = false;
+  ttsQueue = [];
+  ttsQueueIndex = 0;
+  ttsCurrentUtterance = null;
+  document.getElementById('ttsPlayBtn').disabled = ttsSelectedIds.size === 0;
+  document.getElementById('ttsStatus').textContent = '✓ Felolvasás befejezve.';
+  ttsRefreshQueueUI();
+  setTimeout(() => { document.getElementById('ttsStatus').textContent = '–'; }, 3000);
+}
+
+function ttsStop() {
+  ttsProgressStop();
+  if (window._promptStop) window._promptStop();
+  speechSynthesis.cancel();
+  if (window._tts3dLipStop) window._tts3dLipStop();
+  ttsIsSpeaking = false;
+  ttsQueue = [];
+  ttsQueueIndex = 0;
+  ttsCurrentUtterance = null;
+  document.getElementById('ttsPlayBtn').disabled = ttsSelectedIds.size === 0;
+  document.getElementById('ttsStatus').textContent = '–';
+  ttsRefreshQueueUI();
+}
+window.ttsStop = ttsStop;
+
+
+  // ── TTS PROGRESS BAR ──────────────────────────────────────────
+let _ttsProgressRAF   = null;
+let _ttsProgressStart = 0;
+let _ttsProgressTotal = 0;
+let _ttsProgressPause = 0;   // eltelt ms a seek előtt
+
+function ttsProgressStart(totalMs) {
+  _ttsProgressTotal = totalMs;
+  _ttsProgressStart = performance.now();
+  _ttsProgressPause = 0;
+  document.getElementById('ttsProgressBar').classList.add('visible');
+  _ttsProgressTick();
+}
+
+function _ttsProgressTick() {
+  const elapsed = _ttsProgressPause + (performance.now() - _ttsProgressStart);
+  const pct     = _ttsProgressTotal > 0 ? Math.min(100, elapsed / _ttsProgressTotal * 100) : 0;
+  document.getElementById('ttsProgressFill').style.width  = pct + '%';
+  document.getElementById('ttsProgressHandle').style.left = pct + '%';
+  const elSec   = Math.floor(elapsed / 1000);
+  const totSec  = Math.floor(_ttsProgressTotal / 1000);
+  document.getElementById('ttsProgressTime').textContent  =
+    fmtSec(elSec) + ' / ' + fmtSec(totSec);
+  if (elapsed < _ttsProgressTotal) {
+    _ttsProgressRAF = requestAnimationFrame(_ttsProgressTick);
+  }
+}
+
+function ttsProgressStop() {
+  if (_ttsProgressRAF) { cancelAnimationFrame(_ttsProgressRAF); _ttsProgressRAF = null; }
+  document.getElementById('ttsProgressBar').classList.remove('visible');
+  document.getElementById('ttsProgressFill').style.width  = '0%';
+  document.getElementById('ttsProgressHandle').style.left = '0%';
+  document.getElementById('ttsProgressTime').textContent  = '0:00 / 0:00';
+}
+
+function fmtSec(s) {
+  const m = Math.floor(s / 60), sec = s % 60;
+  return m + ':' + String(sec).padStart(2,'0');
+}
+
+function _ttsEstimateMs() {
+  const cfg = getConfig();
+  let ms = cfg.pStartDelay * 1000;
+  for (const item of ttsQueue) {
+    const phonemes = textToPhonemes(item.title + '. ' + item.text, cfg);
+    for (const ph of phonemes) {
+      const dur = ph.dur * 1000;
+      ms += dur * (cfg.pOpenRatio + cfg.pPeakRatio + cfg.pCloseRatio);
+    }
+    ms += (cfg.pEndPause + cfg.pEndExtra) * 1000 + 400;
+  }
+  const rate = getTtsRate();
+  return ms / (rate > 0 ? rate : 1);
+}
+
+function ttsSeekBack()    { _ttsSeek(-10000); }
+function ttsSeekForward() { _ttsSeek(+10000); }
+window.ttsSeekBack    = ttsSeekBack;
+window.ttsSeekForward = ttsSeekForward;
+
+function _ttsSeek(deltaMs) {
+  if (!ttsIsSpeaking) return;
+
+  const elapsed = _ttsProgressPause + (performance.now() - _ttsProgressStart);
+  const newMs   = Math.max(0, Math.min(_ttsProgressTotal, elapsed + deltaMs));
+
+  const cfg  = getConfig();
+  const rate = getTtsRate() > 0 ? getTtsRate() : 1;
+  let acc = cfg.pStartDelay * 1000;
+  let targetQueueIdx    = 0;
+  let targetSentenceIdx = 0;
+
+  outer: for (let qi = 0; qi < ttsQueue.length; qi++) {
+    const fullText  = ttsQueue[qi].title + '. ' + ttsQueue[qi].text;
+    const sentences = fullText.match(/[^.!?…]+[.!?…]*/g) || [fullText];
+
+    for (let si = 0; si < sentences.length; si++) {
+      const phonemes = textToPhonemes(sentences[si], cfg);
+      let sentMs = 0;
+      for (const ph of phonemes) {
+        sentMs += ph.dur * 1000 * (cfg.pOpenRatio + cfg.pPeakRatio + cfg.pCloseRatio);
+      }
+      sentMs = sentMs / rate;
+
+      if (acc + sentMs >= newMs) {
+        targetQueueIdx    = qi;
+        targetSentenceIdx = si;
+        break outer;
+      }
+      acc += sentMs;
+    }
+    acc += (cfg.pEndPause + cfg.pEndExtra) * 1000 / rate + 400;
+    targetQueueIdx    = Math.min(qi + 1, ttsQueue.length - 1);
+    targetSentenceIdx = 0;
+  }
+
+  speechSynthesis.cancel();
+  if (window._tts3dLipStop) window._tts3dLipStop();
+
+  ttsQueueIndex = targetQueueIdx;
+
+  if (_ttsProgressRAF) cancelAnimationFrame(_ttsProgressRAF);
+  _ttsProgressPause = newMs;
+  _ttsProgressStart = performance.now();
+  _ttsProgressTick();
+
+  const item      = ttsQueue[targetQueueIdx];
+   const fullText  = item.text;
+  const sentences = fullText.match(/[^.!?…]+[.!?…]*/g) || [fullText];
+  const remaining = sentences.slice(targetSentenceIdx).join(' ');
+
+  const voices  = speechSynthesis.getVoices();
+  const huVoice = voices.find(v =>
+    v.lang.startsWith('hu') ||
+    v.name.toLowerCase().includes('hungarian') ||
+    v.name.toLowerCase().includes('hun') ||
+    v.name.toLowerCase().includes('szabolcs')
+  );
+
+  const utt  = new SpeechSynthesisUtterance(remaining);
+  utt.rate   = getTtsRate();
+  utt.pitch  = getTtsPitch();
+  utt.volume = 1;
+  utt.lang   = 'hu-HU';
+  if (huVoice) utt.voice = huVoice;
+
+  utt.onstart = () => { if (window._tts3dLipStart) window._tts3dLipStart(remaining, utt.rate); };
+  utt.onend   = () => {
+    if (window._tts3dLipStop) window._tts3dLipStop();
+    ttsQueueIndex++;
+    setTimeout(ttsReadNext, 400);
+  };
+  utt.onerror = (e) => {
+    if (e.error === 'interrupted') return;
+    if (window._tts3dLipStop) window._tts3dLipStop();
+    ttsQueueIndex++;
+    setTimeout(ttsReadNext, 400);
+  };
+
+  ttsCurrentUtterance = utt;
+  setTimeout(() => speechSynthesis.speak(utt), 80);
+}
+
+document.getElementById('ttsProgressTrack').addEventListener('click', function(e) {
+  if (!ttsIsSpeaking && _ttsProgressTotal === 0) return;
+  const rect = this.getBoundingClientRect();
+  const frac = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  _ttsSeek(frac * _ttsProgressTotal - (_ttsProgressPause + (performance.now() - _ttsProgressStart)));
+});
+
+  
+
+// ══════════════════════════════════════════════════════════════════
+//  MODAL
+// ══════════════════════════════════════════════════════════════════
+async function openModal(art) {
+  history.pushState({id: art.id}, '', '/cikk/' + art.id);  // ← EZ AZ ÚJ SOR
+  const c = art.category || 'Egyéb', col = CAT_COLOR[c] || '#888';
+  const tl = art.article_type || '';
+  _currentModalArticleId = String(art.id);
+  document.getElementById('modalCat').textContent  = c;
+  document.getElementById('modalCat').style.color  = col;
+  const tb = document.getElementById('modalTypeBadge');
+  tb.textContent   = tl;
+  tb.style.display = tl ? '' : 'none';
+
+  document.getElementById('modalPremium').style.display = art.is_premium ? '' : 'none';
+  document.getElementById('modalTitle').textContent     = art.title || '–';
+  document.getElementById('modalMeta').innerHTML = `
+    <span>🕐 ${fmtTimeFull(art.created_at)}${ageBadge(art.created_at)}</span>
+    <span>👤 REASON Szerkesztőség</span>
+    <span>⏱ ${art.read_time || '?'} perc olvasás</span>`;
+
+  const statsBar = document.getElementById('modalStatsBar');
+  if (statsBar) {
+    statsBar.style.display = 'flex';
+    document.getElementById('modalStatLikes').textContent    = (art.like_count ?? 0).toLocaleString('hu');
+    document.getElementById('modalStatViews').textContent    = (art.view_count ?? 0).toLocaleString('hu');
+document.getElementById('modalStatComments').textContent = (art.comment_count ?? 0).toLocaleString('hu');
+loadModalViewCount(art.id);
+  }
+
+  // Modal megnyitása és töltő szöveg azonnal
+  document.getElementById('articleModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('articleModalBox').scrollTop = 0;
+
+  if (art.is_premium && !currentUser) {
+    document.getElementById('modalBody').innerHTML = `
+      <div style="text-align:center;padding:60px 20px">
+        <div style="font-size:48px;margin-bottom:16px">⭐</div>
+        <div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--text);margin-bottom:10px">Prémium tartalom</div>
+        <div style="font-size:14px;color:var(--text3);line-height:1.7;margin-bottom:24px;max-width:340px;margin-left:auto;margin-right:auto">Ez a cikk csak bejelentkezett olvasóknak érhető el.</div>
+        <button onclick="closeModal();openAuth();" style="padding:12px 28px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-s)">Bejelentkezés</button>
+      </div>`;
+    return;
+  }
+
+  // Body betöltés – ha még nincs cache-elve
+  if (!art.body) {
+    document.getElementById('modalBody').innerHTML = `
+      <div style="text-align:center;padding:60px 20px;color:var(--text4)">
+        <div style="font-size:32px;margin-bottom:12px">⏳</div>
+        <div>Cikk betöltése...</div>
+      </div>`;
+
+    art.body = await fetchArticleBody(art.id);
+  }
+
+  const body  = art.body || art.excerpt || '';
+  const paras = body.split(/\n\n+|\n/).filter(p => p.trim().length > 4);
+
+  // Kép eltávolítása ha volt előző
+const oldImg = document.getElementById('modalHeroImg')
+if (oldImg) oldImg.remove()
+// Új kép hozzáadása
+if (art.image_url) {
+  document.getElementById('modalBody').insertAdjacentHTML('beforebegin',
+    `<img id="modalHeroImg" src="${art.image_url}" style="width:100%;max-height:340px;object-fit:cover;" alt="${esc(art.title)}">`)
+}
+  document.getElementById('modalBody').innerHTML = paras.length
+    ? paras.map(p => `<p>${esc(p.trim())}</p>`).join('')
+    : `<p>${esc(body)}</p>`;
+
+
+  const bkBtn = document.getElementById('modalBookmark');
+if (bkBtn) bkBtn.style.color = localStorage.getItem('reason_bookmark_' + art.id) ? '#b8860b' : 'var(--text3)';
+ document.getElementById('modalActionBar').style.display = 'block';
+document.getElementById('modalCommentsSection').style.display = 'block';
+loadModalReactions(art.id);
+  renderModalRelated(art.id, art.category);
+  document.getElementById('modalLikeCount').textContent         = art.like_count ?? 0;
+
+  const likeBtn = document.getElementById('modalLikeBtn');
+  likeBtn.dataset.articleId = art.id;
+  const lk = 'reason_liked_' + art.id;
+  likeBtn.style.cssText = localStorage.getItem(lk)
+    ? 'background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important'
+    : '';
+
+  document.getElementById('modalShareMsg').textContent = '';
+  document.getElementById('modalCMsg').textContent     = '';
+  document.getElementById('modalCBody').value          = '';
+  document.getElementById('modalCAuthor').value        = '';
+
+  document.getElementById('modalCommentCountBadge').textContent = '…';
+  document.getElementById('modalCommentCountText').textContent  = '';
+  loadModalComments(art.id);
+
+  const curTheme = document.documentElement.dataset.theme || 'light';
+  document.getElementById('themeBtnLight').classList.toggle('active', curTheme === 'light');
+  document.getElementById('themeBtnDark').classList.toggle('active', curTheme === 'dark');
+  applyModalFont();
+}
+
+
+
+document.getElementById('modalClose').onclick = closeModal;
+document.getElementById('articleModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('articleModal')) closeModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+document.getElementById('articleModalBox').addEventListener('scroll', function() {
+  const el = this;
+  const scrollable = el.scrollHeight - el.clientHeight;
+  const pct = scrollable > 0 ? Math.round(el.scrollTop / scrollable * 100) : 0;
+  document.getElementById('modalReadFill').style.width = pct + '%';
+});
+
+
+  function toggleBookmark() {
+  const id = _currentModalArticleId;
+  if (!id) return;
+  const art = allArticles.find(a => String(a.id) === String(id));
+  if (!art) return;
+  const lk = 'reason_bookmark_' + id;
+  const btn = document.getElementById('modalBookmark');
+  if (localStorage.getItem(lk)) {
+    localStorage.removeItem(lk);
+    if (btn) btn.style.color = 'var(--text3)';
+    showToast('Könyvjelző törölve', '');
+    updateBookmarkNavCount();
+  } else {
+    localStorage.setItem(lk, JSON.stringify({
+      id: art.id,
+      title: art.title,
+      category: art.category,
+      created_at: art.created_at,
+      excerpt: art.excerpt,
+      read_time: art.read_time
+    }));
+    if (btn) btn.style.color = '#b8860b';
+    showToast('✓ Elmentve a könyvjelzőkbe', 'success');
+    updateBookmarkNavCount();
+  }
+}
+window.toggleBookmark = toggleBookmark;
+
+  function updateBookmarkNavCount() {
+  const count = Object.keys(localStorage).filter(k => k.startsWith('reason_bookmark_')).length;
+  const el = document.getElementById('bookmarkNavCount');
+  if (!el) return;
+  if (count > 0) { el.textContent = count; el.style.display = ''; }
+  else el.style.display = 'none';
+}
+window.updateBookmarkNavCount = updateBookmarkNavCount;
+
+function getBookmarks() {
+  const keys = Object.keys(localStorage).filter(k => k.startsWith('reason_bookmark_'));
+  return keys.map(k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } }).filter(Boolean);
+}
+
+function openBookmarks() {
+  const items = getBookmarks();
+  const overlay = document.createElement('div');
+  overlay.id = 'bookmarkOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:600;background:rgba(20,18,14,.8);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML = `
+    <div style="background:var(--bg2);border-radius:16px;width:100%;max-width:540px;max-height:80vh;overflow-y:auto;padding:28px 32px;position:relative">
+      <div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px">🔖 Mentett cikkek</div>
+      <div style="font-size:12px;color:var(--text4);margin-bottom:20px">${items.length} mentett cikk</div>
+      <button onclick="document.getElementById('bookmarkOverlay').remove()" style="position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);cursor:pointer;font-size:14px;color:var(--text3)">✕</button>
+      ${items.length === 0
+        ? '<div style="text-align:center;padding:40px 0;color:var(--text4);font-size:13px">Még nincs mentett cikked.</div>'
+        : items.map(a => {
+            const col = CAT_COLOR[a.category] || '#888';
+            return `<div onclick="document.getElementById('bookmarkOverlay').remove();openArticleById('${a.id}')" style="padding:14px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:.15s" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+              <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${col};margin-bottom:4px">${a.category || ''}</div>
+              <div style="font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px">${esc(a.title || '')}</div>
+              <div style="font-size:11px;color:var(--text4)">${fmtTime(a.created_at)} · ${a.read_time || '?'} perc</div>
+            </div>`;
+          }).join('')
+      }
+    </div>`;
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+}
+window.openBookmarks = openBookmarks;
+  
+function closeModal() {
+  history.pushState({}, '', '/');
+  document.getElementById('articleModal').classList.remove('open');
+  document.body.style.overflow = '';
+  if (_currentModalArticleId) {
+    const art = allArticles.find(a => String(a.id) === String(_currentModalArticleId));
+    if (art) {
+      art.like_count = parseInt(document.getElementById('modalLikeCount').textContent) || art.like_count;
+      art.view_count = parseInt(document.getElementById('modalStatViews').textContent.replace(/\s/g,'')) || art.view_count;
+      art.comment_count = parseInt(document.getElementById('modalStatComments').textContent) || art.comment_count;
+    }
+  }
+  _currentModalArticleId = null;
+  renderArticles();
+}
+window.closeModal = closeModal;
+
+// ══════════════════════════════════════════════════════════════════
+//  STATISZTIKA / SIDEBAR
+// ══════════════════════════════════════════════════════════════════
+const SESSION_ID = localStorage.getItem('reason_session') ||
+  (() => { const id = 'sess_' + Math.random().toString(36).slice(2) + '_' + Date.now(); localStorage.setItem('reason_session', id); return id; })();
+const IS_ADMIN = localStorage.getItem('reason_is_admin') === '1';
+
+async function pingVisitor() {
+  try {
+    await fetch(`${SB_URL}/rest/v1/visitors`, {
+      method: 'POST',
+      headers: { ...SB_HDR, 'Prefer': 'resolution=merge-duplicates' },
+      body: JSON.stringify({ session_id: SESSION_ID, last_seen: new Date().toISOString(), is_admin: IS_ADMIN })
+    });
+  } catch {}
+}
+
+async function fetchActiveReaders() {
+  try {
+    const since = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const r = await fetch(`${SB_URL}/rest/v1/visitors?last_seen=gte.${since}&is_admin=eq.false&select=session_id`, { headers: SB_HDR });
+    if (!r.ok) return;
+    const data = await r.json();
+    document.getElementById('statActiveReaders').textContent = new Set(data.map(v => v.session_id)).size;
+  } catch {}
+}
+
+async function trackArticleView(articleId) {
+  try {
+    const rows = await sbFetch(
+      `/rest/v1/articles?id=eq.${articleId}&select=view_count&limit=1`
+    );
+    const cur = rows?.[0]?.view_count ?? 0;
+    await sbFetch(`/rest/v1/articles?id=eq.${articleId}`, {
+      method: 'PATCH',
+      headers: { ...SB_HDR, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ view_count: cur + 1 })
+    });
+    const cached = allArticles.find(a => String(a.id) === String(articleId));
+    if (cached) cached.view_count = cur + 1;
+    fetchTotalViews();
+  } catch {}
+}
+
+async function fetchTotalViews() {
+  try {
+    const r = await fetch(
+      `${SB_URL}/rest/v1/rpc/sum_view_count`,
+      { method: 'POST', headers: SB_HDR, body: JSON.stringify({}) }
+    );
+    if (!r.ok) {
+      // Fallback ha az RPC nem létezik
+      const r2 = await fetch(`${SB_URL}/rest/v1/articles?select=view_count`, { headers: SB_HDR });
+      if (!r2.ok) return;
+      const data = await r2.json();
+      document.getElementById('statTotalViews').textContent =
+        data.reduce((s, row) => s + (row.view_count || 0), 0).toLocaleString('hu');
+      return;
+    }
+    const data = await r.json();
+    document.getElementById('statTotalViews').textContent = (data || 0).toLocaleString('hu');
+  } catch {}
+}
+
+function updateStats() {
+  const today = new Date().toDateString();
+  document.getElementById('statTotal').textContent = allArticles.length;
+  document.getElementById('statToday').textContent = allArticles.filter(a => new Date(a.created_at || 0).toDateString() === today).length;
+  if (allArticles.length) document.getElementById('statLast').textContent = fmtTime(allArticles[0].created_at);
+}
+
+function updateCatSidebar() {
+  const counts = {};
+  allArticles.forEach(a => { const c = a.category || 'Egyéb'; counts[c] = (counts[c] || 0) + 1; });
+  const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  if (!entries.length) { document.getElementById('catList').innerHTML = '<div style="font-size:12px;color:var(--text4);padding:4px 0">Nincs még cikk</div>'; return; }
+  document.getElementById('catList').innerHTML = entries.map(([c, n]) => {
+    const col = CAT_COLOR[c] || '#999', ico = CAT_EMOJI[c] || '📌';
+    return `<div class="cat-row" onclick="filterByCat('${c}')">
+      <div class="cat-dot" style="background:${col}"></div>
+      <div class="cat-name">${ico} ${c}</div>
+      <div class="cat-count">${n}</div>
+    </div>`;
+  }).join('');
+}
+
+function updateNavCounts() {
+  const counts = { all: allArticles.length };
+  allArticles.forEach(a => { const c = a.category || 'Egyéb'; counts[c] = (counts[c] || 0) + 1; });
+  document.getElementById('nc-all').textContent   = counts['all'] || 0;
+document.getElementById('nc-tech').textContent  = counts['Mesterséges Intelligencia és Technológia'] || 0;
+document.getElementById('nc-klima').textContent = counts['Klímaváltozás és Fenntarthatóság'] || 0;
+document.getElementById('nc-mental').textContent= counts['Mentális Egészség és Önismeret'] || 0;
+document.getElementById('nc-gazd').textContent  = counts['Világgazdaság és Pénzügyek'] || 0;
+document.getElementById('nc-ur').textContent    = counts['Űrkutatás és Asztrofizika'] || 0;
+document.getElementById('nc-orv').textContent   = counts['Orvostudomány és Élethosszabbítás'] || 0;
+document.getElementById('nc-fil').textContent   = counts['Filozófia és az Élet Értelme'] || 0;
+document.getElementById('nc-okt').textContent   = counts['Oktatás és a Tudás Jövője'] || 0;
+}
+
+function updateStripTitle() {
+  const map = {
+  all: 'Legfrissebb',
+  'Mesterséges Intelligencia és Technológia': '🤖 Mesterséges Intelligencia és Technológia',
+  'Klímaváltozás és Fenntarthatóság': '🌍 Klímaváltozás és Fenntarthatóság',
+  'Mentális Egészség és Önismeret': '🧠 Mentális Egészség és Önismeret',
+  'Világgazdaság és Pénzügyek': '💰 Világgazdaság és Pénzügyek',
+  'Űrkutatás és Asztrofizika': '🚀 Űrkutatás és Asztrofizika',
+  'Orvostudomány és Élethosszabbítás': '🩺 Orvostudomány és Élethosszabbítás',
+  'Filozófia és az Élet Értelme': '💡 Filozófia és az Élet Értelme',
+  'Oktatás és a Tudás Jövője': '📚 Oktatás és a Tudás Jövője',
+};
+  document.getElementById('stripTitle').textContent = map[cat] || cat;
+}
+
+function updateTicker(arts) {
+  if (!arts || !arts.length) return;
+  const items = [...arts.slice(0, 20), ...arts.slice(0, 20)].map(a =>
+    `<span class="ticker-item">${esc(a.title || '')}</span><span class="ticker-sep">·</span>`
+  ).join('');
+  document.getElementById('tickerInner').innerHTML = items;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  MODAL LIKE / SHARE / KOMMENTEK
+// ══════════════════════════════════════════════════════════════════
+async function handleModalLike() {
+  const btn       = document.getElementById('modalLikeBtn');
+  const countEl   = document.getElementById('modalLikeCount');
+  const statLikes = document.getElementById('modalStatLikes');
+  const articleId = btn.dataset.articleId;
+  if (!articleId) return;
+
+  const lk = 'reason_liked_' + articleId;
+  if (localStorage.getItem(lk)) {
+    showToast('Ezt a cikket már lájkoltad! 👍', 'info');
+    return;
+  }
+
+  const prev = parseInt(countEl.textContent, 10) || 0;
+  countEl.textContent = prev + 1;
+  if (statLikes) statLikes.textContent = (prev + 1).toLocaleString('hu');
+  btn.style.cssText = 'background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important';
+  localStorage.setItem(lk, '1');
+
+  try {
+    const rows = await sbFetch(
+      '/rest/v1/articles?id=eq.' + articleId + '&select=like_count&limit=1'
+    );
+    const cur = rows?.[0]?.like_count ?? prev;
+
+    await sbFetch('/rest/v1/articles?id=eq.' + articleId, {
+      method:  'PATCH',
+      headers: { ...SB_HDR, 'Prefer': 'return=minimal' },
+      body:    JSON.stringify({ like_count: cur + 1 })
+    });
+
+    const real = cur + 1;
+    countEl.textContent = real;
+    if (statLikes) statLikes.textContent = real.toLocaleString('hu');
+
+    const cached = allArticles.find(a => String(a.id) === String(articleId));
+    if (cached) cached.like_count = real;
+
+    showToast('❤️ Köszönjük a lájkot!', 'success');
+
+  } catch (err) {
+    console.error('[LIKE] Hiba:', err);
+    countEl.textContent = prev;
+    if (statLikes) statLikes.textContent = prev.toLocaleString('hu');
+    btn.style.cssText = '';
+    localStorage.removeItem(lk);
+    showToast('Hiba történt, próbáld újra.', 'warn');
+  }
+}
+window.handleModalLike = handleModalLike;
+
+
+
+async function loadModalViewCount(articleId) {
+  const el = document.getElementById('modalStatViews');
+  if (!el) return;
+  const lk = 'reason_viewed_' + articleId;
+  try {
+    const rows = await sbFetch('/rest/v1/articles?id=eq.' + articleId + '&select=view_count,like_count,comment_count&limit=1');
+    const row = rows?.[0];
+    if (!row) return;
+    el.textContent = (row.view_count ?? 0).toLocaleString('hu');
+    document.getElementById('modalStatLikes').textContent    = (row.like_count    ?? 0).toLocaleString('hu');
+    document.getElementById('modalStatComments').textContent = (row.comment_count ?? 0).toLocaleString('hu');
+    document.getElementById('modalLikeCount').textContent    = (row.like_count    ?? 0);
+    const cached = allArticles.find(a => String(a.id) === String(articleId));
+    if (cached) {
+      cached.view_count    = row.view_count;
+      cached.like_count    = row.like_count;
+      cached.comment_count = row.comment_count;
+    }
+    if (!localStorage.getItem(lk)) {
+      localStorage.setItem(lk, '1');
+      await sbFetch(`/rest/v1/articles?id=eq.${articleId}`, {
+        method: 'PATCH',
+        headers: { ...SB_HDR, 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ view_count: (row.view_count ?? 0) + 1 })
+      });
+      el.textContent = ((row.view_count ?? 0) + 1).toLocaleString('hu');
+      if (cached) cached.view_count = (row.view_count ?? 0) + 1;
+      fetchTotalViews();
+    }
+  } catch {
+    el.textContent = '–';
+  }
+}
+
+  
+async function handleModalShare() {
+  const articleId = document.getElementById('modalLikeBtn').dataset.articleId;
+  if (!articleId) return;
+  const art = allArticles.find(a => String(a.id) === String(articleId));
+  const url = 'https://reason-five.vercel.app/cikk/' + articleId;
+  const msgEl = document.getElementById('modalShareMsg');
+  if (navigator.share) { try { await navigator.share({ title: art?.title, url }); return; } catch {} }
+  try {
+    await navigator.clipboard.writeText(url);
+    msgEl.textContent = '✓ Link másolva!';
+    setTimeout(() => { msgEl.textContent = ''; }, 2500);
+  } catch {
+    const ta = document.createElement('textarea');
+    ta.value = url;
+    ta.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { document.execCommand('copy'); msgEl.textContent = '✓ Link másolva!'; } catch { msgEl.textContent = url; }
+    document.body.removeChild(ta);
+    setTimeout(() => { msgEl.textContent = ''; }, 2500);
+  }
+}
+window.handleModalShare = handleModalShare;
+function getShareUrl() {
+  const id = document.getElementById('modalLikeBtn').dataset.articleId;
+  return 'https://reason-five.vercel.app/cikk/' + id;
+}
+function getShareTitle() {
+  return document.getElementById('modalTitle').textContent || 'REASON cikk';
+}
+function toggleShareMenu() {
+  const m = document.getElementById('shareMenu');
+  m.style.display = m.style.display === 'none' ? 'block' : 'none';
+}
+function closeShareMenu() {
+  const m = document.getElementById('shareMenu');
+  if (m) m.style.display = 'none';
+}
+function shareToFacebook() {
+  window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(getShareUrl()), '_blank', 'width=600,height=400');
+  closeShareMenu();
+}
+function shareToX() {
+  window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(getShareUrl()) + '&text=' + encodeURIComponent(getShareTitle()), '_blank', 'width=600,height=400');
+  closeShareMenu();
+}
+function shareToWhatsApp() {
+  window.open('https://wa.me/?text=' + encodeURIComponent(getShareTitle() + ' ' + getShareUrl()), '_blank');
+  closeShareMenu();
+}
+function shareToReddit() {
+  window.open('https://reddit.com/submit?url=' + encodeURIComponent(getShareUrl()) + '&title=' + encodeURIComponent(getShareTitle()), '_blank', 'width=600,height=400');
+  closeShareMenu();
+}
+async function copyShareLink() {
+  const url = getShareUrl();
+  const msgEl = document.getElementById('modalShareMsg');
+  try {
+    await navigator.clipboard.writeText(url);
+    showToast('✓ Link másolva!', 'success');
+  } catch {
+    const ta = document.createElement('textarea');
+    ta.value = url;
+    ta.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    try { document.execCommand('copy'); showToast('✓ Link másolva!', 'success'); } catch {}
+    document.body.removeChild(ta);
+  }
+  closeShareMenu();
+}
+window.toggleShareMenu = toggleShareMenu;
+window.shareToFacebook = shareToFacebook;
+window.shareToX = shareToX;
+window.shareToWhatsApp = shareToWhatsApp;
+window.shareToReddit = shareToReddit;
+  function shareToTikTok() {
+  window.open('https://www.tiktok.com/share?url=' + encodeURIComponent(getShareUrl()), '_blank', 'width=600,height=400');
+}
+window.shareToTikTok = shareToTikTok;
+window.copyShareLink = copyShareLink;
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#shareMenu') && !e.target.closest('[onclick="toggleShareMenu()"]')) {
+    closeShareMenu();
+  }
+});
+
+async function loadModalReactions(articleId) {
+  const el = document.getElementById('modalReactions');
+  if (!el) return;
+  const REACTIONS = [
+    { key: 'shock',   label: 'Megdöbbentett',      emoji: '😮' },
+    { key: 'learned', label: 'Megtanultam valamit', emoji: '💡' },
+    { key: 'worry',   label: 'Aggaszt',             emoji: '😟' },
+    { key: 'hope',    label: 'Reményt adott',        emoji: '🌱' },
+  ];
+  const voted = localStorage.getItem('reason_reaction_' + articleId);
+  let counts = {};
+  REACTIONS.forEach(r => { counts[r.key] = 0; });
+  try {
+    const rows = await sbFetch('/rest/v1/article_reactions?article_id=eq.' + articleId + '&select=reaction');
+    rows.forEach(r => { if (counts[r.reaction] !== undefined) counts[r.reaction]++; });
+  } catch {}
+
+  const total = Object.values(counts).reduce((a, b) => a + b, 0);
+  el.style.display = 'block';
+
+  if (!voted) {
+    el.innerHTML = `
+      <div style="border-top:1px solid var(--border);padding-top:20px">
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:12px">Hogyan hatott rád ez a cikk?</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          ${REACTIONS.map(r => `
+            <button onclick="submitReaction('${articleId}','${r.key}')"
+              style="display:flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--border);border-radius:50px;background:var(--bg2);font-size:13px;cursor:pointer;color:var(--text);font-family:var(--font-s);transition:.15s"
+              onmouseover="this.style.borderColor='var(--accent)'"
+              onmouseout="this.style.borderColor='var(--border)'">
+              ${r.emoji} ${r.label}
+            </button>`).join('')}
+        </div>
+      </div>`;
+  } else {
+    el.innerHTML = `
+      <div style="border-top:1px solid var(--border);padding-top:20px">
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:12px">Mások reakciói</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          ${REACTIONS.map(r => {
+            const cnt = counts[r.key] || 0;
+            const pct = total > 0 ? Math.round(cnt / total * 100) : 0;
+            const isVoted = voted === r.key;
+            return `
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="font-size:13px;width:180px;color:var(--text2);${isVoted ? 'font-weight:700;color:var(--text)' : ''}">${r.emoji} ${r.label}</span>
+                <div style="flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden">
+                  <div style="height:100%;width:${pct}%;background:${isVoted ? 'var(--accent)' : 'var(--border2)'};border-radius:4px;transition:width .4s"></div>
+                </div>
+                <span style="font-size:12px;color:${isVoted ? 'var(--accent)' : 'var(--text4)'};font-family:var(--font-m);width:36px;text-align:right;font-weight:${isVoted ? '700' : '400'}">${pct}%</span>
+              </div>`;
+          }).join('')}
+          <div style="font-size:11px;color:var(--text4);margin-top:4px">${total} szavazat összesen</div>
+        </div>
+      </div>`;
+  }
+}
+
+async function submitReaction(articleId, reaction) {
+  const lk = 'reason_reaction_' + articleId;
+  if (localStorage.getItem(lk)) return;
+  // Azonnal mentjük lokálisan, hogy az újratöltéskor már voted legyen
+  localStorage.setItem(lk, reaction);
+  try {
+    await sbFetch('/rest/v1/article_reactions', {
+      method: 'POST',
+      headers: { ...SB_HDR, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ article_id: articleId, reaction })
+    });
+  } catch {}
+  // Kis várakozás hogy az adatbázis feldolgozza, majd frissítünk
+  await new Promise(res => setTimeout(res, 300));
+  await loadModalReactions(articleId);
+  showToast('Köszönjük a visszajelzést!', 'success');
+}
+window.submitReaction = submitReaction;
+
+
+function renderModalRelated(articleId, category) {
+  const el = document.getElementById('modalRelated');
+  if (!el) return;
+  const related = allArticles
+    .filter(a => String(a.id) !== String(articleId) && a.category === category)
+    .slice(0, 3);
+  if (!related.length) { el.innerHTML = ''; return; }
+  const col = CAT_COLOR[category] || '#888';
+  el.innerHTML = `
+    <div style="border-top:1px solid var(--border);padding-top:24px;margin-bottom:8px">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text4);margin-bottom:14px">Kapcsolódó cikkek</div>
+      <div style="display:flex;flex-direction:column;gap:0">
+        ${related.map(a => `
+          <div onclick="closeModal();setTimeout(()=>openArticleById('${a.id}'),120)"
+            style="padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:.15s"
+            onmouseover="this.style.opacity='.7'"
+            onmouseout="this.style.opacity='1'">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${col};margin-bottom:4px">${esc(a.category || '')}</div>
+            <div style="font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:4px">${esc(a.title || '')}</div>
+            <div style="font-size:11px;color:var(--text4)">${fmtTime(a.created_at)} · ${a.read_time || '?'} perc</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+window.renderModalRelated = renderModalRelated;
+
+  
+async function loadModalComments(articleId) {
+  const listEl  = document.getElementById('modalCommentList');
+  const badgeEl = document.getElementById('modalCommentCountBadge');
+  const textEl  = document.getElementById('modalCommentCountText');
+  listEl.innerHTML = '<div style="font-size:13px;color:var(--text4);padding:8px 0">Betöltés...</div>';
+  try {
+    const comments = await sbFetch(`/rest/v1/comments?article_id=eq.${articleId}&order=created_at.asc`);
+    const cnt = comments.length;
+    badgeEl.textContent = cnt;
+    const statCnt = document.getElementById('modalStatComments');
+    if (statCnt) statCnt.textContent = cnt;
+    if (cnt === 0) {
+      textEl.textContent = 'Még nincs hozzászólás';
+      listEl.innerHTML = '<div style="font-size:13px;color:var(--text4);padding:8px 0">Még nincs hozzászólás. Légy az első!</div>';
+    } else {
+      textEl.textContent = cnt + ' hozzászólás';
+      listEl.innerHTML = comments.map(c => `
+        <div style="border-bottom:1px solid var(--border);padding:12px 0">
+          <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px">${esc(c.author || 'Névtelen')}</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.6">${esc(c.body)}</div>
+          <div style="font-size:10px;color:var(--text4);margin-top:4px">${fmtTimeFull(c.created_at)}</div>
+        </div>`).join('');
+    }
+  } catch {
+    badgeEl.textContent = '?';
+    textEl.textContent = '';
+    listEl.innerHTML = '<div style="font-size:13px;color:var(--text4)">Kommentek betöltése sikertelen.</div>';
+  }
+}
+
+async function submitModalComment() {
+  const articleId = document.getElementById('modalLikeBtn').dataset.articleId;
+  if (!articleId) return;
+  const author = document.getElementById('modalCAuthor').value.trim() || 'Névtelen olvasó';
+  const body   = document.getElementById('modalCBody').value.trim();
+  const msgEl  = document.getElementById('modalCMsg');
+  if (body.length < 3) { msgEl.style.color = 'var(--accent)'; msgEl.textContent = 'Túl rövid a hozzászólás.'; return; }
+  const spamKey = 'reason_comment_last';
+  const lastComment = parseInt(localStorage.getItem(spamKey) || '0');
+  if (Date.now() - lastComment < 30000) { msgEl.style.color = 'var(--accent)'; msgEl.textContent = 'Várj 30 másodpercet a következő hozzászólás előtt.'; return; }
+  localStorage.setItem(spamKey, Date.now());
+  msgEl.style.color = 'var(--text4)';
+  msgEl.textContent = 'Küldés...';
+  try {
+    await sbFetch('/rest/v1/comments', {
+      method: 'POST',
+      headers: { ...SB_HDR, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ article_id: articleId, author, body })
+    });
+
+    // comment_count növelése az articles táblában
+    const rows = await sbFetch('/rest/v1/articles?id=eq.' + articleId + '&select=comment_count&limit=1');
+    const cur  = rows?.[0]?.comment_count ?? 0;
+    await sbFetch('/rest/v1/articles?id=eq.' + articleId, {
+      method:  'PATCH',
+      headers: { ...SB_HDR, 'Prefer': 'return=minimal' },
+      body:    JSON.stringify({ comment_count: cur + 1, updated_at: new Date().toISOString() })
+    });
+
+    // Lokális cache frissítés
+    const cached = allArticles.find(a => String(a.id) === String(articleId));
+    if (cached) cached.comment_count = cur + 1;
+
+    msgEl.style.color = '#1a7a3c';
+    msgEl.textContent = 'Hozzászólás elküldve!';
+    document.getElementById('modalCBody').value   = '';
+    document.getElementById('modalCAuthor').value = '';
+    await loadModalComments(articleId);
+    setTimeout(() => { msgEl.textContent = ''; }, 3000);
+  } catch { msgEl.style.color = 'var(--accent)'; msgEl.textContent = 'Hiba történt, próbáld újra.'; }
+}
+window.submitModalComment = submitModalComment;
+
+// ══════════════════════════════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════════════════════════════
+function openAuth()    { document.getElementById('authModal').classList.add('open'); switchTab('login'); }
+function closeAuth()   { document.getElementById('authModal').classList.remove('open'); }
+function openSupport() { document.getElementById('supportModal').classList.add('open'); }
+function closeSupport(){ document.getElementById('supportModal').classList.remove('open'); }
+window.openAuth = openAuth; window.closeAuth = closeAuth;
+window.openSupport = openSupport; window.closeSupport = closeSupport;
+
+function switchTab(tab) {
+  document.getElementById('authLoginForm').style.display = tab === 'login' ? '' : 'none';
+  document.getElementById('authRegForm').style.display = tab === 'reg' ? '' : 'none';
+  document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+  document.getElementById('tabReg').classList.toggle('active', tab === 'reg');
+  document.getElementById('authMsg').textContent = '';
+}
+window.switchTab = switchTab;
+
+function setAuthMsg(msg, type) { const el = document.getElementById('authMsg'); el.textContent = msg; el.className = 'auth-msg ' + (type || ''); }
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  if (!email || !pass) { setAuthMsg('Töltsd ki az összes mezőt.', 'err'); return; }
+  setAuthMsg('Bejelentkezés...');
+  try {
+    const r = await fetch(`${SB_URL}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pass }) });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error_description || 'Hibás email vagy jelszó');
+    localStorage.setItem('reason_token', d.access_token);
+    localStorage.setItem('reason_refresh', d.refresh_token);
+    await loadUser(d.access_token);
+    closeAuth();
+    showToast('👋 Üdvözöljük újra!', 'success');
+  } catch (e) { setAuthMsg(e.message, 'err'); }
+}
+window.doLogin = doLogin;
+
+async function doRegister() {
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass = document.getElementById('regPass').value;
+  const gdpr = document.getElementById('gdprCheck').checked;
+  if (!name || !email || !pass) { setAuthMsg('Töltsd ki az összes mezőt.', 'err'); return; }
+  if (pass.length < 6) { setAuthMsg('A jelszó legalább 6 karakter legyen.', 'err'); return; }
+  if (!gdpr) { setAuthMsg('Az adatkezelési tájékoztató elfogadása kötelező.', 'err'); return; }
+  setAuthMsg('Regisztráció...');
+  try {
+    const r = await fetch(`${SB_URL}/auth/v1/signup`, { method: 'POST', headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pass, data: { name } }) });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error_description || 'Hiba történt');
+    if (d.access_token) {
+      localStorage.setItem('reason_token', d.access_token);
+      await loadUser(d.access_token);
+      closeAuth();
+      showToast('🎉 Üdvözöljük a REASON közösségében!', 'success');
+    } else setAuthMsg('Regisztráció sikeres! Erősítse meg az emailben küldött linkkel.', 'ok');
+  } catch (e) { setAuthMsg(e.message, 'err'); }
+}
+window.doRegister = doRegister;
+
+async function loadUser(token) {
+  try {
+    const r = await fetch(`${SB_URL}/auth/v1/user`, { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + token } });
+    if (!r.ok) throw new Error();
+    currentUser = await r.json();
+    renderUserBtn();
+  } catch { logout(); }
+}
+
+function renderUserBtn() {
+  const wrap = document.getElementById('authBtnWrap');
+  if (!wrap) return;
+  if (currentUser) {
+    const name = currentUser.user_metadata?.name || currentUser.email || 'Olvasó';
+    const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    wrap.innerHTML = `<div class="user-menu-wrap">
+      <div class="user-btn" onclick="toggleUserMenu()">
+        <div class="user-avatar">${initials}</div>
+        <span>${name.split(' ')[0]}</span>
+        <span style="font-size:9px;color:var(--text4)">▼</span>
+      </div>
+      <div class="user-dropdown" id="userDropdown">
+        <div class="user-dd-item" style="font-size:11px;color:var(--text4);cursor:default">${currentUser.email}</div>
+        <div style="height:1px;background:var(--border);margin:4px 0"></div>
+        <div class="user-dd-item" onclick="openSupport()">❤️ Támogatás</div>
+        <div class="user-dd-item danger" onclick="logout()">Kijelentkezés</div>
+      </div>
+    </div>`;
+  } else {
+    wrap.innerHTML = `<button onclick="openAuth()" style="padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-s);letter-spacing:.04em">Bejelentkezés</button>`;
+  }
+}
+
+function toggleUserMenu() { const dd = document.getElementById('userDropdown'); if (dd) dd.classList.toggle('open'); }
+window.toggleUserMenu = toggleUserMenu;
+document.addEventListener('click', e => { if (!e.target.closest('.user-menu-wrap')) { const dd = document.getElementById('userDropdown'); if (dd) dd.classList.remove('open'); } });
+
+function logout() {
+  currentUser = null;
+  localStorage.removeItem('reason_token');
+  localStorage.removeItem('reason_refresh');
+  renderUserBtn();
+  showToast('Sikeresen kijelentkeztettük.', '');
+}
+window.logout = logout;
+
+async function initAuth() {
+  const token = localStorage.getItem('reason_token');
+  if (token) await loadUser(token); else renderUserBtn();
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  SUPPORT
+// ══════════════════════════════════════════════════════════════════
+const STRIPE_LINKS = {
+  500:  'https://buy.stripe.com/dRmfZjbhdg3EfkeeOogIo03',
+  1000: 'https://buy.stripe.com/bJeaEZ2KHdVwc820XygIo06',
+  3000: 'https://buy.stripe.com/28E3cxbhd6t43Bw5dOgIo05',
+};
+function setSupportMsg(msg, type) { const el = document.getElementById('supportMsg'); if (el) { el.textContent = msg; el.className = 'auth-msg ' + (type || ''); } }
+function doSupport(amount) {
+  const link = STRIPE_LINKS[amount];
+  if (!link) { setSupportMsg('Ismeretlen összeg.', 'err'); return; }
+  const ep = currentUser?.email ? '?prefilled_email=' + encodeURIComponent(currentUser.email) : '';
+  window.open(link + ep, '_blank', 'noopener');
+  setSupportMsg('✅ A fizetési oldal új lapon nyílt meg. Köszönjük!', 'ok');
+}
+function doSupportCustom() {
+  const v = parseInt(document.getElementById('customAmount').value);
+  if (!v || v < 100) { setSupportMsg('Minimum 100 Ft szükséges.', 'err'); return; }
+  window.open(STRIPE_LINKS[1000], '_blank', 'noopener');
+  setSupportMsg('Egyedi összegnél módosíthatod a fizetési oldalon.', 'ok');
+}
+window.doSupport = doSupport;
+window.doSupportCustom = doSupportCustom;
+
+// ══════════════════════════════════════════════════════════════════
+//  GDPR
+// ══════════════════════════════════════════════════════════════════
+function initGDPR() { if (!localStorage.getItem('reason_gdpr')) document.getElementById('gdprBanner').style.display = 'flex'; }
+function acceptGDPR() { localStorage.setItem('reason_gdpr', '1'); document.getElementById('gdprBanner').style.display = 'none'; }
+window.acceptGDPR = acceptGDPR;
+
+// ══════════════════════════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════════════════════════
+function showToast(msg, type = '') {
+  const w = document.getElementById('toastWrap');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  w.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .4s'; setTimeout(() => t.remove(), 400); }, 3800);
+}
+function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+function ageBadge(iso) {
+  if (!iso) return '';
+  const now   = new Date();
+  const date  = new Date(iso);
+  const diffH = (now - date) / 3600000;
+  const todayStr = now.toDateString();
+  const dateStr  = date.toDateString();
+  if (diffH < 1)             return '<span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#1a7a3c22;color:#1a7a3c;margin-left:4px">● Friss</span>';
+  if (todayStr === dateStr)  return '<span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#0066cc22;color:#0066cc;margin-left:4px">● Ma</span>';
+  return '';
+}
+
+  
+function fmtTime(iso) {
+  if (!iso) return '–';
+  const diff = Math.floor((Date.now() - new Date(iso)) / 1000);
+  if (diff < 60) return 'épp most';
+  if (diff < 3600) return Math.floor(diff / 60) + ' perce';
+  if (diff < 86400) return Math.floor(diff / 3600) + ' órája';
+  return new Date(iso).toLocaleDateString('hu-HU', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.') + '.';
+}
+function fmtTimeFull(iso) {
+  if (!iso) return '–';
+  return new Date(iso).toLocaleString('hu-HU', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+
+
+
+function renderSupportBanner() {
+  const mc = document.getElementById('mainCol');
+  if (!mc) return;
+  const b = document.createElement('div');
+  b.className = 'support-banner';
+  b.innerHTML = `<h3>❤️ Támogasd a REASON-t</h3>
+    <p>Mi egy hírportál vagyunk. Egy kávé árával is sokat segítesz a fenntartásban.</p>
+    <button class="support-btn" onclick="openSupport()">Támogatás küldése →</button>`;
+  mc.appendChild(b);
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  LIP SYNC SEGÉDFÜGGVÉNYEK
+// ══════════════════════════════════════════════════════════════════
+function lerp(a, b, t) {
+  return a + (b - a) * Math.max(0, Math.min(1, t));
+}
+
+
+function getConfig() {
+  return {
+    // FONÉMA – IDŐZÍTÉS
+    pMsPerChar:   0.090,
+    pOpenRatio:   0.50,
+    pPeakRatio:   0.35,
+    pCloseRatio:  0.15,
+    pCloseFrac:   0.40,
+    pSpaceMul:    1.44,
+    pPunctMul:    8.00,
+    pStartDelay:  0.050,
+    pEndPause:    0.120,
+    pEndExtra:    0.200,
+
+    // FONÉMA – MAGÁNHANGZÓK
+    vAjaw:  0.60,  vAfun:  0.05,
+    vEjaw:  0.35,  vEml:   0.30,
+    vIjaw:  0.20,  vIml:   0.45,
+    vOjaw:  0.45,  vOfun:  0.70,
+    vOEjaw: 0.30,  vOEpuck: 0.80,
+    vUjaw:  0.25,  vUpuck:  0.90,
+    vUEjaw: 0.20,  vUEpuck: 0.85,
+
+    // LIP SYNC – VISEME
+    mLabial:    0.08,
+    mLabiodent: 0.15,
+    mSibilant:  0.18,
+    mDefault:   0.15,
+    cMBPjaw:    0.02,
+    cFVjaw:     0.08,  cFVpuck: 0.12,
+    cSZjaw:     0.10,  cSZml:   0.10,
+    cDefjaw:    0.18,  cDefml:  0.05,
+
+    // LIP SYNC – MOTOR
+    m3dMorphScale:  0.67,
+    m3dLerp:        0.11,
+    m3dJawAngle:    0.42,
+    m3dHeadAngle:   0.12,
+    mOpenSpeed:     0.45,
+    mCloseSpeed:    0.28,
+    mConsClose:     0.35,
+    mCharMs:        0.75,
+    mIdleAmp:       0.08,
+    mLerpMin:       0.06,
+    mLerpMax:       0.40,
+    mJawMax:        0.90,
+    mJawIdleMin:    0.00,
+    mVowelBoost:    1.10,
+    mConsDamp:      0.70,
+    mFunnelScale:   1.20,
+    mPuckerScale:   1.20,
+    mMouthLRScale:  1.00,
+    mSilenceThresh: 0.015,
+    mSilenceDelay:  250,
+    mIdleWaveAmp:   0.04,
+    mIdleWaveSpeed: 1.80,
+    mRmsGain:       1.20,
+    mLowBandRatio:  0.25,
+    mHighBandRatio: 0.65,
+    mVowelThresh:   1.20,
+    mFftSmooth:     0.75,
+
+    // 3D MODELL – IDLE ANIMÁCIÓ
+    m3dBlinkDur:   0.18,
+    m3dBlinkMin:   1.51,
+    m3dBlinkMax:   4.01,
+    m3dHeadSwing:  0.04,
+    m3dBob:        0.57,
+  };
+}
+
+
+function phType(c) {
+  if ('aá'.includes(c))       return 'vowel_a';
+  if ('eé'.includes(c))       return 'vowel_e';
+  if ('ií'.includes(c))       return 'vowel_i';
+  if ('oó'.includes(c))       return 'vowel_o';
+  if ('öő'.includes(c))       return 'vowel_oe';
+  if ('uú'.includes(c))       return 'vowel_u';
+  if ('üű'.includes(c))       return 'vowel_ue';
+  if ('mbp'.includes(c))      return 'cons_mbp';
+  if ('fv'.includes(c))       return 'cons_fv';
+  if (['sz','zs','s','z','cs'].includes(c)) return 'cons_sz';
+  if (['ty','gy','ny','dz','dzs'].includes(c)) return 'cons_default';
+  if ('tdnkgrlhjcqwxy'.includes(c)) return 'cons_default';
+  return 'cons_default';
+}
+function textToPhonemes(text, cfg) {
+  const s = text.toLowerCase();
+  const result = [];
+  let i = 0;
+  while (i < s.length) {
+    const three = s.slice(i, i + 3);
+    if (three === 'dzs') {
+      result.push({ char: 'dzs', type: 'cons_sz', dur: cfg.pMsPerChar });
+      i += 3; continue;
+    }
+    const two = s.slice(i, i + 2);
+    if (['sz','zs','cs','ty','gy','ny','dz'].includes(two)) {
+      result.push({ char: two, type: phType(two), dur: cfg.pMsPerChar });
+      i += 2; continue;
+    }
+    const c = s[i];
+    if (c === ' ' || c === '\t') {
+      result.push({ char: c, type: 'silence', dur: cfg.pMsPerChar * cfg.pSpaceMul });
+    } else if ('.,:;!?…–—'.includes(c)) {
+      result.push({ char: c, type: 'silence', dur: cfg.pMsPerChar * cfg.pPunctMul });
+    } else {
+      result.push({ char: c, type: phType(c), dur: cfg.pMsPerChar });
+    }
+    i++;
+  }
+  return result;
+}
+
+
+function getMorphTarget(type, cfg) {
+  switch (type) {
+    case 'vowel_a': return {
+      jawOpen: cfg.vAjaw, mouthFunnel: cfg.vAfun, mouthPucker: 0,
+      mouthLeft: 0, mouthRight: 0,
+      mouthLowerDownLeft: cfg.vAjaw * 0.4, mouthLowerDownRight: cfg.vAjaw * 0.4,
+      mouthUpperUpLeft: cfg.vAjaw * 0.15, mouthUpperUpRight: cfg.vAjaw * 0.15,
+    };
+    case 'vowel_e': return {
+      jawOpen: cfg.vEjaw, mouthLeft: cfg.vEml, mouthRight: cfg.vEml,
+      mouthSmileLeft: cfg.vEml * 0.4, mouthSmileRight: cfg.vEml * 0.4,
+      mouthFunnel: 0, mouthPucker: 0,
+      mouthLowerDownLeft: cfg.vEjaw * 0.2, mouthLowerDownRight: cfg.vEjaw * 0.2,
+    };
+    case 'vowel_i': return {
+      jawOpen: cfg.vIjaw, mouthLeft: cfg.vIml, mouthRight: cfg.vIml,
+      mouthSmileLeft: cfg.vIml * 0.5, mouthSmileRight: cfg.vIml * 0.5,
+      mouthDimpleLeft: cfg.vIml * 0.3, mouthDimpleRight: cfg.vIml * 0.3,
+      mouthFunnel: 0, mouthPucker: 0,
+    };
+    case 'vowel_o': return {
+      jawOpen: cfg.vOjaw, mouthFunnel: cfg.vOfun, mouthPucker: cfg.vOfun * 0.5,
+      mouthLeft: 0, mouthRight: 0,
+      mouthLowerDownLeft: cfg.vOjaw * 0.3, mouthLowerDownRight: cfg.vOjaw * 0.3,
+    };
+    case 'vowel_oe': return {
+      jawOpen: cfg.vOEjaw, mouthPucker: cfg.vOEpuck, mouthFunnel: cfg.vOEpuck * 0.4,
+      mouthLeft: 0, mouthRight: 0,
+      mouthLowerDownLeft: cfg.vOEjaw * 0.25, mouthLowerDownRight: cfg.vOEjaw * 0.25,
+    };
+    case 'vowel_u': return {
+      jawOpen: cfg.vUjaw, mouthPucker: cfg.vUpuck, mouthFunnel: cfg.vUpuck * 0.6,
+      mouthLeft: 0, mouthRight: 0,
+      mouthLowerDownLeft: cfg.vUjaw * 0.2, mouthLowerDownRight: cfg.vUjaw * 0.2,
+    };
+    case 'vowel_ue': return {
+      jawOpen: cfg.vUEjaw, mouthPucker: cfg.vUEpuck, mouthFunnel: cfg.vUEpuck * 0.5,
+      mouthLeft: 0, mouthRight: 0,
+    };
+    case 'cons_mbp': return {
+      jawOpen: cfg.cMBPjaw, mouthClose: 0.6, mouthRollLower: 0.4, mouthRollUpper: 0.4,
+      mouthPressLeft: 0.3, mouthPressRight: 0.3,
+      mouthFunnel: 0, mouthPucker: 0, mouthLeft: 0, mouthRight: 0,
+    };
+    case 'cons_fv': return {
+      jawOpen: cfg.cFVjaw, mouthPucker: cfg.cFVpuck, mouthShrugUpper: 0.25,
+      mouthRollLower: 0.2, mouthPressLeft: 0.1, mouthPressRight: 0.1,
+      mouthFunnel: 0, mouthLeft: 0, mouthRight: 0,
+    };
+    case 'cons_sz': return {
+      jawOpen: cfg.cSZjaw, mouthLeft: cfg.cSZml, mouthRight: cfg.cSZml,
+      mouthPressLeft: 0.2, mouthPressRight: 0.2,
+      mouthStretchLeft: 0.1, mouthStretchRight: 0.1,
+      mouthFunnel: 0, mouthPucker: 0,
+    };
+    case 'cons_default': return {
+      jawOpen: cfg.cDefjaw, mouthLeft: cfg.cDefml, mouthRight: cfg.cDefml,
+      mouthLowerDownLeft: cfg.cDefjaw * 0.2, mouthLowerDownRight: cfg.cDefjaw * 0.2,
+      mouthFunnel: 0, mouthPucker: 0,
+    };
+    case 'silence': default: return {
+      jawOpen: 0, mouthFunnel: 0, mouthPucker: 0,
+      mouthLeft: 0, mouthRight: 0, mouthClose: 0,
+      mouthLowerDownLeft: 0, mouthLowerDownRight: 0,
+      mouthUpperUpLeft: 0, mouthUpperUpRight: 0,
+      mouthSmileLeft: 0, mouthSmileRight: 0,
+    };
+  }
+}
+
+
+// ══════════════════════════════════════════════════════════════════
+//  LIP SYNC MOTOR
+// ══════════════════════════════════════════════════════════════════
+class LipSyncMotor {
+  constructor() {
+    this._meshNodes     = [];
+    this._isAnimating   = false;
+    this._phonemeQueue  = [];
+    this._phonemeSeq    = [];
+    this._startTime     = 0;
+    this._totalMs       = 0;
+    this._lastFrameTime = performance.now();
+    this._endTimer      = null;
+    this._current       = {};
+    this._blinkTimer    = 0;
+    this._blinkNext     = 0;
+    this._blinkPhase    = 0;
+    this._blinkT        = 0;
+    this._idleWaveT     = 0;
+    this._saccadeT      = 0;
+    this._saccadeNext   = 3000;
+    this._saccadeTimer  = 0;
+    this._saccadeCurX   = 0;
+    this._saccadeCurY   = 0;
+    this._saccadeTgtX   = 0;
+    this._saccadeTgtY   = 0;
+    this._saccadeDur    = 120;
+    this._saccadePhase  = 0;
+    this._saccadeFromX  = 0;
+    this._saccadeFromY  = 0;
+    this._browWaveT     = 0;
+    this._headMicroT    = 0;
+    this._toneWaveT     = 0;
+    this._breathT       = 0;
+    this._microExpTimer = 0;
+    this._microExpNext  = 5000 + Math.random() * 8000;
+    this._microExpPhase = 0;
+    this._microExpT     = 0;
+    this._microExpType  = 0;
+    this._charIndexMap  = {};
+  }
+
+  setModel(model) {
+    this._meshNodes = [];
+    model.traverse(n => {
+      if (n.isMesh && n.morphTargetDictionary && n.morphTargetInfluences) {
+        this._meshNodes.push({ mesh: n, dict: n.morphTargetDictionary });
+      }
+    });
+    this._current = {};
+  }
+
+  _buildQueue() {
+  const cfg = getConfig();
+  const q   = [];
+  const charMap = {};
+  let t = cfg.pStartDelay * 1000;
+  let charCursor = 0;
+
+  for (const ph of this._phonemeSeq) {
+    const dur      = ph.dur * 1000;
+    const openEnd  = t + dur * cfg.pOpenRatio;
+    const peakEnd  = openEnd + dur * cfg.pPeakRatio;
+    const closeEnd = peakEnd + dur * cfg.pCloseRatio;
+
+    charMap[charCursor] = q.length;   // ← charIndex → queue index
+
+    q.push({
+      startT:    t,
+      openEndT:  openEnd,
+      peakEndT:  peakEnd,
+      closeEndT: closeEnd,
+      endT:      closeEnd,
+      phType:    ph.type,
+      char:      ph.char,
+      isVowel:   ph.type.startsWith('vowel_'),
+      isSilence: ph.type === 'silence',
+    });
+
+    charCursor += ph.char ? ph.char.length : 1;
+    t = closeEnd;
+  }
+
+  this._totalMs      = t + (cfg.pEndPause || 0.15) * 1000;
+  this._phonemeQueue = q;
+  this._charIndexMap = charMap;   // ← eltároljuk
+}
+
+
+  startAnimation(phonemeSeq) {
+    this.stop();
+    if (!phonemeSeq || !phonemeSeq.length) return;
+    this._phonemeSeq = phonemeSeq;
+    this._buildQueue();
+    this._isAnimating = true;
+    this._startTime   = performance.now();
+    if (this._endTimer) clearTimeout(this._endTimer);
+    const cfg = getConfig();
+    this._endTimer = setTimeout(
+      () => this.stop(),
+      this._totalMs + (cfg.pEndExtra || 0.20) * 1000
+    );
+  }
+
+  update() {
+    const now = performance.now();
+    const dt  = now - this._lastFrameTime;
+    this._lastFrameTime = now;
+    if (!this._meshNodes.length) return;
+    const cfg = getConfig();
+    if (this._isAnimating) this._updateAnimating(now, cfg, dt);
+    else                   this._updateIdle(dt, cfg);
+  }
+
+_updateAnimating(now, cfg, dt) {
+    const elapsed = now - this._startTime;
+
+    let activePh = null;
+    for (let i = 0; i < this._phonemeQueue.length; i++) {
+      const ph = this._phonemeQueue[i];
+      if (elapsed >= ph.startT && elapsed <= ph.endT) { activePh = ph; break; }
+      if (elapsed < ph.startT) break;
+    }
+
+    const target = {};
+
+    if (activePh && !activePh.isSilence) {
+      const { startT, openEndT, peakEndT, closeEndT } = activePh;
+      let blend = 0;
+
+      if (elapsed < openEndT) {
+        blend = openEndT > startT ? (elapsed - startT) / (openEndT - startT) : 1;
+      } else if (elapsed < peakEndT) {
+        blend = 1;
+      } else {
+        const closeLen = closeEndT - peakEndT;
+        const t2 = elapsed - peakEndT;
+        blend = closeLen > 0 ? 1 - t2 / closeLen : 0;
+        blend = Math.min(1, Math.max(0, blend));
+        blend *= cfg.pCloseFrac + (1 - cfg.pCloseFrac) * blend;
+      }
+      blend = Math.min(1, Math.max(0, blend));
+
+      const scale = cfg.m3dMorphScale * (activePh.isVowel ? cfg.mVowelBoost : cfg.mConsDamp);
+
+      const morphTgt = getMorphTarget(activePh.phType, cfg);
+      for (const [k, v] of Object.entries(morphTgt)) {
+        let val = (v || 0) * blend * scale;
+        if (k === 'mouthFunnel') val *= cfg.mFunnelScale;
+        if (k === 'mouthPucker') val *= cfg.mPuckerScale;
+        if (k === 'mouthLeft' || k === 'mouthRight') val *= cfg.mMouthLRScale;
+        if (k === 'jawOpen')     val  = Math.min(val, cfg.mJawMax);
+        target[k] = val;
+      }
+    } else {
+      target.jawOpen = cfg.mJawIdleMin || 0;
+    }
+
+    // Légzés
+    this._breathT += (dt * 0.001) * 0.22;
+    const breathVal = Math.sin(this._breathT * Math.PI * 2);
+    if (!activePh || activePh.isSilence) {
+      target.jawOpen = Math.max(target.jawOpen || 0,
+        Math.max(0, (cfg.mJawIdleMin || 0) + 0.008 * breathVal));
+    }
+    target.mouthRollLower = Math.max(target.mouthRollLower || 0,
+      Math.max(0, 0.03 + 0.02 * breathVal));
+
+    // Pislogás
+    this._blinkTimer += dt;
+    if (this._blinkPhase === 0 && this._blinkTimer >= this._blinkNext) {
+      this._blinkPhase = 1; this._blinkT = 0;
+      this._blinkNext  = Math.random() < 0.3 ? 200
+        : cfg.m3dBlinkMin * 1000 + Math.random() * (cfg.m3dBlinkMax - cfg.m3dBlinkMin) * 1000;
+      this._blinkTimer = 0;
+    }
+    let blinkVal = 0;
+    if (this._blinkPhase > 0) {
+      this._blinkT += dt;
+      const half = (cfg.m3dBlinkDur * 1000) / 2;
+      if (this._blinkPhase === 1) {
+        blinkVal = Math.min(1, this._blinkT / half);
+        if (this._blinkT >= half) { this._blinkPhase = 2; this._blinkT = 0; }
+      } else {
+        blinkVal = 1 - Math.min(1, this._blinkT / half);
+        if (this._blinkT >= half) { this._blinkPhase = 0; blinkVal = 0; }
+      }
+    }
+    target.eyeBlinkLeft  = blinkVal;
+    target.eyeBlinkRight = blinkVal;
+    target.eyeSquintLeft  = blinkVal * 0.35;
+    target.eyeSquintRight = blinkVal * 0.35;
+
+// Saccade
+this._saccadeTimer += dt;
+if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
+  this._saccadeFromX = this._saccadeCurX;
+  this._saccadeFromY = this._saccadeCurY;
+  // Olvasási minta: balról jobbra pásztáz, néha visszaugrik balra
+  if (!this._readSaccadeStep) this._readSaccadeStep = 0;
+  this._readSaccadeStep++;
+  if (this._readSaccadeStep > 4) {
+    // Sor vége: visszaugrik balra és kicsit lejjebb
+    this._saccadeTgtX  = -0.22;
+    this._saccadeTgtY  = (this._saccadeCurY || 0) + 0.06;
+    if (this._saccadeTgtY > 0.18) this._saccadeTgtY = -0.10;
+    this._readSaccadeStep = 0;
+    this._saccadeDur  = 120;
+    this._saccadeNext = 180;
+  } else {
+    // Sor mentén jobbra lép kis ugrásokkal
+    this._saccadeTgtX  = -0.22 + this._readSaccadeStep * 0.11;
+    this._saccadeTgtY  = (this._saccadeCurY || 0) + (Math.random() - 0.5) * 0.03;
+    this._saccadeDur   = 60 + Math.random() * 60;
+    this._saccadeNext  = 280 + Math.random() * 320;
+  }
+  this._saccadeT     = 0;
+  this._saccadePhase = 1;
+  this._saccadeTimer = 0;
+}
+    if (this._saccadePhase === 1) {
+      this._saccadeT += dt;
+      const p    = Math.min(1, this._saccadeT / this._saccadeDur);
+      const ease = p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
+      this._saccadeCurX = lerp(this._saccadeFromX, this._saccadeTgtX, ease);
+      this._saccadeCurY = lerp(this._saccadeFromY, this._saccadeTgtY, ease);
+      if (p >= 1) { this._saccadeCurX = this._saccadeTgtX; this._saccadeCurY = this._saccadeTgtY; this._saccadePhase = 0; }
+    }
+    target.eyeLookInLeft    = Math.max(0,  this._saccadeCurX);
+    target.eyeLookInRight   = Math.max(0, -this._saccadeCurX);
+    target.eyeLookOutLeft   = Math.max(0, -this._saccadeCurX);
+    target.eyeLookOutRight  = Math.max(0,  this._saccadeCurX);
+    target.eyeLookUpLeft    = Math.max(0, -this._saccadeCurY);
+    target.eyeLookUpRight   = Math.max(0, -this._saccadeCurY);
+    target.eyeLookDownLeft  = Math.max(0,  this._saccadeCurY);
+    target.eyeLookDownRight = Math.max(0,  this._saccadeCurY);
+
+    // Arcizom tónus
+    this._toneWaveT += (dt * 0.001) * 0.05;
+    target.cheekSquintLeft  = Math.max(0, 0.05 + 0.03 * Math.sin(this._toneWaveT * Math.PI * 2));
+    target.cheekSquintRight = target.cheekSquintLeft;
+    if (!activePh || activePh.isSilence) {
+      target.mouthPressLeft  = Math.max(0, 0.02 + 0.015 * Math.sin(this._toneWaveT * Math.PI * 2 + 1.1));
+      target.mouthPressRight = target.mouthPressLeft;
+    }
+
+   // Micro expression
+    this._microExpTimer += dt;
+    if (this._microExpPhase === 0 && this._microExpTimer >= this._microExpNext) {
+      this._microExpPhase = 1; this._microExpT = 0;
+      this._microExpType = Math.floor(Math.random() * 4);
+      this._microExpNext  = 6000 + Math.random() * 10000;
+      this._microExpTimer = 0;
+    }
+    if (this._microExpPhase > 0) {
+      this._microExpT += dt;
+      const p   = Math.min(1, this._microExpT / 900);
+      const env = p < 0.4 ? p / 0.4 : 1 - (p - 0.4) / 0.6;
+      const amp = Math.max(0, env);
+      if (this._microExpType === 0) {
+        target.mouthSmileLeft  = (target.mouthSmileLeft  || 0) + amp * 0.18;
+        target.mouthSmileRight = (target.mouthSmileRight || 0) + amp * 0.16;
+        target.eyeSquintLeft   = (target.eyeSquintLeft   || 0) + amp * 0.08;
+        target.eyeSquintRight  = (target.eyeSquintRight  || 0) + amp * 0.08;
+      } else if (this._microExpType === 1) {
+        target.browDownLeft  = amp * 0.16;
+        target.browDownRight = amp * 0.14;
+        target.browInnerUp   = (target.browInnerUp || 0) + amp * 0.18;
+      } else if (this._microExpType === 2) {
+        target.eyeSquintLeft  = (target.eyeSquintLeft  || 0) + amp * 0.18;
+        target.eyeSquintRight = (target.eyeSquintRight || 0) + amp * 0.16;
+      } else {
+        const sub = Math.floor((performance.now() / 1000) * 0.3) % 3;
+        if (sub === 0) {
+          target.browOuterUpLeft  = (target.browOuterUpLeft  || 0) + amp * 0.38;
+          target.browOuterUpRight = (target.browOuterUpRight || 0) + amp * 0.36;
+          target.browInnerUp      = (target.browInnerUp      || 0) + amp * 0.30;
+        } else if (sub === 1) {
+          target.browInnerUp   = (target.browInnerUp   || 0) + amp * 0.45;
+          target.browDownLeft  = (target.browDownLeft  || 0) + amp * 0.10;
+          target.browDownRight = (target.browDownRight || 0) + amp * 0.10;
+        } else {
+          target.browOuterUpLeft = (target.browOuterUpLeft || 0) + amp * 0.42;
+          target.browDownRight   = (target.browDownRight   || 0) + amp * 0.18;
+        }
+      }
+      if (p >= 1) this._microExpPhase = 0;
+    }
+
+    this._lerpToTarget(target, cfg.m3dLerp);
+    this._writeMorphs(this._current);
+  }
+
+
+  _updateIdle(dt, cfg) {
+    const t = dt * 0.001;
+    this._breathT   += t * 0.22;
+    this._idleWaveT += t;
+    const breathVal  = Math.sin(this._breathT * Math.PI * 2);
+    const jawIdle    = Math.max(0, cfg.mJawIdleMin + 0.012 * breathVal);
+    const rollLower  = Math.max(0, 0.04 + 0.03 * breathVal);
+
+    this._blinkTimer += dt;
+    if (this._blinkPhase === 0 && this._blinkTimer >= this._blinkNext) {
+      this._blinkPhase = 1; this._blinkT = 0;
+      this._blinkNext  = Math.random() < 0.3 ? 200
+        : cfg.m3dBlinkMin * 1000 + Math.random() * (cfg.m3dBlinkMax - cfg.m3dBlinkMin) * 1000;
+      this._blinkTimer = 0;
+    }
+    let blinkVal = 0;
+    if (this._blinkPhase > 0) {
+      this._blinkT += dt;
+      const half = (cfg.m3dBlinkDur * 1000) / 2;
+      if (this._blinkPhase === 1) {
+        blinkVal = Math.min(1, this._blinkT / half);
+        if (this._blinkT >= half) { this._blinkPhase = 2; this._blinkT = 0; }
+      } else {
+        blinkVal = 1 - Math.min(1, this._blinkT / half);
+        if (this._blinkT >= half) { this._blinkPhase = 0; blinkVal = 0; }
+      }
+    }
+    const blinkSquint = blinkVal * 0.35;
+
+    this._saccadeTimer += dt;
+    if (this._saccadePhase === 0 && this._saccadeTimer >= this._saccadeNext) {
+      this._saccadeTgtX  = (Math.random() - 0.5) * 0.55;
+      this._saccadeTgtY  = (Math.random() - 0.5) * 0.32;
+      this._saccadeDur   = 80 + Math.random() * 100;
+      this._saccadeT     = 0; this._saccadePhase = 1;
+      this._saccadeNext  = 900 + Math.random() * 2200;
+      this._saccadeTimer = 0;
+    }
+    if (this._saccadePhase === 1) {
+      this._saccadeT += dt;
+      const p    = Math.min(1, this._saccadeT / this._saccadeDur);
+      const ease = p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
+      this._saccadeCurX = lerp(this._saccadeFromX || 0, this._saccadeTgtX, ease);
+      this._saccadeCurY = lerp(this._saccadeFromY || 0, this._saccadeTgtY, ease);
+      if (p >= 1) this._saccadePhase = 0;
+    }
+
+    this._browWaveT += t * 0.07;
+    const browL     = 0.04 + 0.03 * Math.sin(this._browWaveT * Math.PI * 2);
+    const browR     = 0.04 + 0.03 * Math.sin(this._browWaveT * Math.PI * 2 + 0.8);
+    const browInner = Math.max(0, 0.02 + 0.02 * Math.sin(this._browWaveT * Math.PI * 2 + 1.4));
+
+    this._toneWaveT += t * 0.05;
+    const cheekSq   = Math.max(0, 0.06 + 0.04 * Math.sin(this._toneWaveT * Math.PI * 2));
+    const mouthPr   = Math.max(0, 0.03 + 0.02 * Math.sin(this._toneWaveT * Math.PI * 2 + 1.1));
+
+    this._headMicroT += t * 0.09;
+    const jawMicroL  = Math.max(0, 0.015 * Math.sin(this._headMicroT * Math.PI * 2));
+    const jawMicroR  = Math.max(0, 0.015 * Math.sin(this._headMicroT * Math.PI * 2 + Math.PI));
+    const jawFwd     = Math.max(0, 0.01 + 0.008 * Math.sin(this._headMicroT * Math.PI * 2 * 0.7));
+
+    this._microExpTimer += dt;
+    if (this._microExpPhase === 0 && this._microExpTimer >= this._microExpNext) {
+      this._microExpPhase = 1; this._microExpT = 0;
+     this._microExpType = Math.floor(Math.random() * 4);
+      this._microExpNext  = 6000 + Math.random() * 10000;
+      this._microExpTimer = 0;
+    }
+    let microSmileL = 0, microSmileR = 0;
+    let microBrowDnL = 0, microBrowDnR = 0, microBrowIn = 0;
+    let microSquintL = 0, microSquintR = 0;
+    if (this._microExpPhase > 0) {
+  this._microExpT += dt;
+  const p   = Math.min(1, this._microExpT / 900);   // ← EZT
+  const env = p < 0.4 ? p / 0.4 : 1 - (p - 0.4) / 0.6;  // ← ÉS EZT
+  const amp = Math.max(0, env);                      // ← ÉS EZT add hozzá
+  if (this._microExpType === 0) {
+        microSmileL = amp * 0.22; microSmileR = amp * 0.20;
+        microSquintL = amp * 0.10; microSquintR = amp * 0.10;
+      } else if (this._microExpType === 1) {
+        microBrowDnL = amp * 0.18; microBrowDnR = amp * 0.16; microBrowIn = amp * 0.22;
+      } else {
+        microSquintL = amp * 0.20; microSquintR = amp * 0.18;
+      }
+      if (p >= 1) this._microExpPhase = 0;
+    }
+
+    const target = {
+      jawOpen: jawIdle, jawForward: jawFwd, jawLeft: jawMicroL, jawRight: jawMicroR,
+      mouthRollLower: rollLower, mouthPressLeft: mouthPr, mouthPressRight: mouthPr,
+      eyeBlinkLeft: blinkVal, eyeBlinkRight: blinkVal,
+      eyeSquintLeft: blinkSquint + microSquintL, eyeSquintRight: blinkSquint + microSquintR,
+      eyeLookInLeft:    Math.max(0,  this._saccadeCurX),
+      eyeLookInRight:   Math.max(0, -this._saccadeCurX),
+      eyeLookOutLeft:   Math.max(0, -this._saccadeCurX),
+      eyeLookOutRight:  Math.max(0,  this._saccadeCurX),
+      eyeLookUpLeft:    Math.max(0, -this._saccadeCurY),
+      eyeLookUpRight:   Math.max(0, -this._saccadeCurY),
+      eyeLookDownLeft:  Math.max(0,  this._saccadeCurY),
+      eyeLookDownRight: Math.max(0,  this._saccadeCurY),
+      browOuterUpLeft: browL, browOuterUpRight: browR,
+      browInnerUp: browInner + microBrowIn,
+      browDownLeft: microBrowDnL, browDownRight: microBrowDnR,
+      cheekSquintLeft: cheekSq, cheekSquintRight: cheekSq,
+      mouthSmileLeft: microSmileL, mouthSmileRight: microSmileR,
+    };
+
+    this._lerpToTarget(target, cfg.m3dLerp);
+    this._writeMorphs(this._current);
+  }
+
+  
+
+
+  _lerpToTarget(target, lerpSpeed) {
+    const MOUTH = [
+      'jawOpen','jawForward','jawLeft','jawRight',
+      'mouthClose','mouthFunnel','mouthPucker','mouthLeft','mouthRight',
+      'mouthSmileLeft','mouthSmileRight','mouthFrownLeft','mouthFrownRight',
+      'mouthRollLower','mouthRollUpper','mouthShrugLower','mouthShrugUpper',
+      'mouthLowerDownLeft','mouthLowerDownRight','mouthUpperUpLeft','mouthUpperUpRight',
+      'mouthDimpleLeft','mouthDimpleRight','mouthStretchLeft','mouthStretchRight',
+      'mouthPressLeft','mouthPressRight',
+    ];
+    const BLINK = ['eyeBlinkLeft','eyeBlinkRight'];
+    const GAZE  = [
+      'eyeLookInLeft','eyeLookInRight','eyeLookOutLeft','eyeLookOutRight',
+      'eyeLookUpLeft','eyeLookUpRight','eyeLookDownLeft','eyeLookDownRight',
+      'eyeSquintLeft','eyeSquintRight',
+      'browOuterUpLeft','browOuterUpRight','browInnerUp','browDownLeft','browDownRight',
+      'cheekSquintLeft','cheekSquintRight',
+    ];
+    for (const k of MOUTH) {
+      const tgt = target[k] !== undefined ? target[k] : 0;
+      const cur = this._current[k] || 0;
+      const alpha = tgt > cur ? Math.min(1, lerpSpeed * 2.2) : Math.min(1, lerpSpeed * 1.4);
+      this._current[k] = lerp(cur, tgt, alpha);
+    }
+    for (const k of BLINK) {
+      const tgt = target[k] !== undefined ? target[k] : 0;
+      this._current[k] = lerp(this._current[k] || 0, tgt, Math.min(1, lerpSpeed * 3));
+    }
+    for (const k of GAZE) {
+      const tgt = target[k] !== undefined ? target[k] : 0;
+      this._current[k] = lerp(this._current[k] || 0, tgt, Math.min(1, lerpSpeed * 1.2));
+    }
+  }
+
+  _writeMorphs(values) {
+    for (const { mesh, dict } of this._meshNodes) {
+      for (const [name, idx] of Object.entries(dict)) {
+        const val = values[name] ?? values[name.charAt(0).toUpperCase() + name.slice(1)] ?? 0;
+        mesh.morphTargetInfluences[idx] = Math.max(0, Math.min(1, val));
+      }
+    }
+  }
+
+
+  stop() {
+    this._isAnimating  = false;
+    this._phonemeQueue = [];
+    if (this._endTimer) { clearTimeout(this._endTimer); this._endTimer = null; }
+    const MOUTH = [
+      'jawOpen','jawForward','jawLeft','jawRight','mouthClose','mouthFunnel',
+      'mouthPucker','mouthLeft','mouthRight','mouthSmileLeft','mouthSmileRight',
+      'mouthFrownLeft','mouthFrownRight','mouthRollLower','mouthRollUpper',
+      'mouthShrugLower','mouthShrugUpper','mouthLowerDownLeft','mouthLowerDownRight',
+      'mouthUpperUpLeft','mouthUpperUpRight','mouthDimpleLeft','mouthDimpleRight',
+      'mouthStretchLeft','mouthStretchRight','mouthPressLeft','mouthPressRight',
+    ];
+    for (const k of MOUTH) this._current[k] = 0;
+    this._writeMorphs(this._current);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  3D WIDGET
+// ══════════════════════════════════════════════════════════════════
+(function init3D() {
+  const canvas    = document.getElementById('space3dCanvas');
+  const widget    = document.getElementById('space3dWidget');
+  const overlay   = document.getElementById('space3dOverlay');
+  const expandBtn = document.getElementById('space3dExpandBtn');
+  const resetBtn = document.createElement('button');
+resetBtn.id = 'space3dResetBtn';
+resetBtn.title = 'Alaphelyzet';
+resetBtn.textContent = '⌖';
+resetBtn.style.cssText = 'position:absolute;top:10px;right:48px;width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;backdrop-filter:blur(4px);z-index:5';
+resetBtn.addEventListener('mouseenter', () => resetBtn.style.background = 'rgba(255,255,255,.25)');
+resetBtn.addEventListener('mouseleave', () => resetBtn.style.background = 'rgba(255,255,255,.12)');
+resetBtn.addEventListener('click', () => {
+  camera.position.set(0.2025, 0.1218, 0.5717);
+  controls.target.set(-0.1161, 0.0403, 0.0325);
+  controls.update();
+});
+widget.appendChild(resetBtn);
+  let expanded = false;
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.powerPreference = "high-performance";
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+  renderer.setClearColor(0x000000, 1);
+  renderer.shadowMap.enabled = true;
+
+  const scene  = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
+  camera.position.set(0.2025, 0.1218, 0.5717);
+  window._reasonCamera = camera;
+
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping  = true;
+  controls.dampingFactor  = 0.08;
+  controls.minDistance    = 0.3;
+  controls.maxDistance    = 12;
+  controls.enablePan      = true;
+  controls.autoRotate     = false;
+  window._reasonControls = controls;
+  
+
+  // Csillagok
+  const starGeo = new THREE.BufferGeometry();
+  const starCount = 800;
+  const positions = new Float32Array(starCount * 3);
+  for (let i = 0; i < starCount * 3; i++) positions[i] = (Math.random() - 0.5) * 200;
+  starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.18, sizeAttenuation: true })));
+
+
+
+
+
+  
+
+
+
+
+
+
+
+  
+  scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+  const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+  dirLight.position.set(3, 5, 3);
+  scene.add(dirLight);
+
+  let mixer = null;
+  const clock = new THREE.Clock();
+
+  const loader    = new THREE.GLTFLoader();
+  const MODEL_URL = 'https://kqugolmndqonbnjetdyi.supabase.co/storage/v1/object/public/models/csavo.glb';
+
+  loader.load(
+    MODEL_URL,
+    (gltf) => {
+      const character = gltf.scene;
+      const box    = new THREE.Box3().setFromObject(character);
+      const size   = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const scale  = 2.5 / maxDim;
+      character.scale.setScalar(scale);
+      character.position.x -= center.x * scale;
+      character.position.y -= center.y * scale;
+      character.position.z -= center.z * scale;
+
+      const HIDDEN = new Set(['Streamoji_Hands']);
+      character.traverse(obj => { if (HIDDEN.has(obj.name)) obj.visible = false; });
+
+      scene.add(character);
+     controls.target.set(-0.1161, 0.0403, 0.0325);
+      controls.update();
+
+      if (gltf.animations && gltf.animations.length > 0) {
+        mixer = new THREE.AnimationMixer(character);
+        mixer.clipAction(gltf.animations[0]).play();
+      }
+
+      document.getElementById('space3dLabel').textContent = '🌌 REASON felolvasó';
+
+      const lipSync = new LipSyncMotor();
+      lipSync.setModel(character);
+      window.lipSync = lipSync;
+
+      window._tts3dLipStart = function (text) {
+        const cfg = getConfig();
+        const phonemes = textToPhonemes(text, cfg);
+        lipSync.startAnimation(phonemes);
+      };
+      window._tts3dLipStop = function () { lipSync.stop(); };
+    },
+    (xhr) => {
+      if (xhr.total) {
+        const pct = Math.round(xhr.loaded / xhr.total * 100);
+        document.getElementById('space3dLabel').textContent = `⏳ Betöltés ${pct}%`;
+      }
+    },
+    (err) => {
+      console.error('GLB betöltési hiba:', err);
+      document.getElementById('space3dLabel').textContent = '⚠️ Modell nem elérhető';
+    }
+  );
+
+  function resize() {
+    const w = widget.clientWidth, h = widget.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+
+
+  // ── TELEPROMPTER PANEL ────────────────────────────────────────
+const promptCanvas = document.createElement('canvas');
+promptCanvas.width  = 1024;
+promptCanvas.height = 1536;
+const promptCtx = promptCanvas.getContext('2d');
+const promptTex = new THREE.CanvasTexture(promptCanvas);
+
+  // EZT ADD HOZZÁ AZONNAL UTÁNA:
+promptCtx.fillStyle = 'rgba(0,15,35,0.92)';
+promptCtx.fillRect(0, 0, promptCanvas.width, promptCanvas.height);
+promptTex.needsUpdate = true;
+
+const promptGeo = new THREE.PlaneGeometry(0.52, 0.72);
+const promptMat = new THREE.MeshBasicMaterial({
+  map: promptTex, transparent: true, opacity: 0.18,
+  depthWrite: false, side: THREE.DoubleSide
+});
+const promptMesh = new THREE.Mesh(promptGeo, promptMat);
+promptMesh.position.set(-0.10, 0.08, 0.75);
+promptMesh.rotation.y = Math.PI + 0.18;
+scene.add(promptMesh);
+
+// Kék visszafény a karakterre
+const promptLight = new THREE.PointLight(0x00aaff, 0.0, 1.8);
+promptLight.position.set(0.0, 0.14, 0.38);
+scene.add(promptLight);
+
+const promptLight2 = new THREE.PointLight(0x00ffcc, 0.0, 1.2);
+promptLight2.position.set(-0.18, 0.06, 0.32);
+scene.add(promptLight2);
+
+const promptLight3 = new THREE.PointLight(0x0055ff, 0.0, 0.9);
+promptLight3.position.set(0.10, 0.22, 0.30);
+scene.add(promptLight3);
+
+
+
+
+let _promptScrollY  = 0;
+let _promptLines    = [];
+let _promptActive   = false;
+let _promptOpacity  = 0.18;
+let _promptLightInt = 0.0;
+
+function _promptSetText(text) {
+  const words = text.split(' ');
+  const lines = [];
+  let line = '';
+  for (const w of words) {
+    const test = line ? line + ' ' + w : w;
+  if (promptCtx.measureText(test).width > 980) { lines.push(line); line = w; }
+    else line = test;
+  }
+  if (line) lines.push(line);
+  _promptLines   = lines;
+  _promptScrollY = promptCanvas.height;
+}
+
+function _promptDraw() {
+  const w = promptCanvas.width, h = promptCanvas.height;
+  promptCtx.clearRect(0, 0, w, h);
+
+  // Háttér
+  promptCtx.fillStyle = _promptActive ? 'rgba(0,15,35,0.92)' : 'rgba(0,15,35,0.45)';
+  promptCtx.fillRect(0, 0, w, h);
+
+  // Keret
+  promptCtx.strokeStyle = _promptActive ? 'rgba(0,180,255,0.85)' : 'rgba(0,180,255,0.25)';
+  promptCtx.lineWidth = 2;
+  promptCtx.strokeRect(2, 2, w - 4, h - 4);
+
+  // Fejléc háttér
+  promptCtx.fillStyle = 'rgba(0,100,180,0.55)';
+ promptCtx.fillRect(2, 2, w - 4, 72);
+
+  // Fejléc szöveg
+  promptCtx.font = 'bold 32px Arial, sans-serif';
+  promptCtx.fillStyle = 'rgba(0,220,255,' + (_promptActive ? '1.0' : '0.4') + ')';
+  promptCtx.letterSpacing = '2px';
+  promptCtx.fillText('◈  REASON FELOLVASÓ', 28, 52);
+
+// Elválasztó
+  promptCtx.strokeStyle = 'rgba(0,180,255,' + (_promptActive ? '0.6' : '0.2') + ')';
+  promptCtx.lineWidth = 1;
+  promptCtx.beginPath();
+  promptCtx.moveTo(2, 76); promptCtx.lineTo(w - 2, 76);
+  promptCtx.stroke();
+  // Szöveg terület clip
+  promptCtx.save();
+  promptCtx.beginPath();
+  promptCtx.rect(0, 80, w, h - 80);
+  promptCtx.clip();
+
+ promptCtx.font = 'bold 38px Arial, sans-serif';
+
+  promptCtx.letterSpacing = '0px';
+  const lineH = 58;
+  const maxW  = w - 24;
+
+  _promptLines.forEach((ln, i) => {
+    const y = _promptScrollY + i * lineH;
+    if (y < 40 || y > h + lineH) return;
+
+    // Fade a széleken
+    const fadeTop    = Math.min(1, (y - 42) / 30);
+    const fadeBottom = Math.min(1, (h - y) / 30);
+    const fade       = Math.min(fadeTop, fadeBottom);
+    if (fade <= 0) return;
+
+    const alpha = (_promptActive ? 0.95 : 0.4) * fade;
+    promptCtx.fillStyle = `rgba(200,235,255,${alpha})`;
+   promptCtx.fillText(ln, 24, y);
+  });
+
+  promptCtx.restore();
+  promptTex.needsUpdate = true;
+}
+
+function _promptUpdate(delta) {
+  const t = performance.now() * 0.001;
+
+  // Panel opacity animáció
+  const targetOp  = _promptActive ? 0.97 : 0.18;
+  _promptOpacity += (targetOp - _promptOpacity) * Math.min(1, delta * 2.5);
+  promptMat.opacity = _promptOpacity;
+
+  // ── KÉPERNYŐ VISSZAFÉNY A KARAKTERRE ──────────────────────────
+  if (_promptActive) {
+    // Lassú légzés-szerű pulzálás
+    const breathe = 0.55 + 0.08 * Math.sin(t * 1.1);
+    // Apró gyors vibrálás (scanline illúzió)
+    const flicker = 1.0 + 0.04 * Math.sin(t * 47.3) + 0.02 * Math.sin(t * 83.7);
+    // Ritkás erősebb villanás ~2-3 mp-enként
+    const blink   = Math.max(0, Math.sin(t * 2.3) > 0.92 ? (Math.sin(t * 2.3) - 0.92) * 6 : 0);
+
+    promptLight.intensity  = breathe * flicker + blink * 0.3;
+    promptLight2.intensity = (breathe * 0.35 * flicker) + blink * 0.1;
+    promptLight3.intensity = Math.max(0, 0.18 * Math.sin(t * 3.7 + 1.2) * flicker);
+  } else {
+    // Fokozatos elsötétülés
+    promptLight.intensity  += (0.0 - promptLight.intensity)  * Math.min(1, delta * 3);
+    promptLight2.intensity += (0.0 - promptLight2.intensity) * Math.min(1, delta * 3);
+    promptLight3.intensity += (0.0 - promptLight3.intensity) * Math.min(1, delta * 3);
+  }
+
+  // Lebegés
+  promptMesh.position.y = 0.08 + Math.sin(t * 0.6) * 0.008;
+
+  // Görgetés – TTS progress alapján szinkronizálva
+  if (_promptActive && _promptLines.length) {
+    const totalH      = _promptLines.length * 58;
+    const totalScroll = promptCanvas.height + totalH;
+    if (_ttsProgressTotal > 0) {
+      const elapsed  = _ttsProgressPause + (performance.now() - _ttsProgressStart);
+      const pct      = Math.min(1, elapsed / _ttsProgressTotal);
+      _promptScrollY = promptCanvas.height - pct * totalScroll;
+    } else {
+      _promptScrollY -= delta * 35;
+      if (_promptScrollY + totalH < 60) _promptScrollY = promptCanvas.height;
+    }
+  }
+
+  _promptDraw();
+}
+
+  
+window._promptStart = function(text) {
+  _promptSetText(text);
+  _promptScrollY = promptCanvas.height;
+  _promptActive  = true;
+};
+window._promptStop = function() {
+  _promptActive = false;
+};
+// ── TELEPROMPTER VÉGE ─────────────────────────────────────────
+
+function animate() {
+  requestAnimationFrame(animate);
+  const delta = clock.getDelta();
+  if (document.hidden) return;
+  if (mixer) mixer.update(delta);
+  controls.update();
+  if (window.lipSync) window.lipSync.update();
+  _promptUpdate(delta);
+  renderer.render(scene, camera);
+}
+animate();
+
+  new ResizeObserver(resize).observe(widget);
+
+  window.toggle3D = function () {
+  expanded = !expanded;
+  if (expanded) {
+    widget.classList.add('expanded');
+    overlay.classList.add('visible');
+    expandBtn.textContent = '✕';
+    expandBtn.title = 'Bezárás';
+    setTimeout(resize, 60);
+  } else collapse3D();
+};
+  window.collapse3D = function () {
+  expanded = false;
+  widget.classList.remove('expanded');
+  overlay.classList.remove('visible');
+  expandBtn.textContent = '⛶';
+  expandBtn.title = 'Nagyítás';
+  setTimeout(resize, 60);
+};
+})();
+
+
+
+// Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').catch(() => {}); });
+}
+
+// Voices betöltés
+if (speechSynthesis.onvoiceschanged !== undefined) { speechSynthesis.onvoiceschanged = () => {}; }
+
+// ══════════════════════════════════════════════════════════════════
+//  INICIALIZÁLÁS
+// ══════════════════════════════════════════════════════════════════
+initWeather();
+setInterval(initWeather, 10 * 60 * 1000);
+let _lastKnownCreatedAt = null;
+fetchArticles();
+async function pollForNewArticles() {
+  try {
+    const newest = await sbFetch(
+      '/rest/v1/articles?select=id,created_at&order=created_at.desc&limit=1'
+    );
+    if (!newest?.length) return;
+
+    // Első futás: csak eltároljuk a legfrissebb időpontot, nem villogunk
+    if (!_lastKnownCreatedAt) {
+      _lastKnownCreatedAt = newest[0].created_at;
+      return;
+    }
+
+    // Nincs újabb cikk
+    if (newest[0].created_at <= _lastKnownCreatedAt) return;
+
+    // Lekérjük az új cikkeket
+    const newData = await sbFetch(
+      `/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium,image_url&order=created_at.desc&created_at=gt.${encodeURIComponent(_lastKnownCreatedAt)}&limit=1000`
+    );
+    if (!newData?.length) return;
+
+    const existingIds = new Set(allArticles.map(a => String(a.id)));
+    const truly_new   = newData.filter(a => !existingIds.has(String(a.id)));
+    if (!truly_new.length) return;
+
+// Csak eltároljuk hogy van új – NEM töltjük be
+    _lastKnownCreatedAt = newData[0].created_at;
+
+    // Csak jelzés – a tényleges betöltés F5 vagy gombnyomásra történik
+    showToast(`🆕 ${truly_new.length} új cikk érkezett – nyomj frissítést!`, 'success');
+    const btn = document.getElementById('refreshBtn');
+    if (btn) {
+      btn.classList.remove('flashing');
+      setTimeout(() => btn.classList.add('flashing'), 20);
+    }
+
+  } catch (e) {
+    console.error('pollForNewArticles hiba:', e);
+  }
+}
+setInterval(pollForNewArticles, 30 * 1000);
+renderArticles();
+setTimeout(() => {
+  pingVisitor();
+  setInterval(pingVisitor, 60 * 1000);
+}, 3000);
+setTimeout(() => {
+  fetchActiveReaders();
+  fetchTotalViews();
+  setInterval(() => { fetchActiveReaders(); fetchTotalViews(); }, 3 * 60 * 1000);
+}, 5000);
+initAuth();
+initGDPR();
+renderSupportBanner();
+  updateBookmarkNavCount();
+</script>
+</body>
+</html>
