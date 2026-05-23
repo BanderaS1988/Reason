@@ -10,16 +10,21 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "x-robots-tag",           "value": "index, follow" },
+        { "key": "x-robots-tag", "value": "index, follow" },
         { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options",        "value": "SAMEORIGIN" },
-        { "key": "Cache-Control",          "value": "no-cache, no-store, must-revalidate" }
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
       ]
     },
     {
       "source": "/api/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "s-maxage=60, stale-while-revalidate=30" }
+      ]
+    },
+    {
+      "source": "/og-default.png",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
       ]
     }
   ],
