@@ -4,7 +4,7 @@ const SITE = 'https://reason-five.vercel.app';
 
 async function getArticles() {
   const r = await fetch(
-    `${SB_URL}/rest/v1/articles?select=id,title,category,created_at&order=created_at.desc&limit=500`,
+    `${SB_URL}/rest/v1/articles?select=id,title,category,created_at&order=created_at.desc&limit=20`,
     { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
   );
   return r.ok ? r.json() : [];
