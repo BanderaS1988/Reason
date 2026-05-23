@@ -1,4 +1,4 @@
-const CACHE = 'reason-v4';
+const CACHE = 'reason-v5';
 const STATIC = ['/', '/index.html'];
 
 self.addEventListener('install', e => {
