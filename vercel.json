@@ -3,7 +3,8 @@
     "api/sitemap.js":      { "maxDuration": 30 },
     "api/news-sitemap.js": { "maxDuration": 30 },
     "api/cikk.js":         { "maxDuration": 30 },
-    "api/indexnow.js":     { "maxDuration": 30 }
+    "api/indexnow.js":     { "maxDuration": 30 },
+    "api/home.js":         { "maxDuration": 30 }
   },
   "headers": [
     {
