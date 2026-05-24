@@ -2,6 +2,26 @@ const SB_URL = 'https://kqugolmndqonbnjetdyi.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxdWdvbG1uZHFvbmJuamV0ZHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2OTM3NjMsImV4cCI6MjA4ODI2OTc2M30.wGEBEJDPUKsUPu9W5vxvH7Do0wX9U3FdgKzEzny_zBg';
 const SITE   = 'https://reason-five.vercel.app';
 
+// ── Bot felismerés ──────────────────────────────────────────────
+// Ha bot → statikus HTML-t kap (Google látja a cikkeket)
+// Ha ember → az eredeti dinamikus _index.html-t kapja (teljes funkció)
+const BOT_PATTERNS = [
+  'googlebot', 'bingbot', 'slurp', 'duckduckbot', 'baiduspider',
+  'yandexbot', 'sogou', 'exabot', 'facebot', 'facebookexternalhit',
+  'ia_archiver', 'linkedinbot', 'twitterbot', 'whatsapp', 'applebot',
+  'semrushbot', 'ahrefsbot', 'mj12bot', 'dotbot', 'rogerbot',
+  'screaming frog', 'chrome-lighthouse', 'pagespeed', 'gtmetrix',
+  'pingdom', 'uptimerobot', 'python-requests', 'curl/', 'wget/',
+  'node-fetch', 'axios/', 'go-http-client', 'jakarta commons',
+];
+
+function isBot(userAgent) {
+  if (!userAgent) return false;
+  const ua = userAgent.toLowerCase();
+  return BOT_PATTERNS.some(p => ua.includes(p));
+}
+
+// ── Kategória adatok ────────────────────────────────────────────
 const CAT_COLOR = {
   'Mesterséges Intelligencia és Technológia': '#0066cc',
   'Klímaváltozás és Fenntarthatóság':         '#10b981',
@@ -23,6 +43,7 @@ const CAT_EMOJI = {
   'Oktatás és a Tudás Jövője':                '📚',
 };
 
+// ── Segédfüggvények ─────────────────────────────────────────────
 function esc(s) {
   return (s || '')
     .replace(/&/g, '&amp;')
@@ -42,22 +63,39 @@ function ageBadge(iso) {
   if (!iso) return '';
   const diffH = (Date.now() - new Date(iso)) / 3600000;
   const today = new Date().toDateString() === new Date(iso).toDateString();
-  if (diffH < 1)  return '<span class="badge-new">● Friss</span>';
-  if (today)      return '<span class="badge-today">● Ma</span>';
+  if (diffH < 1) return '<span class="badge-new">● Friss</span>';
+  if (today)     return '<span class="badge-today">● Ma</span>';
   return '';
 }
 
+// ── Supabase lekérés – mind a 1000 cikk ─────────────────────────
+// Ha több mint 1000 cikk van, két körben hozzuk le (offset-tel)
 async function fetchArticles() {
   try {
-    const r = await fetch(
-      `${SB_URL}/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium,image_url&order=created_at.desc&limit=50`,
-      { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } }
-    );
-    if (!r.ok) return [];
-    return await r.json();
-  } catch { return []; }
+    const headers = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
+    const base = `${SB_URL}/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium,image_url&order=created_at.desc`;
+
+    // Első 1000
+    const r1 = await fetch(`${base}&limit=1000&offset=0`, { headers });
+    if (!r1.ok) return [];
+    const batch1 = await r1.json();
+
+    // Ha pontosan 1000 jött, lehet több – lekérjük a következő adagot is
+    if (batch1.length === 1000) {
+      const r2 = await fetch(`${base}&limit=1000&offset=1000`, { headers });
+      if (r2.ok) {
+        const batch2 = await r2.json();
+        return [...batch1, ...batch2];
+      }
+    }
+
+    return batch1;
+  } catch {
+    return [];
+  }
 }
 
+// ── Kártyák renderelése ─────────────────────────────────────────
 function renderCards(articles) {
   if (!articles.length) {
     return `<div class="empty-state">
@@ -70,12 +108,13 @@ function renderCards(articles) {
     const col = CAT_COLOR[c] || '#888';
     const ico = CAT_EMOJI[c] || '📰';
     const ex  = art.excerpt || '';
-    // Kiemelt kártya az első cikk
+
+    // Kiemelt kártya (első cikk)
     if (i === 0) {
       return `<div class="featured-card">
         <div class="featured-img" style="background:linear-gradient(135deg,${col}20,${col}08)">
           ${art.image_url
-            ? `<img src="${esc(art.image_url)}" alt="${esc(art.title)}" style="width:100%;height:100%;object-fit:cover">`
+            ? `<img src="${esc(art.image_url)}" alt="${esc(art.title)}" style="width:100%;height:100%;object-fit:cover" loading="lazy">`
             : `<span style="font-size:64px;opacity:.18">${ico}</span>`}
         </div>
         <div class="featured-content">
@@ -92,6 +131,8 @@ function renderCards(articles) {
         </div>
       </div>`;
     }
+
+    // Normál kártya
     return `<article class="card">
       <a href="${SITE}/cikk/${art.id}" class="card-link">
         <div class="card-img" style="background:linear-gradient(135deg,${col}16,${col}08)${art.image_url ? `;background-image:url(${esc(art.image_url)});background-size:cover;background-position:center` : ''}">
@@ -122,39 +163,39 @@ function renderCards(articles) {
   }).join('');
 }
 
-function buildCatCounts(articles) {
+// ── Sidebar kategóriák ──────────────────────────────────────────
+function renderCatList(articles) {
   const counts = {};
   articles.forEach(a => {
     const c = a.category || 'Egyéb';
     counts[c] = (counts[c] || 0) + 1;
   });
-  return Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([c, n]) => {
+      const col = CAT_COLOR[c] || '#999';
+      const ico = CAT_EMOJI[c] || '📌';
+      return `<a href="${SITE}/?cat=${encodeURIComponent(c)}" class="cat-row">
+        <span class="cat-dot-c" style="background:${col}"></span>
+        <span class="cat-name">${ico} ${esc(c)}</span>
+        <span class="cat-count">${n}</span>
+      </a>`;
+    }).join('');
 }
 
-function renderCatList(articles) {
-  return buildCatCounts(articles).map(([c, n]) => {
-    const col = CAT_COLOR[c] || '#999';
-    const ico = CAT_EMOJI[c] || '📌';
-    return `<a href="${SITE}/?cat=${encodeURIComponent(c)}" class="cat-row">
-      <span class="cat-dot-c" style="background:${col}"></span>
-      <span class="cat-name">${ico} ${esc(c)}</span>
-      <span class="cat-count">${n}</span>
-    </a>`;
-  }).join('');
-}
-
+// ── Teljes oldal HTML ───────────────────────────────────────────
 function renderPage(articles) {
   const todayCount = articles.filter(a =>
     new Date(a.created_at || 0).toDateString() === new Date().toDateString()
   ).length;
 
-  const schemaItems = articles.slice(0, 10).map(a => ({
+  // Schema.org – első 10 cikk
+  const schemaItems = articles.slice(0, 10).map((a, i) => ({
     '@type': 'ListItem',
-    position: articles.indexOf(a) + 1,
+    position: i + 1,
     url: `${SITE}/cikk/${a.id}`,
     name: a.title || '',
   }));
-
   const schema = JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -164,6 +205,7 @@ function renderPage(articles) {
     itemListElement: schemaItems,
   });
 
+  // Nav kategóriák
   const navCats = [
     ['Mesterséges Intelligencia és Technológia', '🤖 MI &amp; Tech'],
     ['Klímaváltozás és Fenntarthatóság',         '🌍 Klíma'],
@@ -174,13 +216,19 @@ function renderPage(articles) {
     ['Filozófia és az Élet Értelme',             '💡 Filozófia'],
     ['Oktatás és a Tudás Jövője',                '📚 Oktatás'],
   ];
-
   const navHtml = navCats.map(([cat, label]) => {
     const cnt = articles.filter(a => a.category === cat).length;
     return `<a href="${SITE}/?cat=${encodeURIComponent(cat)}" class="nav-item">
       ${label} <span class="nav-count">${cnt}</span>
     </a>`;
   }).join('');
+
+  // Ticker – első 20 cikk duplázva az animációhoz
+  const tickerItems = articles.slice(0, 20);
+  const tickerHtml = [
+    ...tickerItems.map(a => `<span class="ticker-item">${esc(a.title || '')}</span><span class="ticker-sep">·</span>`),
+    ...tickerItems.map(a => `<span class="ticker-item">${esc(a.title || '')}</span><span class="ticker-sep">·</span>`),
+  ].join('');
 
   return `<!DOCTYPE html>
 <html lang="hu">
@@ -221,25 +269,19 @@ html,body{overflow-x:hidden;max-width:100%}
 }
 body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:15px;line-height:1.6;min-height:100vh}
 a{text-decoration:none;color:inherit}
-
-/* ── TICKER ── */
 .ticker-wrap{background:var(--accent);color:#fff;overflow:hidden;height:34px;display:flex;align-items:center}
 .ticker-label{background:rgba(0,0,0,.25);padding:0 14px;height:100%;display:flex;align-items:center;font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
 .ticker-scroll{flex:1;overflow:hidden}
-.ticker-inner{display:flex;animation:ticker 40s linear infinite;white-space:nowrap;align-items:center;height:34px}
+.ticker-inner{display:flex;animation:ticker 60s linear infinite;white-space:nowrap;align-items:center;height:34px}
 .ticker-item{padding:0 28px;font-size:12px;font-weight:500}
 .ticker-sep{opacity:.4;padding:0 4px}
 @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-
-/* ── HEADER ── */
 .site-header{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:190;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .header-top{display:flex;align-items:center;justify-content:space-between;padding:14px 28px 12px;max-width:1400px;margin:0 auto;gap:16px;flex-wrap:wrap}
 .logo{font-family:var(--font-d);font-size:34px;font-weight:900;color:var(--text);letter-spacing:-1.5px;line-height:1}
 .logo span{color:var(--accent)}
 .logo-tagline{font-size:10px;color:var(--text4);letter-spacing:.18em;text-transform:uppercase;margin-top:2px}
 .header-right{display:flex;align-items:center;gap:16px}
-
-/* ── NAV ── */
 .main-nav{border-top:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
 .main-nav::-webkit-scrollbar{display:none}
 .nav-inner{display:flex;padding:0 28px;max-width:1400px;margin:0 auto}
@@ -247,28 +289,18 @@ a{text-decoration:none;color:inherit}
 .nav-item:hover{color:var(--text);border-bottom-color:var(--accent)}
 .nav-item.all{color:var(--accent);border-bottom-color:var(--accent)}
 .nav-count{display:inline-block;background:var(--accent);color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:10px;margin-left:4px;vertical-align:middle;min-width:16px;text-align:center}
-
-/* ── ADS ── */
 .ad-strip{margin:16px auto 0;max-width:1400px;padding:0 28px;min-height:0}
-
-/* ── PAGE ── */
 .page-wrap{max-width:1400px;margin:0 auto;padding:28px 28px 80px}
 .main-layout{display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start}
 @media(max-width:1000px){.main-layout{grid-template-columns:1fr}}
-
-/* ── STATUS BAR ── */
 .status-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;margin-bottom:20px;border-bottom:1px solid var(--border)}
 .live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-right:8px;animation:pulse-dot 2s infinite}
 @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
 .status-text{font-size:12px;color:var(--text3)}
-
-/* ── SECTION HEADER ── */
 .section-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text4);margin-bottom:14px;display:flex;align-items:center;gap:10px}
 .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
 .strip-title{font-family:var(--font-d);font-size:26px;font-weight:900;color:var(--text);margin-bottom:16px}
 .strip-count{font-size:11px;color:var(--text4);font-family:monospace;background:var(--bg3);padding:2px 8px;border-radius:10px;margin-left:8px}
-
-/* ── FEATURED ── */
 .featured-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:grid;grid-template-columns:280px 1fr;margin-bottom:32px;transition:.2s}
 .featured-card:hover{box-shadow:var(--shadow2);border-color:var(--border2)}
 .featured-img{display:flex;align-items:center;justify-content:center;min-height:240px;overflow:hidden}
@@ -280,8 +312,6 @@ a{text-decoration:none;color:inherit}
 .featured-excerpt{font-size:13px;color:var(--text3);line-height:1.65;margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .featured-foot{display:flex;align-items:center;gap:14px;font-size:11px;color:var(--text4);flex-wrap:wrap}
 .premium-tag{color:var(--gold);font-weight:700}
-
-/* ── GRID ── */
 .articles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:.2s}
 .card:hover{box-shadow:var(--shadow2);border-color:var(--border2);transform:translateY(-2px)}
@@ -300,17 +330,11 @@ a{text-decoration:none;color:inherit}
 .card-excerpt{font-size:12px;color:var(--text3);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:10px}
 .card-foot{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border);font-size:10px;color:var(--text4)}
 .card-stats{display:flex;align-items:center;gap:8px}
-
-/* ── BADGES ── */
 .badge-new{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#1a7a3c22;color:#1a7a3c;margin-left:4px}
 .badge-today{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:#0066cc22;color:#0066cc;margin-left:4px}
-
-/* ── EMPTY ── */
 .empty-state{text-align:center;padding:80px 24px;color:var(--text4)}
 .empty-icon{font-size:60px;display:block;margin-bottom:16px;opacity:.25}
 .empty-title{font-family:var(--font-d);font-size:22px;color:var(--text3)}
-
-/* ── SIDEBAR ── */
 .sidebar{display:flex;flex-direction:column;gap:20px;position:sticky;top:110px}
 .s-widget{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px}
 .s-title{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text4);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
@@ -323,20 +347,12 @@ a{text-decoration:none;color:inherit}
 .cat-dot-c{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .cat-name{font-size:12px;font-weight:500;color:var(--text2);flex:1;transition:.15s}
 .cat-count{font-size:11px;color:var(--text4);font-family:monospace;background:var(--bg3);padding:1px 7px;border-radius:10px}
-
-/* ── SUPPORT ── */
 .support-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;background:linear-gradient(135deg,#f0c040,#e8a800);color:#5a3e00;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-s);width:100%;justify-content:center;margin-top:8px}
 .support-btn:hover{opacity:.9}
-
-/* ── ABOUT ── */
 .about-text{font-size:12px;color:var(--text3);line-height:1.75}
 .about-text p{margin-bottom:8px}
-
-/* ── FOOTER ── */
 footer{background:var(--text);color:var(--text4);text-align:center;padding:20px;font-size:11px;line-height:2}
 footer a{color:#f0c040}
-
-/* ── MOBILE ── */
 @media(max-width:700px){
   .header-top{padding:10px 12px}
   .logo{font-size:26px}
@@ -345,7 +361,7 @@ footer a{color:#f0c040}
   .nav-item{padding:8px 10px;font-size:10px}
   .page-wrap{padding:12px 10px 70px}
   .featured-card{grid-template-columns:1fr}
-  .featured-img{min-height:120px;font-size:40px}
+  .featured-img{min-height:120px}
   .featured-content{padding:14px 16px}
   .featured-title{font-size:18px}
   .articles-grid{grid-template-columns:1fr;gap:14px}
@@ -355,25 +371,18 @@ footer a{color:#f0c040}
   .sidebar{position:static}
   .ad-strip{padding:0 12px}
 }
-@media(max-width:400px){
-  .logo{font-size:22px}
-}
+@media(max-width:400px){.logo{font-size:22px}}
 </style>
 </head>
 <body>
 
-<!-- TICKER -->
 <div class="ticker-wrap">
   <div class="ticker-label">⚡ ÉLŐBEN</div>
   <div class="ticker-scroll">
-    <div class="ticker-inner">
-      ${articles.slice(0, 10).map(a => `<span class="ticker-item">${esc(a.title || '')}</span><span class="ticker-sep">·</span>`).join('')}
-      ${articles.slice(0, 10).map(a => `<span class="ticker-item">${esc(a.title || '')}</span><span class="ticker-sep">·</span>`).join('')}
-    </div>
+    <div class="ticker-inner">${tickerHtml}</div>
   </div>
 </div>
 
-<!-- HEADER -->
 <header class="site-header">
   <div class="header-top">
     <div>
@@ -392,17 +401,13 @@ footer a{color:#f0c040}
   </nav>
 </header>
 
-<!-- AD STRIP -->
 <div class="ad-strip">
   <ins class="adsbygoogle" style="display:block;min-height:0" data-ad-client="ca-pub-7856205120757314" data-ad-slot="4427813320" data-ad-format="auto" data-full-width-responsive="true"></ins>
   <script>(adsbygoogle=window.adsbygoogle||[]).push({});<\/script>
 </div>
 
-<!-- MAIN -->
 <main class="page-wrap">
   <div class="main-layout">
-
-    <!-- CIKKLISTA -->
     <div>
       <div class="status-bar">
         <div>
@@ -423,7 +428,6 @@ footer a{color:#f0c040}
       </div>
     </div>
 
-    <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="s-widget">
         <div class="s-title">📊 Portálstatisztika</div>
@@ -453,7 +457,6 @@ footer a{color:#f0c040}
         </div>
       </div>
     </aside>
-
   </div>
 </main>
 
@@ -464,11 +467,62 @@ footer a{color:#f0c040}
   <a href="/cookie.html">Cookie tájékoztató</a>
 </footer>
 
+<!-- Az eredeti dinamikus oldal betöltése – csak valódi látogatóknak -->
+<script>
+(function() {
+  // Ha ez nem bot (azaz JavaScript fut), betöltjük az eredeti teljes funkciójú oldalt
+  // A bot nem futtatja ezt a scriptet, így a statikus HTML-t látja
+  var w = window, d = document;
+
+  // Kis delay hogy a prerender eszközök ne kapják el
+  setTimeout(function() {
+    // Betöltjük az eredeti _index.html tartalmát AJAX-szal és kicseréljük az oldalt
+    fetch('/_original')
+      .then(function(r) { return r.text(); })
+      .then(function(html) {
+        d.open();
+        d.write(html);
+        d.close();
+      })
+      .catch(function() {
+        // Ha nem sikerül, az oldal marad ahogy van – működőképes marad
+      });
+  }, 50);
+})();
+<\/script>
+
 </body>
 </html>`;
 }
 
+// ── Fő handler ──────────────────────────────────────────────────
 module.exports = async function handler(req, res) {
+  const ua = req.headers['user-agent'] || '';
+
+  // Ember → átirányítás az eredeti dinamikus oldalra
+  // FONTOS: a vercel.json-ban fel kell venni:
+  // { "source": "/_original", "destination": "/_index.html" }
+  if (!isBot(ua)) {
+    // Közvetlenül az _index.html tartalmát szolgáljuk ki
+    // (nem redirect, hogy az URL ne változzon)
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      // Vercel-en a projekt gyökere a process.cwd()
+      const indexPath = path.join(process.cwd(), '_index.html');
+      const html = fs.readFileSync(indexPath, 'utf8');
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+      return res.status(200).send(html);
+    } catch (e) {
+      // Ha az _index.html nem olvasható, visszaesünk a statikus verzióra
+      // (jobb ez mint egy hibás oldal)
+    }
+  }
+
+  // Bot (vagy fallback) → statikus HTML az összes cikkel
+  const articles = await fetchArticles();
+
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
   res.setHeader('Pragma', 'no-cache');
@@ -485,6 +539,5 @@ module.exports = async function handler(req, res) {
     "frame-src *;"
   );
 
-  const articles = await fetchArticles();
   return res.status(200).send(renderPage(articles));
 };
