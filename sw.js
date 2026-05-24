@@ -1,57 +1,80 @@
-{
-  "functions": {
-    "api/sitemap.js":      { "maxDuration": 30 },
-    "api/news-sitemap.js": { "maxDuration": 30 },
-    "api/cikk.js":         { "maxDuration": 30 },
-    "api/indexnow.js":     { "maxDuration": 30 },
-    "api/home.js":         { "maxDuration": 30 }
-  },
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "x-robots-tag",                "value": "index, follow" },
-        { "key": "X-Content-Type-Options",       "value": "nosniff" },
-        { "key": "X-Frame-Options",              "value": "SAMEORIGIN" },
-        { "key": "Access-Control-Allow-Origin",  "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PATCH, OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization, apikey, x-client-info" },
-        { "key": "Cache-Control",                "value": "public, max-age=0, must-revalidate" },
-        { "key": "Content-Security-Policy",      "value": "default-src * blob: data:; script-src * 'unsafe-inline' 'unsafe-eval' blob:; style-src * 'unsafe-inline'; img-src * data: blob:; font-src * data: blob:; connect-src * blob:; worker-src * blob:; media-src * blob:; frame-src *;" }
-      ]
-    },
-    {
-      "source": "/",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
-      ]
-    },
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "s-maxage=60, stale-while-revalidate=30" }
-      ]
-    },
-    {
-      "source": "/og-default.png",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400" }
-      ]
-    },
-    {
-      "source": "/favicon.ico",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400" }
-      ]
+const CACHE = 'reason-v5';
+const STATIC = ['/', '/index.html'];
+
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(STATIC)));
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys =>
+    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+  ));
+  self.clients.claim();
+});
+
+function safeFetch(request) {
+  return fetch(request.clone()).then(r => {
+    if (!r || r.status !== 200 || r.type === 'opaque' || r.type === 'error') {
+      return r;
     }
-  ],
-  "rewrites": [
-    { "source": "/", "destination": "/api/home" },
-    { "source": "/sitemap.xml",      "destination": "/api/sitemap" },
-    { "source": "/rss.xml",          "destination": "/api/rss" },
-    { "source": "/robots.txt",       "destination": "/api/robots" },
-    { "source": "/news-sitemap.xml", "destination": "/api/news-sitemap" },
-    { "source": "/llms.txt",         "destination": "/api/llms" },
-    { "source": "/cikk/:id",         "destination": "/api/cikk?id=:id" }
-  ]
+    const clone = r.clone();
+    caches.open(CACHE).then(c => {
+      try { c.put(request, clone); } catch (err) {}
+    });
+    return r;
+  });
 }
+
+function fallback() {
+  return new Response('', { status: 503, statusText: 'Offline' });
+}
+
+self.addEventListener('fetch', e => {
+  const url = new URL(e.request.url);
+  if (e.request.method !== 'GET') return;
+
+  // Reklám domainek – elengedjük, SW nem kezeli
+  if (url.hostname.includes('googlesyndication.com') ||
+      url.hostname.includes('doubleclick.net') ||
+      url.hostname.includes('google-analytics.com')) {
+    return;
+  }
+
+  // Supabase + OpenWeather – mindig hálózatról, cache csak fallback
+  if (url.hostname.includes('supabase.co') ||
+      url.hostname.includes('openweathermap.org')) {
+    e.respondWith(
+      safeFetch(e.request).catch(() =>
+        caches.match(e.request).then(c => c || fallback())
+      )
+    );
+    return;
+  }
+
+  // Google Fonts – cache-first
+  if (url.hostname.includes('fonts.googleapis.com') ||
+      url.hostname.includes('fonts.gstatic.com')) {
+    e.respondWith(
+      caches.match(e.request).then(cached => cached || safeFetch(e.request).catch(fallback))
+    );
+    return;
+  }
+
+  // Saját domain – network-first
+  if (url.hostname === self.location.hostname) {
+    e.respondWith(
+      safeFetch(e.request).catch(() =>
+        caches.match(e.request).then(c => c || fallback())
+      )
+    );
+    return;
+  }
+
+  // Minden más
+  e.respondWith(
+    fetch(e.request.clone()).catch(() =>
+      caches.match(e.request).then(c => c || fallback())
+    )
+  );
+});
