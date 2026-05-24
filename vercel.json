@@ -17,7 +17,7 @@
         { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PATCH, OPTIONS" },
         { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization, apikey, x-client-info" },
         { "key": "Cache-Control",                "value": "public, max-age=0, must-revalidate" },
-        { "key": "Content-Security-Policy",      "value": "default-src *; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; img-src * data: blob:; font-src * data:; connect-src *; frame-src *;" }
+        { "key": "Content-Security-Policy",      "value": "default-src * blob: data:; script-src * 'unsafe-inline' 'unsafe-eval' blob:; style-src * 'unsafe-inline'; img-src * data: blob:; font-src * data: blob:; connect-src * blob:; worker-src * blob:; media-src * blob:; frame-src *;" }
       ]
     },
     {
