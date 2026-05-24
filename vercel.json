@@ -8,6 +8,18 @@
   },
   "headers": [
     {
+      "source": "/sitemap.xml",
+      "headers": [
+        { "key": "Cache-Control", "value": "s-maxage=600, stale-while-revalidate=60" }
+      ]
+    },
+    {
+      "source": "/news-sitemap.xml",
+      "headers": [
+        { "key": "Cache-Control", "value": "s-maxage=600, stale-while-revalidate=60" }
+      ]
+    },
+    {
       "source": "/(.*)",
       "headers": [
         { "key": "x-robots-tag",                "value": "index, follow" },
