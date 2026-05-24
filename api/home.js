@@ -509,7 +509,7 @@ module.exports = async function handler(req, res) {
       const fs = require('fs');
       const path = require('path');
       // Vercel-en a projekt gyökere a process.cwd()
-      const indexPath = path.join(process.cwd(), '_index.html');
+      const indexPath = path.join(process.cwd(), 'index.html');
       const html = fs.readFileSync(indexPath, 'utf8');
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
