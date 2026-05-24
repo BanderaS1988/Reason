@@ -1,6 +1,6 @@
 const SB_URL = 'https://kqugolmndqonbnjetdyi.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxdWdvbG1uZHFvbmJuamV0ZHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2OTM3NjMsImV4cCI6MjA4ODI2OTc2M30.wGEBEJDPUKsUPu9W5vxvH7Do0wX9U3FdgKzEzny_zBg';
-const SITE = 'https://reason-five.vercel.app';
+const SITE   = 'https://reason-five.vercel.app';
 
 module.exports = async (req, res) => {
   let articles = [];
@@ -12,9 +12,19 @@ module.exports = async (req, res) => {
     if (r.ok) articles = await r.json();
   } catch (e) {}
 
+  const now = Date.now();
+
   const urls = articles.map(a => {
     const lastmod = (a.created_at || new Date().toISOString()).slice(0, 10);
-    return '\n  <url>\n    <loc>' + SITE + '/cikk/' + a.id + '</loc>\n    <lastmod>' + lastmod + '</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>';
+    // Frissebb cikkek magasabb prioritást kapnak
+    const ageMs   = now - new Date(a.created_at || 0).getTime();
+    const ageDays = ageMs / (1000 * 60 * 60 * 24);
+    const priority = ageDays < 1  ? '1.0'
+                   : ageDays < 7  ? '0.9'
+                   : ageDays < 30 ? '0.8'
+                   : '0.7';
+
+    return `\n  <url>\n    <loc>${SITE}/cikk/${a.id}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
   }).join('');
 
   res.setHeader('Content-Type', 'text/xml');
