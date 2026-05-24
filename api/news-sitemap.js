@@ -49,7 +49,7 @@ module.exports = async (req, res) => {
         <news:language>hu</news:language>
       </news:publication>
       <news:publication_date>${new Date(a.created_at).toISOString()}</news:publication_date>
-      <news:title>${esc(a.title.trim())}</news:title>
+      <news:title>${esc(a.title.trim().slice(0, 200))}</news:title>
     </news:news>
   </url>`).join('\n');
 
