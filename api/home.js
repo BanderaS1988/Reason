@@ -64,7 +64,7 @@ module.exports = async function handler(req, res) {
   // index.html beolvasása – Vercel-en a projekt gyökere process.cwd()
   let html;
   try {
-    const htmlPath = path.join(process.cwd(), 'index.html');
+    const htmlPath = path.join(process.cwd(), '_shell.html');
     html = fs.readFileSync(htmlPath, 'utf8');
   } catch (e) {
     return res.status(500).send('index.html nem olvasható: ' + e.message);
