@@ -1,5 +1,5 @@
-import { readFileSync } from 'fs';
-import { join } from 'path';
+const { readFileSync } = require('fs');
+const { join } = require('path');
 
 const SB_URL = 'https://kqugolmndqonbnjetdyi.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxdWdvbG1uZHFvbmJuamV0ZHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2OTM3NjMsImV4cCI6MjA4ODI2OTc2M30.wGEBEJDPUKsUPu9W5vxvH7Do0wX9U3FdgKzEzny_zBg';
@@ -124,12 +124,11 @@ function getFullHtml() {
   try {
     return readFileSync(join(process.cwd(), 'index.html'), 'utf8');
   } catch {
-    // Ha a readFileSync nem megy Vercelen, redirect az index.html-re
     return null;
   }
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   const ua = req.headers['user-agent'] || '';
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -158,4 +157,4 @@ export default async function handler(req, res) {
 
   res.setHeader('Location', '/index.html');
   return res.status(302).send('');
-}
+};
