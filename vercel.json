@@ -10,13 +10,19 @@
     {
       "source": "/sitemap.xml",
       "headers": [
-        { "key": "Cache-Control", "value": "s-maxage=600, stale-while-revalidate=60" }
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
       ]
     },
     {
       "source": "/news-sitemap.xml",
       "headers": [
-        { "key": "Cache-Control", "value": "s-maxage=600, stale-while-revalidate=60" }
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/robots.txt",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
       ]
     },
     {
@@ -41,7 +47,7 @@
     {
       "source": "/api/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "s-maxage=60, stale-while-revalidate=30" }
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
       ]
     },
     {
@@ -58,8 +64,8 @@
     }
   ],
   "rewrites": [
-    { "source": "/", "destination": "/api/home" },
-    { "source": "/sitemap.xml", "destination": "/api/sitemap" },
+    { "source": "/",                 "destination": "/api/home" },
+    { "source": "/sitemap.xml",      "destination": "/api/sitemap" },
     { "source": "/rss.xml",          "destination": "/api/rss" },
     { "source": "/robots.txt",       "destination": "/api/robots" },
     { "source": "/news-sitemap.xml", "destination": "/api/news-sitemap" },
