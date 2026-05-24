@@ -3,8 +3,6 @@ const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 const SITE   = 'https://reason-five.vercel.app';
 
 // ── Bot felismerés ──────────────────────────────────────────────
-// Ha bot → statikus HTML-t kap (Google látja a cikkeket)
-// Ha ember → az eredeti dinamikus _index.html-t kapja (teljes funkció)
 const BOT_PATTERNS = [
   'googlebot', 'bingbot', 'slurp', 'duckduckbot', 'baiduspider',
   'yandexbot', 'sogou', 'exabot', 'facebot', 'facebookexternalhit',
@@ -16,7 +14,7 @@ const BOT_PATTERNS = [
 ];
 
 function isBot(userAgent) {
-  if (!userAgent) return false;
+  if (!userAgent) return true; // UA nélküli kérés bot-nak számít
   const ua = userAgent.toLowerCase();
   return BOT_PATTERNS.some(p => ua.includes(p));
 }
@@ -43,7 +41,6 @@ const CAT_EMOJI = {
   'Oktatás és a Tudás Jövője':                '📚',
 };
 
-// ── Segédfüggvények ─────────────────────────────────────────────
 function esc(s) {
   return (s || '')
     .replace(/&/g, '&amp;')
@@ -62,25 +59,22 @@ function fmtDate(iso) {
 function ageBadge(iso) {
   if (!iso) return '';
   const diffH = (Date.now() - new Date(iso)) / 3600000;
-  const today = new Date().toDateString() === new Date(iso).toDateString();
+  const today  = new Date().toDateString() === new Date(iso).toDateString();
   if (diffH < 1) return '<span class="badge-new">● Friss</span>';
   if (today)     return '<span class="badge-today">● Ma</span>';
   return '';
 }
 
-// ── Supabase lekérés – mind a 1000 cikk ─────────────────────────
-// Ha több mint 1000 cikk van, két körben hozzuk le (offset-tel)
+// ── Supabase: összes cikk (max 2000) ───────────────────────────
 async function fetchArticles() {
   try {
     const headers = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
     const base = `${SB_URL}/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium,image_url&order=created_at.desc`;
 
-    // Első 1000
     const r1 = await fetch(`${base}&limit=1000&offset=0`, { headers });
     if (!r1.ok) return [];
     const batch1 = await r1.json();
 
-    // Ha pontosan 1000 jött, lehet több – lekérjük a következő adagot is
     if (batch1.length === 1000) {
       const r2 = await fetch(`${base}&limit=1000&offset=1000`, { headers });
       if (r2.ok) {
@@ -88,14 +82,13 @@ async function fetchArticles() {
         return [...batch1, ...batch2];
       }
     }
-
     return batch1;
   } catch {
     return [];
   }
 }
 
-// ── Kártyák renderelése ─────────────────────────────────────────
+// ── Kártyák ─────────────────────────────────────────────────────
 function renderCards(articles) {
   if (!articles.length) {
     return `<div class="empty-state">
@@ -109,7 +102,6 @@ function renderCards(articles) {
     const ico = CAT_EMOJI[c] || '📰';
     const ex  = art.excerpt || '';
 
-    // Kiemelt kártya (első cikk)
     if (i === 0) {
       return `<div class="featured-card">
         <div class="featured-img" style="background:linear-gradient(135deg,${col}20,${col}08)">
@@ -132,7 +124,6 @@ function renderCards(articles) {
       </div>`;
     }
 
-    // Normál kártya
     return `<article class="card">
       <a href="${SITE}/cikk/${art.id}" class="card-link">
         <div class="card-img" style="background:linear-gradient(135deg,${col}16,${col}08)${art.image_url ? `;background-image:url(${esc(art.image_url)});background-size:cover;background-position:center` : ''}">
@@ -163,7 +154,6 @@ function renderCards(articles) {
   }).join('');
 }
 
-// ── Sidebar kategóriák ──────────────────────────────────────────
 function renderCatList(articles) {
   const counts = {};
   articles.forEach(a => {
@@ -183,13 +173,12 @@ function renderCatList(articles) {
     }).join('');
 }
 
-// ── Teljes oldal HTML ───────────────────────────────────────────
+// ── Teljes statikus HTML oldal ──────────────────────────────────
 function renderPage(articles) {
   const todayCount = articles.filter(a =>
     new Date(a.created_at || 0).toDateString() === new Date().toDateString()
   ).length;
 
-  // Schema.org – első 10 cikk
   const schemaItems = articles.slice(0, 10).map((a, i) => ({
     '@type': 'ListItem',
     position: i + 1,
@@ -205,7 +194,6 @@ function renderPage(articles) {
     itemListElement: schemaItems,
   });
 
-  // Nav kategóriák
   const navCats = [
     ['Mesterséges Intelligencia és Technológia', '🤖 MI &amp; Tech'],
     ['Klímaváltozás és Fenntarthatóság',         '🌍 Klíma'],
@@ -223,7 +211,6 @@ function renderPage(articles) {
     </a>`;
   }).join('');
 
-  // Ticker – első 20 cikk duplázva az animációhoz
   const tickerItems = articles.slice(0, 20);
   const tickerHtml = [
     ...tickerItems.map(a => `<span class="ticker-item">${esc(a.title || '')}</span><span class="ticker-sep">·</span>`),
@@ -415,19 +402,15 @@ footer a{color:#f0c040}
           <span class="status-text">Összesen ${articles.length} cikk · Frissítve: ${new Date().toLocaleTimeString('hu-HU')}</span>
         </div>
       </div>
-
       <div class="section-label">⭐ Kiemelt cikk</div>
       ${articles.length > 0 ? renderCards(articles.slice(0, 1)) : ''}
-
       <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:20px">
         <h1 class="strip-title">Legfrissebb hírek<span class="strip-count">${articles.length} cikk</span></h1>
       </div>
-
       <div class="articles-grid">
         ${articles.length > 1 ? renderCards(articles.slice(1)) : renderCards([])}
       </div>
     </div>
-
     <aside class="sidebar">
       <div class="s-widget">
         <div class="s-title">📊 Portálstatisztika</div>
@@ -437,17 +420,14 @@ footer a{color:#f0c040}
           <a href="${SITE}" class="support-btn">❤️ Támogasd a REASON-t</a>
         </div>
       </div>
-
       <div class="s-widget">
         <div class="s-title">📂 Kategóriák</div>
         ${renderCatList(articles)}
       </div>
-
       <div class="s-widget">
         <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7856205120757314" data-ad-slot="4427813320" data-ad-format="auto" data-full-width-responsive="true"></ins>
         <script>(adsbygoogle=window.adsbygoogle||[]).push({});<\/script>
       </div>
-
       <div class="s-widget">
         <div class="s-title">ℹ️ A REASON-ról</div>
         <div class="about-text">
@@ -467,30 +447,6 @@ footer a{color:#f0c040}
   <a href="/cookie.html">Cookie tájékoztató</a>
 </footer>
 
-<!-- Az eredeti dinamikus oldal betöltése – csak valódi látogatóknak -->
-<script>
-(function() {
-  // Ha ez nem bot (azaz JavaScript fut), betöltjük az eredeti teljes funkciójú oldalt
-  // A bot nem futtatja ezt a scriptet, így a statikus HTML-t látja
-  var w = window, d = document;
-
-  // Kis delay hogy a prerender eszközök ne kapják el
-  setTimeout(function() {
-    // Betöltjük az eredeti _index.html tartalmát AJAX-szal és kicseréljük az oldalt
-    fetch('/_original')
-      .then(function(r) { return r.text(); })
-      .then(function(html) {
-        d.open();
-        d.write(html);
-        d.close();
-      })
-      .catch(function() {
-        // Ha nem sikerül, az oldal marad ahogy van – működőképes marad
-      });
-  }, 50);
-})();
-<\/script>
-
 </body>
 </html>`;
 }
@@ -499,28 +455,20 @@ footer a{color:#f0c040}
 module.exports = async function handler(req, res) {
   const ua = req.headers['user-agent'] || '';
 
-  // Ember → átirányítás az eredeti dinamikus oldalra
-  // FONTOS: a vercel.json-ban fel kell venni:
-  // { "source": "/_original", "destination": "/_index.html" }
+  // Ember → 302 redirect az index.html-re
+  // A vercel.json rewrites miatt a "/" → "/api/home" megy,
+  // de az index.html közvetlenül elérhető a "/_app" route-on keresztül.
+  // Legegyszerűbb: ember esetén az index.html tartalmát adjuk vissza
+  // úgy, hogy a vercel.json-ban felveszünk egy "/_app" → "index.html" rewrite-ot.
   if (!isBot(ua)) {
-    // Közvetlenül az _index.html tartalmát szolgáljuk ki
-    // (nem redirect, hogy az URL ne változzon)
-    try {
-      const fs = require('fs');
-      const path = require('path');
-      // Vercel-en a projekt gyökere a process.cwd()
-      const indexPath = path.join(process.cwd(), 'index.html');
-      const html = fs.readFileSync(indexPath, 'utf8');
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
-      return res.status(200).send(html);
-    } catch (e) {
-      // Ha az _index.html nem olvasható, visszaesünk a statikus verzióra
-      // (jobb ez mint egy hibás oldal)
-    }
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-store');
+    // 302 redirect az /_app route-ra, ami az index.html-t szolgálja ki
+    res.setHeader('Location', '/_app');
+    return res.status(302).end();
   }
 
-  // Bot (vagy fallback) → statikus HTML az összes cikkel
+  // Bot → statikus HTML az összes cikkel
   const articles = await fetchArticles();
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
