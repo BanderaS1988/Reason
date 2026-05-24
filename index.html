@@ -1170,8 +1170,9 @@ function renderCard(art) {
   const likes    = (art.like_count    ?? 0).toLocaleString('hu');
   const views    = (art.view_count    ?? 0).toLocaleString('hu');
   const comments = (art.comment_count ?? 0).toLocaleString('hu');
-  return `<div class="article-card" onclick="openArticleById('${art.id}')" style="cursor:pointer;${isSelected ? 'border-color:var(--accent);box-shadow:0 0 0 2px rgba(200,16,46,.2)' : ''}">
-<div class="card-img" style="background:linear-gradient(135deg,${col}16,${col}08);${art.image_url ? `background-image:url(${art.image_url});background-size:cover;background-position:center;` : ''}">      ${!art.image_url ? `<div class="card-img-emoji">${ico}</div>` : ''}
+  return `<a class="article-card" href="/cikk/${art.id}" style="text-decoration:none;color:inherit;${isSelected ? 'border-color:var(--accent);box-shadow:0 0 0 2px rgba(200,16,46,.2)' : ''}">
+    <div class="card-img" style="background:linear-gradient(135deg,${col}16,${col}08);${art.image_url ? `background-image:url(${art.image_url});background-size:cover;background-position:center;` : ''}">
+      ${!art.image_url ? `<div class="card-img-emoji">${ico}</div>` : ''}
       <div class="card-img-badge">${c}</div>
       ${art.is_premium ? '<div class="card-premium-ribbon">⭐ PRÉMIUM</div>' : ''}
       ${isSelected ? '<div style="position:absolute;top:8px;left:8px;background:var(--accent);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;">🔊 Kijelölve</div>' : ''}
@@ -1187,9 +1188,9 @@ function renderCard(art) {
       <div onclick="event.stopPropagation()" style="padding:8px 16px 0;border-top:1px solid var(--border);display:flex;align-items:center;gap:7px">
         <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);cursor:pointer;user-select:none">
           <input type="checkbox"
-  ${isSelected ? 'checked' : ''}
-  onchange="ttsCardToggle('${art.id}', this.checked)"
-  style="width:14px;height:14px;accent-color:var(--accent);cursor:pointer;${!isSelected ? 'outline:2px solid var(--accent);outline-offset:2px;animation:pulse-checkbox 1.5s ease-in-out infinite;border-radius:2px;' : ''}">
+            ${isSelected ? 'checked' : ''}
+            onchange="event.stopPropagation();ttsCardToggle('${art.id}', this.checked)"
+            style="width:14px;height:14px;accent-color:var(--accent);cursor:pointer;">
           🔊 <span style="color:var(--accent)">Felolvasáshoz</span>
         </label>
         ${isSelected ? '<span style="font-size:9px;background:var(--accent);color:#fff;padding:1px 7px;border-radius:10px;font-weight:700;">Kijelölve</span>' : ''}
@@ -1204,15 +1205,17 @@ function renderCard(art) {
         </span>
       </div>
     </div>
-  </div>`;
+  </a>`;
 }
+
 
 
 function openArticleById(id) {
-  const art = allArticles.find(a => String(a.id) === String(id));
-  if (art) openModal(art);
+  window.location.href = '/cikk/' + id;
 }
 window.openArticleById = openArticleById;
+
+
 
 function hlSearch(html) {
   if (!searchQ) return html;
