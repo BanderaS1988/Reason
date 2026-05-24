@@ -59,7 +59,7 @@
   ],
   "rewrites": [
     { "source": "/", "destination": "/api/home" },
-    
+    { "source": "/sitemap.xml", "destination": "/api/sitemap" }
     { "source": "/rss.xml",          "destination": "/api/rss" },
     { "source": "/robots.txt",       "destination": "/api/robots" },
     { "source": "/news-sitemap.xml", "destination": "/api/news-sitemap" },
