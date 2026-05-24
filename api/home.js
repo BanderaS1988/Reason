@@ -133,8 +133,19 @@ export default async function handler(req, res) {
   const ua = req.headers['user-agent'] || '';
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=30');
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');  // ← no-store!
   res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Content-Security-Policy',
+    "default-src * blob: data:; " +
+    "script-src * 'unsafe-inline' 'unsafe-eval' blob:; " +
+    "style-src * 'unsafe-inline'; " +
+    "img-src * data: blob:; " +
+    "font-src * data: blob:; " +
+    "connect-src * blob:; " +
+    "worker-src * blob:; " +
+    "media-src * blob:; " +
+    "frame-src *;"
+  );
 
   // Bot vagy WebView (Messenger, Instagram, Facebook app)
   if (isBot(ua) || isWebView(ua)) {
@@ -148,7 +159,7 @@ export default async function handler(req, res) {
     return res.status(200).send(html);
   }
 
-  // Fallback ha readFileSync nem megy
+  // Fallback
   res.setHeader('Location', '/index.html');
   return res.status(302).send('');
 }
