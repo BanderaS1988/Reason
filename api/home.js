@@ -133,7 +133,8 @@ export default async function handler(req, res) {
   const ua = req.headers['user-agent'] || '';
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');  // ← no-store!
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Content-Security-Policy',
     "default-src * blob: data:; " +
@@ -147,19 +148,14 @@ export default async function handler(req, res) {
     "frame-src *;"
   );
 
-  // Bot vagy WebView (Messenger, Instagram, Facebook app)
   if (isBot(ua) || isWebView(ua)) {
     const articles = await fetchArticles();
     return res.status(200).send(renderSSRHtml(articles));
   }
 
-  // Normál böngésző
   const html = getFullHtml();
-  if (html) {
-    return res.status(200).send(html);
-  }
+  if (html) return res.status(200).send(html);
 
-  // Fallback
   res.setHeader('Location', '/index.html');
   return res.status(302).send('');
 }
