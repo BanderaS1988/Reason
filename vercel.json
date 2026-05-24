@@ -65,7 +65,6 @@
   ],
  "rewrites": [
   { "source": "/",                 "destination": "/api/home" },
-  { "source": "/_app",            "destination": "/index.html" },
   { "source": "/sitemap.xml",      "destination": "/api/sitemap" },
   { "source": "/rss.xml",          "destination": "/api/rss" },
   { "source": "/robots.txt",       "destination": "/api/robots" },
