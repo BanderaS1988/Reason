@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="hu" data-theme="light">
 <head>
@@ -3511,7 +3510,21 @@ if (speechSynthesis.onvoiceschanged !== undefined) { speechSynthesis.onvoicescha
 initWeather();
 setInterval(initWeather, 10 * 60 * 1000);
 let _lastKnownCreatedAt = null;
-fetchArticles();
+// Ha a home.js SSR-rel előre töltötte a cikkeket, használjuk azt
+if (window.__SSR_ARTICLES__ && window.__SSR_ARTICLES__.length) {
+  allArticles = window.__SSR_ARTICLES__;
+  page = 1;
+  fetchHasMore = allArticles.length >= FETCH_LIMIT;
+  fetchOffset = allArticles.length;
+  updateTicker(allArticles);
+  applyFilters();
+  updateStats();
+  updateCatSidebar();
+  updateNavCounts();
+  setStatus('Utoljára frissítve: ' + new Date().toLocaleTimeString('hu-HU'));
+} else {
+  fetchArticles();
+}
 async function pollForNewArticles() {
   try {
     const newest = await sbFetch(
