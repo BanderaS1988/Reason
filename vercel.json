@@ -70,6 +70,7 @@
     { "source": "/robots.txt",       "destination": "/api/robots" },
     { "source": "/news-sitemap.xml", "destination": "/api/news-sitemap" },
     { "source": "/llms.txt",         "destination": "/api/llms" },
+    { "source": "/_original", "destination": "/_index.html" },
     { "source": "/cikk/:id",         "destination": "/api/cikk?id=:id" }
   ]
 }
