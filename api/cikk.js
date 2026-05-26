@@ -42,11 +42,25 @@ module.exports = async function handler(req, res) {
     'Content-Type': 'application/json',
   };
 
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
+
   try {
     const [artRes, commentsRes] = await Promise.all([
-      fetch(`${SB_URL}/rest/v1/articles?id=eq.${encodeURIComponent(id)}&select=*&limit=1`, { headers }),
-      fetch(`${SB_URL}/rest/v1/comments?article_id=eq.${encodeURIComponent(id)}&order=created_at.asc`, { headers }),
+      fetch(`${SB_URL}/rest/v1/articles?id=eq.${encodeURIComponent(id)}&select=*&limit=1`, { 
+        headers, 
+        signal: controller.signal 
+      }),
+      fetch(`${SB_URL}/rest/v1/comments?article_id=eq.${encodeURIComponent(id)}&order=created_at.asc`, { 
+        headers, 
+        signal: controller.signal 
+      }),
     ]);
+    clearTimeout(timeout);
+
+    if (!artRes.ok) {
+      throw new Error('Articles fetch failed: ' + artRes.status);
+    }
 
     const artData = await artRes.json();
     const art = artData?.[0];
@@ -55,7 +69,7 @@ module.exports = async function handler(req, res) {
       return;
     }
 
-    const comments  = await commentsRes.json() || [];
+    const comments = await commentsRes.json() || [];
     const col       = CAT_COLOR[art.category] || '#c8102e';
     const url       = `${SITE}/cikk/${art.id}`;
     const imageUrl  = art.image_url || `${SITE}/og-default.png`;
@@ -152,17 +166,17 @@ html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.7;transition:background .2s,color .2s}
 a{color:inherit;text-decoration:none}
 
-/* ── READ PROGRESS ── */
+/* READ PROGRESS */
 #readProgress{position:fixed;top:0;left:0;width:0%;height:3px;background:var(--accent);z-index:999;transition:width .1s linear;border-radius:0 2px 2px 0}
 
-/* ── TOPBAR ── */
+/* TOPBAR */
 .topbar{background:var(--accent);color:#fff;padding:10px 20px;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
 .topbar a{color:#fff;display:flex;align-items:center;gap:4px}
 .topbar a:hover{opacity:.85}
 .theme-toggle{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:.15s}
 .theme-toggle:hover{background:rgba(255,255,255,.3)}
 
-/* ── TOOLBAR ── */
+/* TOOLBAR */
 .toolbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .toolbar-label{font-size:10px;color:var(--text4);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
 .tool-btn{width:32px;height:32px;border-radius:7px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;font-family:'Inter',sans-serif}
@@ -174,27 +188,27 @@ a{color:inherit;text-decoration:none}
 .like-btn.liked{background:var(--accent);color:#fff;border-color:var(--accent)}
 .stats-bar{display:flex;align-items:center;gap:14px;font-size:12px;color:var(--text4);margin-left:auto;flex-wrap:wrap}
 
-/* ── WRAP ── */
+/* WRAP */
 .wrap{max-width:780px;margin:0 auto;padding:40px 24px 80px}
 
-/* ── ARTICLE HEADER ── */
+/* ARTICLE HEADER */
 .art-cat{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
 .art-title{font-family:'Playfair Display',Georgia,serif;font-size:38px;font-weight:900;line-height:1.2;margin-bottom:16px;color:var(--text)}
 .art-meta{font-size:12px;color:var(--text4);margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .art-meta span{display:flex;align-items:center;gap:4px}
 
-/* ── HERO IMAGE ── */
+/* HERO IMAGE */
 .hero-img{width:100%;max-height:460px;object-fit:cover;border-radius:12px;margin-bottom:28px;display:block}
 
-/* ── AD ── */
+/* AD */
 .ad-wrap{margin:28px 0;text-align:center;min-height:90px}
 
-/* ── BODY ── */
+/* BODY */
 .article-body{font-family:'Playfair Display',Georgia,serif;font-size:var(--font-size);line-height:2.05;color:var(--text2)}
 .article-body p{margin-bottom:22px;text-align:justify}
 .article-body p:first-child::first-letter{font-size:3.5em;font-weight:700;float:left;margin:0 8px -8px 0;line-height:.78;color:var(--accent);font-family:'Playfair Display',Georgia,serif}
 
-/* ── SHARE ── */
+/* SHARE */
 .share-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:20px 0;border-top:1px solid var(--border);margin-top:32px}
 .share-label{font-size:11px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.08em;margin-right:4px}
 .share-btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:.15s;white-space:nowrap}
@@ -205,7 +219,7 @@ a{color:inherit;text-decoration:none}
 .share-wa{background:#25d366;color:#fff}
 .share-msg{font-size:12px;color:#1a7a3c;font-weight:600}
 
-/* ── COMMENTS ── */
+/* COMMENTS */
 .comments-section{margin-top:48px;border-top:2px solid var(--border);padding-top:32px}
 .comments-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:20px;color:var(--text);display:flex;align-items:center;gap:10px}
 .comment-badge{font-size:12px;background:var(--bg3);color:var(--text4);padding:2px 8px;border-radius:10px;font-family:monospace}
@@ -225,15 +239,15 @@ a{color:inherit;text-decoration:none}
 .btn-submit:hover{opacity:.85}
 #cMsg{font-size:12px;margin-top:8px;min-height:16px}
 
-/* ── BACK ── */
+/* BACK */
 .back-btn{display:inline-flex;align-items:center;gap:6px;margin-top:40px;padding:10px 20px;background:var(--accent);color:#fff;border-radius:8px;font-size:13px;font-weight:700;transition:.15s}
 .back-btn:hover{opacity:.85}
 
-/* ── FOOTER ── */
+/* FOOTER */
 footer{background:#1a1814;color:#9e9890;text-align:center;padding:20px;font-size:11px;line-height:2}
 footer a{color:#f0c040}
 
-/* ── TOAST ── */
+/* TOAST */
 .toast-wrap{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:6px;pointer-events:none}
 .toast{padding:10px 16px;background:#1a1814;color:#fff;border-radius:8px;font-size:12px;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,.2);animation:toastIn .3s ease;pointer-events:auto;max-width:280px}
 .toast.ok{background:#1a7a3c}
@@ -241,7 +255,7 @@ footer a{color:#f0c040}
 .toast.info{background:#0066cc}
 @keyframes toastIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── MOBILE ── */
+/* MOBILE */
 @media(max-width:600px){
   .art-title{font-size:24px}
   .wrap{padding:20px 16px 60px}
@@ -356,7 +370,7 @@ const SB_URL_JS   = '${SB_URL}';
 const SB_KEY_JS   = '${SB_KEY}';
 const SB_HDR      = { apikey: SB_KEY_JS, Authorization: 'Bearer ' + SB_KEY_JS, 'Content-Type': 'application/json' };
 
-// ── TOAST ──────────────────────────────────────────────────────
+// TOAST
 function toast(msg, type) {
   const w = document.getElementById('toastWrap');
   const t = document.createElement('div');
@@ -370,14 +384,14 @@ function toast(msg, type) {
   }, 3500);
 }
 
-// ── READ PROGRESS ──────────────────────────────────────────────
+// READ PROGRESS
 window.addEventListener('scroll', () => {
   const h = document.documentElement;
   const pct = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100;
   document.getElementById('readProgress').style.width = Math.min(100, pct) + '%';
 }, { passive: true });
 
-// ── TÉMA ──────────────────────────────────────────────────────
+// TÉMA
 function toggleTheme() {
   const t = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
   document.documentElement.dataset.theme = t;
@@ -392,7 +406,7 @@ function toggleTheme() {
   }
 })();
 
-// ── BETŰMÉRET ──────────────────────────────────────────────────
+// BETŰMÉRET
 let fontSize = parseInt(localStorage.getItem('reason_font') || '18', 10);
 function applyFont() {
   document.documentElement.style.setProperty('--font-size', fontSize + 'px');
@@ -405,7 +419,7 @@ function changeFontSize(d) {
 }
 applyFont();
 
-// ── VIEW TRACKING ──────────────────────────────────────────────
+// VIEW TRACKING
 (async function trackView() {
   const lk = 'reason_viewed_' + ARTICLE_ID;
   try {
@@ -433,7 +447,7 @@ applyFont();
   } catch(e) { console.error('View tracking hiba:', e); }
 })();
 
-// ── LÁJK ──────────────────────────────────────────────────────
+// LÁJK
 async function handleLike() {
   const lk = 'reason_liked_' + ARTICLE_ID;
   if (localStorage.getItem(lk)) { toast('Ezt már lájkoltad! 👍', 'info'); return; }
@@ -465,7 +479,7 @@ async function handleLike() {
   }
 }
 
-// ── MEGOSZTÁS ──────────────────────────────────────────────────
+// MEGOSZTÁS
 async function copyLink() {
   try {
     await navigator.clipboard.writeText(ARTICLE_URL);
@@ -481,7 +495,7 @@ async function copyLink() {
   toast('✓ Link másolva!', 'ok');
 }
 
-// ── KOMMENT BEKÜLDÉS ──────────────────────────────────────────
+// KOMMENT BEKÜLDÉS
 async function submitComment() {
   const author = (document.getElementById('cAuthor').value.trim() || 'Névtelen olvasó');
   const body   = document.getElementById('cBody').value.trim();
@@ -533,7 +547,7 @@ async function submitComment() {
   }
 }
 
-// ── KOMMENTEK ÚJRATÖLTÉSE ─────────────────────────────────────
+// KOMMENTEK ÚJRATÖLTÉSE
 async function reloadComments() {
   try {
     const r    = await fetch(SB_URL_JS + '/rest/v1/comments?article_id=eq.' + ARTICLE_ID + '&order=created_at.asc', { headers: SB_HDR });
@@ -566,6 +580,12 @@ async function reloadComments() {
     res.status(200).send(html);
 
   } catch (e) {
-    res.status(500).send(`Szerver hiba: ${e.message}`);
+    clearTimeout(timeout);
+    if (e.name === 'AbortError') {
+      res.status(504).send('A kérés túl hosszú ideig tartott');
+    } else {
+      console.error('Cikk hiba:', e);
+      res.status(500).send(`Szerver hiba: ${e.message}`);
+    }
   }
 };
