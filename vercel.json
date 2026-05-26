@@ -4,7 +4,10 @@
     "api/news-sitemap.js": { "maxDuration": 30 },
     "api/cikk.js":         { "maxDuration": 30 },
     "api/indexnow.js":     { "maxDuration": 30 },
-    "api/home.js":         { "maxDuration": 30 }
+    "api/home.js":         { "maxDuration": 30 },
+    "api/rss.js":          { "maxDuration": 30 },
+    "api/robots.js":       { "maxDuration": 30 },
+    "api/llms.js":         { "maxDuration": 30 }
   },
   "headers": [
     {
@@ -20,34 +23,39 @@
       ]
     },
     {
+      "source": "/rss.xml",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
+      ]
+    },
+    {
       "source": "/robots.txt",
       "headers": [
         { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
       ]
     },
     {
-      "source": "/(.*)",
+      "source": "/llms.txt",
       "headers": [
-        { "key": "x-robots-tag",                "value": "index, follow" },
-        { "key": "X-Content-Type-Options",       "value": "nosniff" },
-        { "key": "X-Frame-Options",              "value": "SAMEORIGIN" },
-        { "key": "Access-Control-Allow-Origin",  "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PATCH, OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization, apikey, x-client-info" },
-        { "key": "Cache-Control",                "value": "public, max-age=0, must-revalidate" },
-        { "key": "Content-Security-Policy",      "value": "default-src * blob: data:; script-src * 'unsafe-inline' 'unsafe-eval' blob:; style-src * 'unsafe-inline'; img-src * data: blob:; font-src * data: blob:; connect-src * blob:; worker-src * blob:; media-src * blob:; frame-src *;" }
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
       ]
     },
     {
       "source": "/",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
       ]
     },
     {
-      "source": "/api/(.*)",
+      "source": "/cikk/:id",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
       ]
     },
     {
@@ -63,13 +71,13 @@
       ]
     }
   ],
- "rewrites": [
-  { "source": "/",                 "destination": "/api/home" },
-  { "source": "/sitemap.xml",      "destination": "/api/sitemap" },
-  { "source": "/rss.xml",          "destination": "/api/rss" },
-  { "source": "/robots.txt",       "destination": "/api/robots" },
-  { "source": "/news-sitemap.xml", "destination": "/api/news-sitemap" },
-  { "source": "/llms.txt",         "destination": "/api/llms" },
-  { "source": "/cikk/:id",         "destination": "/api/cikk?id=:id" }
-]
+  "rewrites": [
+    { "source": "/",                 "destination": "/api/home" },
+    { "source": "/sitemap.xml",      "destination": "/api/sitemap" },
+    { "source": "/rss.xml",          "destination": "/api/rss" },
+    { "source": "/robots.txt",       "destination": "/api/robots" },
+    { "source": "/news-sitemap.xml", "destination": "/api/news-sitemap" },
+    { "source": "/llms.txt",         "destination": "/api/llms" },
+    { "source": "/cikk/:id",         "destination": "/api/cikk?id=:id" }
+  ]
 }
