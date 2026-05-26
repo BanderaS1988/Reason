@@ -23,6 +23,12 @@ function esc(s) {
     .replace(/"/g, '&quot;');
 }
 
+function fmtDate(iso) {
+  if (!iso) return '–';
+  const d = new Date(iso);
+  return `${d.getFullYear()}. ${d.getMonth()+1}. ${d.getDate()}.`;
+}
+
 async function fetchArticles() {
   try {
     const headers = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
@@ -44,7 +50,23 @@ async function fetchArticles() {
   }
 }
 
-// Noscript cikklista a Google számára – tiszta HTML linkek
+// ═══════════════════════════════════════════════════════════════════════════
+// SSR CIKKLISTA HTML-BEN – ezt látja a Google JS nélkül is
+// ═══════════════════════════════════════════════════════════════════════════
+function buildArticleListHtml(articles) {
+  return articles.slice(0, 30).map(a => {
+    const col = CAT_COLOR[a.category] || '#888';
+    return `
+    <div class="article-card" style="margin-bottom:16px;border-bottom:1px solid #e8e4dc;padding-bottom:12px;">
+      <div class="card-cat" style="font-size:11px;font-weight:700;text-transform:uppercase;color:${col};margin-bottom:4px;">${esc(a.category || '')}</div>
+      <h3 style="font-size:18px;font-weight:700;margin:0 0 8px 0;"><a href="${SITE}/cikk/${a.id}" style="color:var(--text, #1a1814);text-decoration:none;">${esc(a.title || '')}</a></h3>
+      <div class="card-meta" style="font-size:11px;color:var(--text4, #9e9890);margin-bottom:6px;">${fmtDate(a.created_at)} · ${a.read_time || '?'} perc</div>
+      <div class="card-excerpt" style="font-size:13px;color:var(--text3, #706b62);line-height:1.6;">${esc((a.excerpt || '').slice(0, 200))}…</div>
+    </div>`;
+  }).join('');
+}
+
+// Noscript változat (fallback)
 function buildNoscript(articles) {
   const items = articles.slice(0, 100).map(a => {
     const col = CAT_COLOR[a.category] || '#888';
@@ -61,44 +83,39 @@ ${items}
 }
 
 module.exports = async function handler(req, res) {
-  // index.html beolvasása – Vercel-en a projekt gyökere process.cwd()
+  // 1. Alap HTML sablon betöltése
   let html;
   try {
     const htmlPath = path.join(process.cwd(), '_shell.html');
     html = fs.readFileSync(htmlPath, 'utf8');
   } catch (e) {
-    return res.status(500).send('index.html nem olvasható: ' + e.message);
+    return res.status(500).send('_shell.html nem található: ' + e.message);
   }
 
-  // Cikkek lekérése Supabase-ből
+  // 2. Cikkek lekérése
   const articles = await fetchArticles();
+  const articleListHtml = buildArticleListHtml(articles);
 
-  // SSR inject: window.__SSR_ARTICLES__ + noscript linklist
-  // A fetchArticles() az index.html-ben ezt észleli és nem csinál külön Supabase-hívást
-  const ssrScript = `<script>
-window.__SSR_ARTICLES__ = ${JSON.stringify(articles)};
-</script>`;
+  // 3. SSR inject: a cikklistát beleírjuk a HTML-be egy helyőrzőbe
+  //    A _shell.html-ben kell lennie egy <!-- SSR_ARTICLES_LIST --> kommentnek
+  if (html.includes('<!-- SSR_ARTICLES_LIST -->')) {
+    html = html.replace('<!-- SSR_ARTICLES_LIST -->', articleListHtml);
+  } else {
+    // Ha nincs helyőrző, akkor a </main> vagy <div id="articles-grid"> elé tesszük
+    html = html.replace('</main>', `<div class="ssr-articles" style="margin:20px 0;">${articleListHtml}</div>\n</main>`);
+  }
 
+  // 4. JS változó a kliensoldali hydration-hoz
+  const ssrScript = `<script>window.__SSR_ARTICLES__ = ${JSON.stringify(articles)};</script>`;
   const noscript = buildNoscript(articles);
 
-  // Beinjektálás a </body> elé
+  // 5. Beinjektálás a </body> elé
   html = html.replace('</body>', `${noscript}\n${ssrScript}\n</body>`);
 
+  // 6. Válasz
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Content-Security-Policy',
-    "default-src * blob: data:; " +
-    "script-src * 'unsafe-inline' 'unsafe-eval' blob:; " +
-    "style-src * 'unsafe-inline'; " +
-    "img-src * data: blob:; " +
-    "font-src * data: blob:; " +
-    "connect-src * blob:; " +
-    "worker-src * blob:; " +
-    "media-src * blob:; " +
-    "frame-src *;"
-  );
-
-  return res.status(200).send(html);
+  res.status(200).send(html);
 };
