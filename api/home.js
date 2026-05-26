@@ -1,8 +1,8 @@
-const fs     = require('fs');
-const path   = require('path');
+const fs = require('fs');
+const path = require('path');
 const SB_URL = 'https://kqugolmndqonbnjetdyi.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxdWdvbG1uZHFvbmJuamV0ZHlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2OTM3NjMsImV4cCI6MjA4ODI2OTc2M30.wGEBEJDPUKsUPu9W5vxvH7Do0wX9U3FdgKzEzny_zBg';
-const SITE   = 'https://reason-five.vercel.app';
+const SITE = 'https://reason-five.vercel.app';
 
 const CAT_COLOR = {
   'Mesterséges Intelligencia és Technológia': '#0066cc',
@@ -14,6 +14,9 @@ const CAT_COLOR = {
   'Filozófia és az Élet Értelme':             '#a16207',
   'Oktatás és a Tudás Jövője':                '#0891b2',
 };
+
+let cachedArticles = null;
+let cacheTime = 0;
 
 function esc(s) {
   return (s || '')
@@ -30,29 +33,20 @@ function fmtDate(iso) {
 }
 
 async function fetchArticles() {
-  try {
-    const headers = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
-    const base = `${SB_URL}/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium,image_url&order=created_at.desc`;
-    const r1 = await fetch(`${base}&limit=1000&offset=0`, { headers, signal: AbortSignal.timeout(20000) });
-    if (!r1.ok) return [];
-    const batch1 = await r1.json();
-    if (!Array.isArray(batch1)) return [];
-    if (batch1.length === 1000) {
-      const r2 = await fetch(`${base}&limit=1000&offset=1000`, { headers, signal: AbortSignal.timeout(20000) });
-      if (r2.ok) {
-        const batch2 = await r2.json();
-        if (Array.isArray(batch2)) return [...batch1, ...batch2];
-      }
-    }
-    return batch1;
-  } catch {
-    return [];
-  }
+  const headers = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
+  const base = `${SB_URL}/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium,image_url&order=created_at.desc`;
+  
+  // Csak egy kérés, max 100 cikk
+  const r = await fetch(`${base}&limit=100`, { 
+    headers, 
+    signal: AbortSignal.timeout(5000) 
+  });
+  
+  if (!r.ok) return [];
+  const data = await r.json();
+  return Array.isArray(data) ? data : [];
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SSR CIKKLISTA HTML-BEN – ezt látja a Google JS nélkül is
-// ═══════════════════════════════════════════════════════════════════════════
 function buildArticleListHtml(articles) {
   return articles.slice(0, 30).map(a => {
     const col = CAT_COLOR[a.category] || '#888';
@@ -66,9 +60,8 @@ function buildArticleListHtml(articles) {
   }).join('');
 }
 
-// Noscript változat (fallback)
 function buildNoscript(articles) {
-  const items = articles.slice(0, 100).map(a => {
+  const items = articles.slice(0, 50).map(a => {
     const col = CAT_COLOR[a.category] || '#888';
     return `<li><a href="${SITE}/cikk/${esc(String(a.id))}" style="color:${col}">${esc(a.title || '')}</a> <small>${esc(a.category || '')} · ${(a.created_at || '').slice(0, 10)}</small></li>`;
   }).join('\n');
@@ -83,7 +76,6 @@ ${items}
 }
 
 module.exports = async function handler(req, res) {
-  // 1. Alap HTML sablon betöltése
   let html;
   try {
     const htmlPath = path.join(process.cwd(), '_shell.html');
@@ -92,27 +84,27 @@ module.exports = async function handler(req, res) {
     return res.status(500).send('_shell.html nem található: ' + e.message);
   }
 
-  // 2. Cikkek lekérése
-  const articles = await fetchArticles();
+  // Cache 5 percig
+  let articles = cachedArticles;
+  if (!articles || Date.now() - cacheTime > 300000) {
+    articles = await fetchArticles();
+    cachedArticles = articles;
+    cacheTime = Date.now();
+  }
+
   const articleListHtml = buildArticleListHtml(articles);
 
-  // 3. SSR inject: a cikklistát beleírjuk a HTML-be egy helyőrzőbe
-  //    A _shell.html-ben kell lennie egy <!-- SSR_ARTICLES_LIST --> kommentnek
   if (html.includes('<!-- SSR_ARTICLES_LIST -->')) {
     html = html.replace('<!-- SSR_ARTICLES_LIST -->', articleListHtml);
   } else {
-    // Ha nincs helyőrző, akkor a </main> vagy <div id="articles-grid"> elé tesszük
     html = html.replace('</main>', `<div class="ssr-articles" style="margin:20px 0;">${articleListHtml}</div>\n</main>`);
   }
 
-  // 4. JS változó a kliensoldali hydration-hoz
-  const ssrScript = `<script>window.__SSR_ARTICLES__ = ${JSON.stringify(articles)};</script>`;
+  const ssrScript = `<script>window.__SSR_ARTICLES__ = ${JSON.stringify(articles.slice(0, 50))};</script>`;
   const noscript = buildNoscript(articles);
 
-  // 5. Beinjektálás a </body> elé
   html = html.replace('</body>', `${noscript}\n${ssrScript}\n</body>`);
 
-  // 6. Válasz
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
   res.setHeader('Pragma', 'no-cache');
