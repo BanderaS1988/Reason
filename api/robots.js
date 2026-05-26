@@ -29,8 +29,8 @@ User-agent: Diffbot
 Allow: /
 User-agent: cohere-ai
 Allow: /
-Sitemap: ${SITE}/api/sitemap
-Sitemap: ${SITE}/api/news-sitemap
+Sitemap: ${SITE}/sitemap.xml
+Sitemap: ${SITE}/news-sitemap.xml
 `;
   res.setHeader('Content-Type', 'text/plain');
   res.setHeader('Cache-Control', 's-maxage=86400');
