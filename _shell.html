@@ -1230,7 +1230,7 @@ function hlSearch(html) {
 async function loadMoreBatch() {
     try {
         const nextOffset = fetchOffset + FETCH_LIMIT;
-        const data = await sbFetch(`/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium,image_url&order=created_at.desc&limit=${FETCH_LIMIT}&offset=${nextOffset}`);
+        const data = await sbFetch(`/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium,image_url&order=created_at.desc&limit=${FETCH_LIMIT}&offset=${nextOffset}&target_site=eq.reason`);
         if (data && data.length) {
             allArticles = [...allArticles, ...data];
             fetchOffset = nextOffset;
