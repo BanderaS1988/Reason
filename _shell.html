@@ -3530,9 +3530,8 @@ if (window.__SSR_ARTICLES__ && window.__SSR_ARTICLES__.length) {
 }
 async function pollForNewArticles() {
   try {
-    const newData = await sbFetch(
-  `/rest/v1/articles?select=id,title,...&order=created_at.desc&created_at=gt.${...}&limit=1000`
-);
+    const newest = await sbFetch(
+      '/rest/v1/articles?select=id,created_at&order=created_at.desc&limit=1&target_site=eq.reason'
     );
     if (!newest?.length) return;
 
@@ -3547,7 +3546,7 @@ async function pollForNewArticles() {
 
     // Lekérjük az új cikkeket
     const newData = await sbFetch(
-      `/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium,image_url&order=created_at.desc&created_at=gt.${encodeURIComponent(_lastKnownCreatedAt)}&limit=1000`
+      `/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,is_premium,image_url&order=created_at.desc&created_at=gt.${encodeURIComponent(_lastKnownCreatedAt)}&limit=1000&target_site=eq.reason`
     );
     if (!newData?.length) return;
 
@@ -3555,7 +3554,7 @@ async function pollForNewArticles() {
     const truly_new   = newData.filter(a => !existingIds.has(String(a.id)));
     if (!truly_new.length) return;
 
-// Csak eltároljuk hogy van új – NEM töltjük be
+    // Csak eltároljuk hogy van új – NEM töltjük be
     _lastKnownCreatedAt = newData[0].created_at;
 
     // Csak jelzés – a tényleges betöltés F5 vagy gombnyomásra történik
@@ -3584,7 +3583,7 @@ setTimeout(() => {
 initAuth();
 initGDPR();
 renderSupportBanner();
-  updateBookmarkNavCount();
+updateBookmarkNavCount();
 </script>
 </body>
 </html>
