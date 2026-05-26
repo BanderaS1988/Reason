@@ -990,8 +990,8 @@ async function sbFetch(path, opts = {}) {
 async function fetchArticles(offset = 0) {
   try {
     const data = await sbFetch(
-      `/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium,image_url&order=created_at.desc&limit=${FETCH_LIMIT}&offset=${offset}`
-    );
+  `/rest/v1/articles?select=id,title,excerpt,category,created_at,read_time,like_count,comment_count,view_count,is_premium,image_url&order=created_at.desc&limit=${FETCH_LIMIT}&offset=${offset}&target_site=eq.reason`
+);
     if (!Array.isArray(data)) throw new Error();
     if (offset === 0) {
       // Meglévő view/like/comment értékek megőrzése ha az adatbázis 0-t küld
@@ -3530,8 +3530,9 @@ if (window.__SSR_ARTICLES__ && window.__SSR_ARTICLES__.length) {
 }
 async function pollForNewArticles() {
   try {
-    const newest = await sbFetch(
-      '/rest/v1/articles?select=id,created_at&order=created_at.desc&limit=1'
+    const newData = await sbFetch(
+  `/rest/v1/articles?select=id,title,...&order=created_at.desc&created_at=gt.${...}&limit=1000`
+);
     );
     if (!newest?.length) return;
 
