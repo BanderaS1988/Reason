@@ -672,7 +672,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-s);font-size:
           <input class="search-input" type="text" id="searchInput" placeholder="Keresés a cikkek között..." oninput="onSearch(this.value)" autocomplete="off">
           <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
         </div>
-        <div class="articles-grid" id="articlesGrid"></div>
+       <div class="articles-grid" id="articlesGrid">
+  <!-- SSR_ARTICLES_LIST -->
+</div>
+        
         <div id="emptyState" style="display:none">
           <div class="empty-state">
             <span class="empty-icon">📭</span>
